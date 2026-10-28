@@ -24,7 +24,7 @@ export function GET() {
 
   const services = [
     ['Личный кабинет студента', 'https://istudent.urfu.ru/'], ['Библиотека', 'https://lib.urfu.ru/'],
-    ['Wi-Fi в УрФУ', '/study/hub'], ['Справка об обучении', '/study/documents'], ['Стипендии', '/study/scholarships'],
+    ['Wi-Fi в УрФУ', '/study/hub'], ['Документы для студентов', '/study/documents'], ['Стипендии', '/study/scholarships'],
   ];
   for (const [t, h] of services) items.push({ t, s: 'Сервис', g: 'Сервисы', h });
 

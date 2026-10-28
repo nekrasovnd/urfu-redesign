@@ -28,7 +28,7 @@ const dirs = directions.map((d, idx) => ({
 const institutes = [...new Set(dirs.flatMap(d => d.pr.map(p => p.i)))].sort((a, b) => a.localeCompare(b, 'ru'));
 const DETAIL: Record<string, string> = { '09.03.04': '/programs/software-engineering' };
 const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
-const minCost = Math.min(...dirs.filter(d => d.p).map(d => d.p!));
+const maxCost = Math.max(...dirs.filter(d => d.p).map(d => d.p!));
 const c = university.contacts;
 ---
 <Base title="Подбор программы по баллам ЕГЭ" section="admission"
@@ -183,7 +183,7 @@ const c = university.contacts;
         <dl>
           <div><dt>Приёмная комиссия</dt><dd>Екатеринбург, ул. Мира, 19, кабинет ГУК-100</dd></div>
           <div><dt>Контакт-центр</dt><dd>{c.contact_center}, звонок бесплатный</dd></div>
-          <div><dt>Стоимость</dt><dd>от {rub(minCost)} в год, есть скидки и кредит</dd></div>
+          <div><dt>Стоимость</dt><dd>до {rub(maxCost)} в год, зависит от направления</dd></div>
         </dl>
       </div>
     </section>

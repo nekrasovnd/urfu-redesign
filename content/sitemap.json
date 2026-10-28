@@ -18,7 +18,7 @@
         { "label": "Аспирантура", "href": "/admission/phd" },
         { "label": "Колледж (СПО)", "href": "/admission/college" },
         { "label": "Перевод и восстановление", "href": "/admission/transfer" },
-        { "label": "Стоимость, скидки и кредит", "href": "/admission/cost" },
+        { "label": "Стоимость обучения", "href": "/admission/cost" },
         { "label": "Льготы, квоты и целевое обучение", "href": "/admission/quotas" },
         { "label": "Олимпиады и подготовка", "href": "/admission/prep" },
         { "label": "Списки поступающих", "href": "/admission/lists" },

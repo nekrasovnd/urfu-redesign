@@ -11,8 +11,8 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
     lead: 'Введите баллы ЕГЭ — сразу покажем подходящие направления, минимальные баллы и стоимость обучения.',
     actions: [
       { t: 'Подобрать программу по баллам', h: '/admission/match', s: `${directions.length} направлений бакалавриата и специалитета` },
-      { t: 'Все программы', h: '/programs', s: 'Фильтры по институту, уровню и форме' },
-      { t: 'Стоимость, скидки и кредит', h: '/admission/cost', s: 'От 165 000 ₽ в год' },
+      { t: 'Все программы', h: '/programs', s: 'Фильтры по институту и уровню' },
+      { t: 'Стоимость обучения', h: '/admission/cost', s: 'Указана для каждого направления' },
       { t: 'Общежития', h: '/life/housing', s: `${figures.dormitories} общежитий, ${figures.dorm_places} мест` },
       { t: 'Приёмная комиссия', h: '/admission/contacts', s: `${c.admissions.phone} · ${c.admissions.address}` },
     ],
@@ -43,11 +43,11 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
   },
   {
     id: 'school', label: 'школьник', title: 'Поступать — это рано?',
-    lead: 'Нет. Олимпиады дают льготы при поступлении, а курсы и смены помогают выбрать направление.',
+    lead: 'Нет. Олимпиады могут дать особые права при поступлении, а дни открытых дверей и курсы подготовки помогают выбрать направление.',
     actions: [
-      { t: 'Олимпиады и конкурсы', h: '/admission/prep', s: '«Изумруд», «Я — профессионал», «Эврика»' },
+      { t: 'Олимпиады и конкурсы', h: '/admission/prep' },
       { t: 'Курсы подготовки к ЕГЭ', h: '/admission/prep' },
-      { t: 'Тест-драйв в УрФУ', h: '/admission/prep', s: 'Неделя студенческой жизни' },
+      { t: 'Дни открытых дверей', h: '/events', s: '23–30 января 2027' },
       { t: 'Подобрать программу по баллам', h: '/admission/match' },
     ],
     audience: 'Школьники',
@@ -212,7 +212,7 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
   <!-- ============ STATS ============ -->
   <section class="container stats-band" aria-label="УрФУ в цифрах">
     <div class="stats">
-      <div class="stat stat--accent"><span class="stat__value">{fmtNum(figures.students)}</span><span class="stat__label">студентов, из них {fmtNum(figures.international_students)} иностранных</span></div>
+      <div class="stat stat--accent"><span class="stat__value">{fmtNum(figures.students)}</span><span class="stat__label">студентов; {fmtNum(figures.international_students)} иностранных студентов и слушателей</span></div>
       <div class="stat"><span class="stat__value">{fmtNum(figures.budget_places_2026)}</span><span class="stat__label">бюджетных мест в 2026 году</span></div>
       <div class="stat"><span class="stat__value">{figures.research_labs}</span><span class="stat__label">научно-исследовательских лабораторий</span></div>
       <div class="stat"><span class="stat__value">1920</span><span class="stat__label">год основания — декрет об Уральском университете</span></div>
@@ -319,13 +319,13 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     <div class="campus-grid">
       <a class="campus-tile campus-tile--lead" href="/life/campus">
         <h3>Новый кампус в Новокольцовском</h3>
-        <p>Учебные корпуса, общежития, стадион и спортзалы в одном месте. Карта кампуса и всех 15 учебных корпусов в центре города.</p>
+        <p>Кампус построен по нацпроекту «Молодёжь и дети», сюда переехал лицей УрФУ. На карте — он и все {figures.academic_buildings} учебных корпусов.</p>
         <span class="btn btn--primary" style="justify-self:start">Открыть карту <span class="arrow" aria-hidden="true">→</span></span>
       </a>
       <a class="campus-tile" href="/life/housing"><b>{figures.dormitories}</b><span>общежитий на {figures.dorm_places} мест</span></a>
       <a class="campus-tile" href="/life/sport"><b>{figures.sports_facilities}</b><span>спортивных объектов и {figures.sports_teams} команды</span></a>
       <a class="campus-tile" href="/life/clubs"><b>{figures.creative_groups}</b><span>творческих коллективов</span></a>
-      <a class="campus-tile" href="/study/mobility"><b>{figures.partner_universities.split(' ')[1]}</b><span>зарубежных вузов-партнёров из 72 стран</span></a>
+      <a class="campus-tile" href="/study/mobility"><b>400+</b><span>зарубежных вузов-партнёров из 72 стран</span></a>
     </div>
   </section>
 
@@ -352,7 +352,7 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
       <dl>
         <div><dt>Адрес</dt><dd>Екатеринбург, ул. Мира, 19, кабинет ГУК-100</dd></div>
         <div><dt>Контакт-центр</dt><dd>{c.contact_center} — звонок по России бесплатный</dd></div>
-        <div><dt>Часы работы</dt><dd>{c.hours}</dd></div>
+        <div><dt>Контакт-центр работает</dt><dd>{c.hours}</dd></div>
       </dl>
     </div>
   </section>

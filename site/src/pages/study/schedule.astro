@@ -3,21 +3,10 @@ import Base from '../../layouts/Base.astro';
 import '../../styles/schedule.css';
 import { schedule } from '../../data/site';
 
-// Two sources:
-//  · group — the real open schedule of РИ-250902 (urfu.ru/api/v2/schedule), sparse because most classes
-//    live in each student's individual trajectory;
-//  · trajectory — what the personal view would look like: the same real classes plus elective courses
-//    from the trajectory (marked as an example — not real data).
-type Ev = { date: string; pair: number; title: string; type: string; room?: string; location?: string; teacher?: string; comment?: string; demo?: boolean };
-const real: Ev[] = schedule.events.map(e => ({ ...e }));
-
-const DEMO_WEEK: Omit<Ev, 'date'>[][] = [
-  /* пн */ [{ pair: 2, title: 'Алгоритмы и структуры данных', type: 'лекции', room: 'Р-237', location: 'ул. Мира, 32' }, { pair: 3, title: 'Алгоритмы и структуры данных', type: 'практические занятия', room: 'Р-410', location: 'ул. Мира, 32' }],
-  /* вт */ [{ pair: 1, title: 'Базы данных', type: 'лекции', room: 'Р-225', location: 'ул. Мира, 32' }, { pair: 2, title: 'Базы данных', type: 'лабораторные работы', room: 'Р-138', location: 'ул. Мира, 32' }],
-  /* ср */ [{ pair: 4, title: 'Иностранный язык', type: 'практические занятия', room: 'Т-604', location: 'ул. Мира, 19' }],
-  /* чт */ [{ pair: 2, title: 'Теория вероятностей и математическая статистика', type: 'лекции', room: 'Р-237', location: 'ул. Мира, 32' }, { pair: 3, title: 'Теория вероятностей и математическая статистика', type: 'практические занятия', room: 'Р-317', location: 'ул. Мира, 32' }],
-  /* пт */ [{ pair: 2, title: 'Объектно-ориентированное программирование', type: 'лабораторные работы', room: 'Р-138', location: 'ул. Мира, 32' }],
-];
+// The real open schedule of РИ-250902 (urfu.ru/api/v2/schedule). It is sparse: most classes live in each
+// student's individual trajectory, which only the personal account knows — so the prototype shows no invented courses.
+type Ev = { date: string; pair: number; title: string; type: string; room?: string; location?: string; teacher?: string; comment?: string };
+const events: Ev[] = schedule.events.map(e => ({ ...e }));
 
 const toISO = (d: Date) => d.toISOString().slice(0, 10);
 const weeks = [{ start: '2026-10-26' }, { start: '2026-11-02' }].map(w => {
@@ -25,14 +14,6 @@ const weeks = [{ start: '2026-10-26' }, { start: '2026-11-02' }].map(w => {
   const days = Array.from({ length: 7 }, (_, i) => toISO(new Date(s.getTime() + i * 864e5)));
   return { start: w.start, end: days[6], days };
 });
-
-const trajectory: Ev[] = [...real];
-for (const w of weeks) w.days.slice(0, 5).forEach((d, i) => DEMO_WEEK[i].forEach(e => trajectory.push({ ...e, date: d, demo: true })));
-
-const views = [
-  { id: 'group', label: `Группа ${schedule.group.title}`, events: real },
-  { id: 'track', label: 'Моя траектория', events: trajectory },
-];
 
 const pairs = schedule.pairs;
 const pairOf = (n: number) => pairs.find(p => p.n === n);
@@ -50,7 +31,8 @@ const campusHref = (room?: string) => /^I/.test(room ?? '') ? '/life/campus#corp
 const isOnline = (e: Ev) => !e.pair || /^https?:/.test(e.location ?? '');
 const ROWS = [0, ...pairs.map(p => p.n)];
 const evAt = (list: Ev[], date: string, pair: number) => list.filter(e => e.date === date && (pair === 0 ? !e.pair : e.pair === pair));
-const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair).map(e => ({ date: e.date, start: pairOf(e.pair)!.start, end: pairOf(e.pair)!.end, title: e.title, room: e.room, location: e.location })) }));
+const icsData = events.filter(e => e.pair).map(e => ({ date: e.date, start: pairOf(e.pair)!.start, end: pairOf(e.pair)!.end, title: e.title, room: e.room, location: e.location }));
+const altBells = schedule.pairs_alt;
 ---
 <Base title="Расписание" section="study" description={`Расписание занятий УрФУ: по группе, преподавателю или аудитории. Неделя целиком, адреса корпусов и экспорт в календарь. Пример — группа ${schedule.group.title}, ИРИТ-РтФ.`}>
 
@@ -76,9 +58,7 @@ const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair)
 
   <div class="sch-bar">
     <div class="container sch-bar__inner">
-      <div class="tabs sch-views" role="tablist" aria-label="Источник расписания">
-        {views.map((v, i) => <button role="tab" type="button" id={`tab-${v.id}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`view-${v.id}`} data-view={v.id}>{v.label}{v.id === 'track' && <span class="tag tag--soft sch-demo-tag">пример</span>}</button>)}
-      </div>
+      <p class="sch-bar__group"><b>Группа {schedule.group.title}</b><span>открытое расписание urfu.ru</span></p>
       <div class="sch-week-nav">
         <button class="btn btn--sm" type="button" data-week-step="-1" aria-label="Предыдущая неделя">←</button>
         <p class="sch-week-label" aria-live="polite" data-week-label>{range(weeks[0].start, weeks[0].end)}</p>
@@ -90,86 +70,78 @@ const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair)
   </div>
 
   <div class="container sch-body">
-    {views.map((v, vi) => (
-      <section class="sch-view" id={`view-${v.id}`} role="tabpanel" aria-labelledby={`tab-${v.id}`} data-view-panel={v.id} hidden={vi !== 0}>
-        {v.id === 'group' ? (
-          <div class="notice notice--info sch-note"><span class="notice__mark" aria-hidden="true"></span><div>
-            <p class="notice__title">Это общее расписание группы — реальные данные urfu.ru</p>
-            <p class="notice__text">Большая часть занятий в УрФУ — курсы по выбору индивидуальной траектории, поэтому у группы почти пусто. Во вкладке «Моя траектория» показано, как выглядит личное расписание, когда группа и выбранные курсы собраны вместе.</p>
-          </div></div>
-        ) : (
-          <div class="notice sch-note"><span class="notice__mark" aria-hidden="true"></span><div>
-            <p class="notice__title">Пример личного расписания</p>
-            <p class="notice__text">Занятия группы — реальные, курсы по выбору помечены как пример. На сайте эта вкладка заполняется из личного кабинета после входа.</p>
-          </div></div>
-        )}
+    <section class="sch-view">
+        <div class="notice notice--info sch-note"><span class="notice__mark" aria-hidden="true"></span><div>
+        <p class="notice__title">Общее расписание группы — реальные данные urfu.ru</p>
+        <p class="notice__text">Большая часть занятий в УрФУ — курсы индивидуальной траектории, их видно только в личном кабинете. Поэтому у группы почти пусто. На новом сайте после входа сюда добавятся и курсы траектории.</p>
+        </div></div>
 
         {weeks.map((w, wi) => (
-          <div class="sch-week" data-week={wi} hidden={wi !== 0}>
-            <!-- Desktop: week grid -->
-            <div class="sch-grid" role="table" aria-label={`Неделя ${range(w.start, w.end)}`}>
-              <div class="sch-grid__row sch-grid__row--head" role="row">
-                <span class="sch-grid__corner" role="columnheader">Пара</span>
-                {w.days.map((d, i) => <span class="sch-grid__day" role="columnheader" data-date={d}><b>{DAY[i]}</b> {dLabel(d)}</span>)}
-              </div>
-              {ROWS.map(n => {
-                const hasAny = w.days.some(d => evAt(v.events, d, n).length);
-                if (n === 0 && !hasAny) return null;
-                const p = pairOf(n);
-                return (
-                  <div class="sch-grid__row" role="row">
-                    <span class={`sch-grid__time${n === 0 ? ' sch-grid__time--online' : ''}`} role="rowheader">{n === 0 ? <><b>Онлайн</b><small>в своём темпе</small></> : <><b>{n}</b><small>{p!.start}–{p!.end}</small></>}</span>
-                    {w.days.map(d => (
-                      <div class="sch-grid__cell" role="cell" data-date={d}>
-                        {evAt(v.events, d, n).map(e => (
-                          <article class={`sch-ev sch-ev--${TYPE[e.type]?.cls ?? 'pr'}${e.demo ? ' is-demo' : ''}`}>
-                            <span class="sch-ev__type">{TYPE[e.type]?.short ?? e.type}{e.demo && ' · пример'}</span>
-                            <span class="sch-ev__title">{e.title}</span>
-                            {isOnline(e)
-                              ? <a class="sch-ev__place" href={e.location}>Онлайн: {e.room}</a>
-                              : e.room ? <a class="sch-ev__place" href={campusHref(e.room)}>{e.room}{e.location && <small>{e.location}</small>}</a> : <span class="sch-ev__place sch-ev__place--none">Аудитория уточняется</span>}
-                            {e.teacher && <span class="sch-ev__teacher">{e.teacher}</span>}
-                          </article>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                );
-              })}
+        <div class="sch-week" data-week={wi} hidden={wi !== 0}>
+          <!-- Desktop: week grid -->
+          <div class="sch-grid" role="table" aria-label={`Неделя ${range(w.start, w.end)}`}>
+            <div class="sch-grid__row sch-grid__row--head" role="row">
+              <span class="sch-grid__corner" role="columnheader">Пара</span>
+              {w.days.map((d, i) => <span class="sch-grid__day" role="columnheader" data-date={d}><b>{DAY[i]}</b> {dLabel(d)}</span>)}
             </div>
-
-            <!-- Mobile: agenda by day -->
-            <ol class="sch-agenda">
-              {w.days.map((d, i) => {
-                const list = v.events.filter(e => e.date === d).sort((a, b) => a.pair - b.pair);
-                return (
-                  <li class="sch-day" data-date={d}>
-                    <h2 class="sch-day__title"><span>{DAY_FULL[i]}</span> {dLabel(d)}</h2>
-                    {list.length === 0 ? <p class="sch-day__empty">Занятий нет</p> : list.map(e => {
-                      const p = pairOf(e.pair);
-                      return (
-                        <div class={`lesson sch-lesson${e.demo ? ' is-demo' : ''}`}>
-                          <span class="lesson__time">{p ? `${p.start}–${p.end}` : 'Онлайн'}<small>{p ? `${e.pair} пара` : 'в своём темпе'}</small></span>
-                          <span>
-                            <span class="lesson__title">{e.title}</span>
-                            <span class="lesson__meta">{[TYPE[e.type]?.short ?? e.type, e.room && (isOnline(e) ? `онлайн: ${e.room}` : `ауд. ${e.room}`), e.location && !isOnline(e) && e.location, e.teacher, e.demo && 'пример'].filter(Boolean).join(' · ')}</span>
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </li>
-                );
-              })}
-            </ol>
+            {ROWS.map(n => {
+              const hasAny = w.days.some(d => evAt(events, d, n).length);
+              if (n === 0 && !hasAny) return null;
+              const p = pairOf(n);
+              return (
+                <div class="sch-grid__row" role="row">
+                  <span class={`sch-grid__time${n === 0 ? ' sch-grid__time--online' : ''}`} role="rowheader">{n === 0 ? <><b>Онлайн</b><small>в своём темпе</small></> : <><b>{n}</b><small>{p!.start}–{p!.end}</small></>}</span>
+                  {w.days.map(d => (
+                    <div class="sch-grid__cell" role="cell" data-date={d}>
+                      {evAt(events, d, n).map(e => (
+                        <article class={`sch-ev sch-ev--${TYPE[e.type]?.cls ?? 'pr'}`}>
+                          <span class="sch-ev__type">{TYPE[e.type]?.short ?? e.type}</span>
+                          <span class="sch-ev__title">{e.title}</span>
+                          {isOnline(e)
+                            ? <a class="sch-ev__place" href={e.location}>Онлайн: {e.room}</a>
+                            : e.room ? <a class="sch-ev__place" href={campusHref(e.room)}>{e.room}{e.location && <small>{e.location}</small>}</a> : <span class="sch-ev__place sch-ev__place--none">Аудитория уточняется</span>}
+                          {e.teacher && <span class="sch-ev__teacher">{e.teacher}</span>}
+                        </article>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
           </div>
+
+          <!-- Mobile: agenda by day -->
+          <ol class="sch-agenda">
+            {w.days.map((d, i) => {
+              const list = events.filter(e => e.date === d).sort((a, b) => a.pair - b.pair);
+              return (
+                <li class="sch-day" data-date={d}>
+                  <h2 class="sch-day__title"><span>{DAY_FULL[i]}</span> {dLabel(d)}</h2>
+                  {list.length === 0 ? <p class="sch-day__empty">Занятий нет</p> : list.map(e => {
+                    const p = pairOf(e.pair);
+                    return (
+                      <div class={`lesson sch-lesson`}>
+                        <span class="lesson__time">{p ? `${p.start}–${p.end}` : 'Онлайн'}<small>{p ? `${e.pair} пара` : 'в своём темпе'}</small></span>
+                        <span>
+                          <span class="lesson__title">{e.title}</span>
+                          <span class="lesson__meta">{[TYPE[e.type]?.short ?? e.type, e.room && (isOnline(e) ? `онлайн: ${e.room}` : `ауд. ${e.room}`), e.location && !isOnline(e) && e.location, e.teacher].filter(Boolean).join(' · ')}</span>
+                        </span>
+                      </div>
+                    );
+                  })}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
         ))}
-      </section>
-    ))}
+    </section>
 
     <aside class="sch-legend" aria-label="Звонки и обозначения">
       <div>
         <h2 class="t-label t-muted">Звонки</h2>
         <ol class="sch-bells">{pairs.map(p => <li><b>{p.n}</b><span>{p.start}–{p.end}</span></li>)}</ol>
+        <p class="t-small t-muted sch-bells__alt">В части корпусов пары 1–5 начинаются позже: {altBells.map(p => p.start).join(', ')}.</p>
       </div>
       <div>
         <h2 class="t-label t-muted">Обозначения</h2>
@@ -177,7 +149,6 @@ const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair)
           <li><i class="sch-key sch-key--lec"></i>Лекция</li>
           <li><i class="sch-key sch-key--pr"></i>Практика</li>
           <li><i class="sch-key sch-key--lab"></i>Лабораторная</li>
-          <li><i class="sch-key sch-key--demo"></i>Пример курса по выбору</li>
         </ul>
       </div>
       <p class="t-small t-muted">Адрес аудитории ведёт на карту кампуса. Корпус I — новый кампус на ул. 100-летия Уральского университета, 5.</p>
@@ -188,11 +159,8 @@ const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair)
 </Base>
 
 <script>
-  const views = [...document.querySelectorAll<HTMLButtonElement>('[data-view]')];
-  const panels = [...document.querySelectorAll<HTMLElement>('[data-view-panel]')];
   const label = document.querySelector<HTMLElement>('[data-week-label]')!;
   const WEEKS = [{ s: '2026-10-26', l: '26 октября — 1 ноября' }, { s: '2026-11-02', l: '2–8 ноября' }];
-  let view = 'group';
   let week = 0;
 
   // Start on the week that contains today, when it is in range.
@@ -202,21 +170,11 @@ const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair)
   document.querySelectorAll<HTMLElement>(`[data-date="${today}"]`).forEach(el => el.classList.add('is-today'));
 
   function render() {
-    views.forEach(b => b.setAttribute('aria-selected', String(b.dataset.view === view)));
-    panels.forEach(p => {
-      p.hidden = p.dataset.viewPanel !== view;
-      p.querySelectorAll<HTMLElement>('[data-week]').forEach(w => (w.hidden = +w.dataset.week! !== week));
-    });
+    document.querySelectorAll<HTMLElement>('[data-week]').forEach(w => (w.hidden = +w.dataset.week! !== week));
     label.textContent = WEEKS[week].l;
     document.querySelector<HTMLButtonElement>('[data-week-step="-1"]')!.disabled = week === 0;
     document.querySelector<HTMLButtonElement>('[data-week-step="1"]')!.disabled = week === WEEKS.length - 1;
   }
-  views.forEach(b => b.addEventListener('click', () => { view = b.dataset.view!; render(); }));
-  views.forEach((b, i) => b.addEventListener('keydown', e => {
-    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    const next = views[(i + (e.key === 'ArrowRight' ? 1 : -1) + views.length) % views.length];
-    next.focus(); next.click();
-  }));
   document.querySelectorAll<HTMLButtonElement>('[data-week-step]').forEach(b => b.addEventListener('click', () => {
     week = Math.min(WEEKS.length - 1, Math.max(0, week + Number(b.dataset.weekStep)));
     render();
@@ -236,11 +194,10 @@ const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair)
     q.focus();
   }));
 
-  // Export the visible view as .ics.
+  // Export the group schedule as .ics.
   type IcsEv = { date: string; start: string; end: string; title: string; room?: string; location?: string };
-  const ics: { id: string; events: IcsEv[] }[] = JSON.parse(document.getElementById('ics-data')!.textContent!);
+  const evs: IcsEv[] = JSON.parse(document.getElementById('ics-data')!.textContent!);
   document.querySelector('[data-ics]')!.addEventListener('click', () => {
-    const evs = ics.find(x => x.id === view)!.events;
     const stamp = (d: string, t: string) => d.replace(/-/g, '') + 'T' + t.replace(':', '') + '00';
     const esc = (s: string) => s.replace(/[,;\\]/g, m => '\\' + m);
     const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//UrFU redesign//Schedule//RU', 'X-WR-TIMEZONE:Asia/Yekaterinburg'];
@@ -250,7 +207,7 @@ const icsData = views.map(v => ({ id: v.id, events: v.events.filter(e => e.pair)
     lines.push('END:VCALENDAR');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar' }));
-    a.download = view === 'group' ? 'raspisanie-RI-250902.ics' : 'moe-raspisanie.ics';
+    a.download = 'raspisanie-RI-250902.ics';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   });

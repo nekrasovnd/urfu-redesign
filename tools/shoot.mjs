@@ -26,7 +26,7 @@ const SHOTS = [
   ['programs', '/programs/', DESKTOP],
   ['program', '/programs/software-engineering/', DESKTOP],
   ['program-exams', '/programs/software-engineering/', DESKTOP, { scrollTo: '#exams', act: async p => { for (const [id, v] of [['pc-0', '82'], ['pc-1', '76'], ['po-0', '80']]) await p.type('#' + id, v); } }],
-  ['schedule', '/study/schedule/', DESKTOP, { act: async p => { await p.click('[data-view="track"]'); } }],
+  ['schedule', '/study/schedule/', DESKTOP],
   ['schedule-mobile', '/study/schedule/', MOBILE, { scrollTo: '.sch-bar' }],
   ['hub', '/study/hub/', DESKTOP],
   ['news', '/news/', DESKTOP],
