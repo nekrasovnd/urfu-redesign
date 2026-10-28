@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<title>Конструктив — редизайн сайта УрФУ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@700;800&display=swap">
+<link rel="stylesheet" href="../system/tokens.css">
+<link rel="stylesheet" href="../system/components.css">
+<style>
+  /* Concept document: A4 landscape pages, design-system tokens, light theme only. */
+  @page { size: 297mm 210mm; margin: 0; }
+  html, body { background: #9a978f; }
+  body { margin: 0; font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { position: relative; width: 297mm; height: 210mm; padding: 13mm 15mm 12mm; box-sizing: border-box; overflow: hidden; background: var(--bg); color: var(--fg); page-break-after: always; break-after: page; display: grid; grid-template-rows: auto 1fr auto; gap: 6mm; margin: 0 auto 8mm; }
+  @media print { html, body { background: none; } .slide { margin: 0; } }
+  .s-head { display: grid; grid-template-columns: auto 1fr auto; gap: 5mm; align-items: end; border-top: 1mm solid var(--rule); padding-top: 3mm; }
+  .s-num { font: 800 13pt/1 var(--font-display); color: var(--accent-text); }
+  .s-title { font: 800 26pt/1 var(--font-display); letter-spacing: -0.03em; margin: 0; }
+  .s-kicker { font: 600 7.5pt/1.2 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); text-align: right; }
+  .s-foot { display: flex; justify-content: space-between; font: 500 7pt/1 var(--font-text); color: var(--fg-muted); border-top: .3mm solid var(--rule-soft); padding-top: 2mm; }
+  .body { min-height: 0; }
+  .lead { font: 400 12pt/1.45 var(--font-text); max-width: 120mm; }
+  .muted { color: var(--fg-muted); }
+  .label { font: 600 7.5pt/1.2 var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); }
+  .shot { display: block; width: 100%; border: .6mm solid var(--rule); background: var(--surface); }
+  .shot--pop { box-shadow: 2mm 2mm 0 var(--c-ink); }
+  .cap { font: 500 7.5pt/1.35 var(--font-text); color: var(--fg-muted); margin-top: 1.6mm; }
+  .cap b { color: var(--fg); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7mm; }
+  .big { font: 800 30pt/0.92 var(--font-display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; }
+  .big--red { color: var(--accent); }
+  ul.clean { list-style: none; margin: 0; padding: 0; }
+  .bullets { margin: 0; padding-left: 4.5mm; display: grid; gap: 1.6mm; font-size: 10pt; line-height: 1.4; }
+  .diag::after { content: ""; position: absolute; z-index: 0; top: 0; bottom: 0; right: -18mm; width: 80mm; background: var(--accent); transform: skewX(-26.565deg); transform-origin: top; }
+  .diag > * { position: relative; z-index: 1; }
+
+  /* 1 · Cover */
+  .cover { grid-template-rows: auto 1fr auto; }
+  .cover::after { width: 112mm; right: -30mm; }
+  .cover__top { display: flex; flex-direction: column; gap: 4mm; align-items: start; }
+  .cover__top img { height: 15mm; }
+  .cover__date { font: 600 8pt var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); }
+  .cover__main { display: grid; grid-template-columns: 1.05fr 1fr; gap: 10mm; align-items: center; }
+  .cover h1 { font: 800 50pt/0.9 var(--font-display); letter-spacing: -0.05em; margin: 0; }
+  .cover h1 span { display: block; font-size: 15pt; letter-spacing: -0.02em; margin-top: 5mm; line-height: 1.15; }
+  .cover p { font-size: 12pt; line-height: 1.45; max-width: 115mm; margin: 6mm 0 0; }
+  .cover__shot { transform: translateY(4mm); }
+  .cover__bottom { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6mm; border-top: 1mm solid var(--rule); padding: 3mm 4mm 0 0; font-size: 9pt; background: var(--bg); margin-right: -15mm; padding-right: 15mm; }
+  .cover__bottom b { display: block; font: 700 11pt/1.3 var(--font-text); margin-top: 1mm; }
+  .fill { background: #fff4a8; outline: .4mm dashed #9a5b00; padding: 0 1mm; }
+
+  /* 2 · Problem */
+  .problem { display: grid; grid-template-columns: 82mm 1fr; gap: 9mm; }
+  .facts { display: grid; gap: 0; border-top: .8mm solid var(--rule); }
+  .facts li { display: grid; grid-template-columns: 34mm 1fr; gap: 3mm; align-items: center; padding: 2.2mm 0; border-bottom: .3mm solid var(--rule); }
+  .facts .big { font-size: 22pt; }
+  .facts span { font-size: 9pt; line-height: 1.3; }
+
+  /* 3 · Journey */
+  .journey { display: grid; grid-template-columns: 1fr 14mm 1fr; gap: 3mm; align-items: start; }
+  .journey__col { display: grid; gap: 3mm; }
+  .journey__arrow { align-self: center; font: 800 26pt var(--font-display); color: var(--accent); text-align: center; }
+  .steps { counter-reset: s; display: grid; gap: 2mm; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 7mm 1fr; gap: 2mm; font-size: 9.5pt; line-height: 1.35; }
+  .steps li::before { content: counter(s); font: 800 13pt/1 var(--font-display); color: var(--fg-muted); }
+  .journey__col--new .steps li::before { color: var(--accent); }
+  .verdict { padding: 3mm 4mm; border: .8mm solid var(--rule); font: 700 12pt/1.2 var(--font-display); }
+  .verdict--bad { border-style: dashed; color: var(--fg-muted); }
+  .verdict--good { background: var(--c-ink); color: var(--c-concrete); border-color: var(--c-ink); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .pair .shot { aspect-ratio: 16 / 10; height: auto; object-fit: cover; object-position: top; }
+
+  /* 4 · Audiences */
+  .aud { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  .aud th { text-align: left; font: 600 7.5pt var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); padding: 2mm 3mm 2mm 0; border-bottom: .8mm solid var(--rule); }
+  .aud td { padding: 2.2mm 3mm 2.2mm 0; border-bottom: .3mm solid var(--rule-soft); vertical-align: top; line-height: 1.35; }
+  .aud td:first-child { font: 700 10pt var(--font-display); white-space: nowrap; }
+
+  /* 5 · Structure */
+  .ia { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3mm; }
+  .ia__col { border-top: 1mm solid var(--rule); padding-top: 2.5mm; display: grid; gap: 1.6mm; align-content: start; }
+  .ia__col h3 { font: 800 12pt/1.1 var(--font-display); margin: 0 0 1mm; letter-spacing: -0.02em; }
+  .ia__col li { font-size: 8.5pt; line-height: 1.3; padding-bottom: 1.2mm; border-bottom: .2mm solid var(--rule-soft); }
+  .ia__col li.hl { font-weight: 700; }
+  .ia__col li.hl::before { content: "● "; color: var(--accent); }
+  .ia-top { display: flex; align-items: baseline; gap: 6mm; margin-bottom: 5mm; }
+  .moves { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5mm; margin-top: 5mm; font-size: 8.8pt; line-height: 1.35; }
+  .moves div { padding: 3mm; background: var(--surface); border: .4mm solid var(--rule); }
+  .moves b { display: block; font: 700 9.5pt var(--font-display); margin-bottom: 1mm; }
+
+  .was { display: grid; grid-template-columns: 1fr 12mm auto; gap: 3mm; align-items: center; margin-top: 6mm; padding-top: 3mm; border-top: .3mm solid var(--rule-soft); }
+  .was__old { display: flex; flex-wrap: wrap; gap: 1.2mm; }
+  .was__old span { font: 500 7.5pt var(--font-text); color: var(--fg-muted); padding: .8mm 1.6mm; border: .3mm solid var(--rule-soft); text-decoration: line-through; text-decoration-color: var(--accent); }
+  .was__arrow { font: 800 18pt var(--font-display); color: var(--accent); text-align: center; }
+  .was__new { display: flex; gap: 1.5mm; }
+  .was__new span { font: 700 8.5pt var(--font-text); padding: 1.2mm 2.2mm; background: var(--c-ink); color: var(--c-concrete); }
+  .corner::after { content: ""; position: absolute; z-index: 0; top: 52%; bottom: 0; right: -14mm; width: 70mm; background: var(--c-red); transform: skewX(-26.565deg); transform-origin: bottom; }
+  .corner > * { position: relative; z-index: 1; }
+  .corner .s-foot { background: var(--bg); margin-right: -15mm; padding-right: 15mm; }
+  .closing { font: 800 28pt/1.02 var(--font-display); letter-spacing: -0.04em; max-width: 170mm; margin-top: 12mm; }
+  .closing span { color: var(--accent); }
+
+  /* 6 · Navigation */
+  .nav3 { display: grid; grid-template-columns: 1.25fr 1.25fr .55fr; gap: 5mm; align-items: start; }
+
+  /* 7 · Logo */
+  .logo-grid { display: grid; grid-template-columns: 60mm 98mm 1fr; gap: 7mm; align-items: start; }
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .ba > div { display: grid; place-items: center; height: 60mm; border: .4mm solid var(--rule); background: var(--surface); position: relative; }
+  .ba img { height: 40mm; }
+  .ba .label { position: absolute; top: 2mm; left: 2mm; }
+  .versions { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 3mm; }
+  .versions > div { display: grid; place-items: center; height: 30mm; border: .4mm solid var(--rule); background: var(--surface); }
+  .versions img { max-height: 15mm; max-width: 90%; }
+  .versions .dark { background: var(--c-ink); }
+  .versions .red { background: var(--c-red); }
+
+  /* 8 · Design system */
+  .ds { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; }
+  .sw { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2mm; }
+  .sw div { font-size: 7pt; line-height: 1.25; }
+  .sw i { display: block; height: 15mm; border: .3mm solid var(--rule-soft); margin-bottom: 1mm; }
+  .type-sample { border-top: .8mm solid var(--rule); padding-top: 2mm; display: grid; gap: 1.5mm; }
+  .comp { display: flex; flex-wrap: wrap; gap: 1.5mm; }
+  .comp span { font: 600 8pt var(--font-text); padding: 1.2mm 2mm; border: .4mm solid var(--rule); }
+
+  /* 9-10 · Screens */
+  .screens { display: grid; gap: 4mm; }
+  .screens--4 { grid-template-columns: repeat(2, 1fr); }
+  .screens--6 { grid-template-columns: repeat(3, 1fr); }
+  .screens--mix { grid-template-columns: minmax(0, 1fr) 78mm; gap: 6mm; align-items: start; }
+  .screens--mix .g9 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.5mm; }
+  .screens--mix .g9 .cap { margin-top: 1mm; font-size: 7pt; }
+  .phones { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .phones .shot { height: auto; }
+
+  /* 11 · Numbers */
+  .ba-nums { display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1mm solid var(--rule); }
+  .ba-nums div { padding: 3.5mm 4mm 3.5mm 0; display: grid; gap: 1mm; }
+  .ba-nums div + div { border-left: .3mm solid var(--rule); padding-left: 4mm; }
+  .ba-nums s { font: 700 12pt var(--font-display); color: var(--fg-muted); text-decoration-thickness: .5mm; }
+  .ba-nums .big { font-size: 28pt; color: var(--accent); }
+  .lh { width: 100%; border-collapse: collapse; font-size: 8.8pt; font-variant-numeric: tabular-nums; }
+  .lh th { text-align: left; font: 600 7pt var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--fg-muted); padding: 1.6mm 2mm 1.6mm 0; border-bottom: .6mm solid var(--rule); }
+  .lh td { padding: 1.4mm 2mm 1.4mm 0; border-bottom: .2mm solid var(--rule-soft); }
+  .lh td.n { text-align: right; font-weight: 700; }
+  .lh tr.old td { color: var(--accent-text); }
+
+  /* 12 · Rollout */
+  .phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; }
+  .phase { border-top: 1mm solid var(--rule); padding-top: 2.5mm; display: grid; gap: 1.5mm; align-content: start; font-size: 8.8pt; line-height: 1.35; }
+  .phase b { font: 800 22pt/1 var(--font-display); color: var(--accent); }
+  .phase h3 { font: 700 10.5pt/1.2 var(--font-display); margin: 0; }
+  .links { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 5mm; margin-top: 7mm; padding: 4mm 5mm; background: var(--c-ink); color: var(--c-concrete); }
+  .links b { display: block; font: 700 11pt/1.3 var(--font-text); margin-top: 1mm; }
+  .links .label { color: #a3a099; }
+</style>
+</head>
+<body>
+
+<!-- ======================= 1 · COVER ======================= -->
+<section class="slide cover diag">
+  <div class="cover__top">
+    <img src="../logo/urfu-short-ru-color.svg" alt="Уральский федеральный университет">
+    <span class="cover__date">Конкурс «Взломай веб-дизайн университета» · октябрь 2026</span>
+  </div>
+  <div class="cover__main">
+    <div>
+      <h1>Конструктив<span>Редизайн сайта Уральского федерального университета</span></h1>
+      <p>Новая структура по задачам пользователей вместо 22 пунктов меню и 38 поддоменов, обновлённый знак «Точная У», дизайн-система и работающий прототип — главная и 10 страниц на реальных данных университета.</p>
+    </div>
+    <img class="shot shot--pop cover__shot" src="shots/home.png" alt="Главная страница нового сайта">
+  </div>
+  <div class="cover__bottom">
+    <div><span class="label">Автор</span><b><span class="fill">Фамилия Имя Отчество</span></b><span class="fill">Институт, курс, группа</span></div>
+    <div><span class="label">Прототип</span><b>nekrasovnd.github.io/urfu-redesign</b>работает в браузере и на телефоне</div>
+    <div><span class="label">Исходники и материалы</span><b>github.com/nekrasovnd/urfu-redesign</b>аудит, данные, дизайн-система, логотип</div>
+  </div>
+</section>
+
+<!-- ======================= 2 · PROBLEM ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">01</span><h2 class="s-title">Что не так с сайтом сейчас</h2><span class="s-kicker">Аудит urfu.ru · 28.10.2026</span></header>
+  <div class="body problem">
+    <ul class="clean facts">
+      <li><span class="big">22</span><span>пункта в навигации первого уровня: 8 вкладок по аудиториям и 14 тематических ссылок</span></li>
+      <li><span class="big">206</span><span>ссылок в мега-меню; «Автошкола» — в трёх меню, «Аспирантура» — в трёх</span></li>
+      <li><span class="big">38</span><span>поддоменов *.urfu.ru с главной, у каждого свой дизайн и навигация</span></li>
+      <li><span class="big big--red">23</span><span>из 100 — производительность главной на телефоне (Lighthouse), загрузка главного блока 14,5 с, 11 МБ</span></li>
+      <li><span class="big">70/87</span><span>картинок на главной без текстовой альтернативы; доступность — 73 из 100</span></li>
+    </ul>
+    <div>
+      <img class="shot" src="../../research/screenshots/hires/home-desktop-fold.png" alt="Текущая главная urfu.ru">
+      <p class="cap"><b>Главная urfu.ru сегодня.</b> Две навигации одновременно, слайдер без задачи в первом экране, баннеры в разных стилях; ниже — пустой блок «Видео» и 8 заголовков первого уровня на одной странице. Раздел «Наука» начинается с распоряжений и порядка заключения договоров ГПХ, история обрывается на 2020 годе.</p>
+    </div>
+  </div>
+  <footer class="s-foot"><span>Конструктив · редизайн urfu.ru</span><span>2</span></footer>
+</section>
+
+<!-- ======================= 3 · JOURNEY ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">02</span><h2 class="s-title">Главный сценарий: «куда я пройду с моими баллами?»</h2><span class="s-kicker">Путь абитуриента</span></header>
+  <div class="body journey">
+    <div class="journey__col">
+      <p class="label">Сейчас</p>
+      <ol class="clean steps">
+        <li>Калькулятор ЕГЭ — отдельный сайт calcege.my1.urfu.ru: пороги и цены без описаний программ и без ссылок на них.</li>
+        <li>Каталог — ещё один сайт: таблица на 907 строк, 196 дублей, нет баллов и стоимости.</li>
+        <li>Стоимость — PDF-приказ на 32 МБ и три дополнения к нему.</li>
+        <li>Описание программы — 15 вкладок, но нет мест, сроков и кнопки «Подать документы».</li>
+      </ol>
+      <div class="pair">
+        <img class="shot" src="../../research/screenshots/browser/14-ege-calculator-subdomain.jpg" alt="Калькулятор ЕГЭ на отдельном сайте">
+        <img class="shot" src="../../research/screenshots/hires/cost-desktop.png" alt="Страница стоимости со списком PDF">
+      </div>
+      <p class="verdict verdict--bad">3 сайта + PDF на 32 МБ</p>
+    </div>
+    <div class="journey__arrow">→</div>
+    <div class="journey__col journey__col--new">
+      <p class="label">В редизайне</p>
+      <ol class="clean steps">
+        <li>На главной выбираешь роль «абитуриент» и сразу вводишь баллы — видишь, сколько из 113 направлений подходит.</li>
+        <li>«Подбор программы»: все предметы, фильтры по стоимости и институту, запас баллов, блок «почти подходят».</li>
+        <li>Карточка программы: экзамены с проверкой твоих баллов, цена, карьера, партнёры, «Подать документы».</li>
+      </ol>
+      <div class="pair">
+        <img class="shot" src="shots/match.png" alt="Страница подбора программы">
+        <img class="shot" src="shots/program-exams.png" alt="Проверка баллов в карточке программы">
+      </div>
+      <p class="verdict verdict--good">1 сайт, 3 шага, без PDF</p>
+    </div>
+  </div>
+  <footer class="s-foot"><span>Пороги и цены — открытое API калькулятора ЕГЭ УрФУ, приём-2026; программы — каталог programms.edu.urfu.ru</span><span>3</span></footer>
+</section>
+
+<!-- ======================= 4 · AUDIENCES ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">03</span><h2 class="s-title">Для кого сайт и что им нужно в первую очередь</h2><span class="s-kicker">Топ-задачи по итогам аудита</span></header>
+  <div class="body grid2" style="grid-template-columns: 1.35fr 1fr; align-items: start">
+    <table class="aud">
+      <thead><tr><th>Кто</th><th>Что ищет</th><th>Где это в новом сайте</th></tr></thead>
+      <tbody>
+        <tr><td>Абитуриент</td><td>подходящие программы по баллам, стоимость, сроки, общежития, приёмная комиссия</td><td>роль «абитуриент» на главной, подбор, каталог, карточка программы</td></tr>
+        <tr><td>Студент</td><td>расписание группы, личный кабинет, стипендии, справки, практика</td><td>роль «студент», расписание с траекторией, хаб сервисов</td></tr>
+        <tr><td>Сотрудник</td><td>расписание преподавателя, документы и бланки, гранты, IT</td><td>роль «сотрудник» и хаб сотрудника — служебное ушло из публичного меню</td></tr>
+        <tr><td>Школьник</td><td>олимпиады, курсы подготовки, события</td><td>роль «школьник», афиша с фильтром «Школьники»</td></tr>
+        <tr><td>Партнёр</td><td>заказать исследование, центр карьеры, целевое обучение</td><td>«Наука → для индустрии», «Партнёрам»</td></tr>
+        <tr><td>СМИ</td><td>пресс-служба, эксперты, фотобанк</td><td>«Пресс-центр», контакты в ленте новостей</td></tr>
+      </tbody>
+    </table>
+    <div>
+      <img class="shot shot--pop" src="shots/home-student.png" alt="Главная в роли студента">
+      <p class="cap"><b>Переключатель «Я — …».</b> Роль перестраивает первый экран главной — заголовок, виджет и быстрые действия, — но не навигацию: структура сайта одна для всех. Студент видит ближайшие пары своей группы, абитуриент — подбор по баллам. Выбор запоминается в браузере, вход не нужен.</p>
+    </div>
+  </div>
+  <footer class="s-foot"><span>Следующий шаг — подтвердить порядок задач опросом в студенческих чатах и тестом первого клика</span><span>4</span></footer>
+</section>
+
+<!-- ======================= 5 · STRUCTURE ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">04</span><h2 class="s-title">Новая структура: 5 разделов вместо 22 пунктов</h2><span class="s-kicker">Информационная архитектура</span></header>
+  <div class="body">
+    <div class="ia">
+      <div class="ia__col"><h3>Поступление</h3><ul class="clean"><li class="hl">Подбор программы по баллам</li><li class="hl">Все программы</li><li>Бакалавриат · магистратура · аспирантура · СПО</li><li>Стоимость, скидки, кредит</li><li>Льготы и квоты</li><li>Олимпиады и подготовка</li><li>Приёмная комиссия</li></ul></div>
+      <div class="ia__col"><h3>Обучение</h3><ul class="clean"><li class="hl">Студенческие сервисы</li><li class="hl">Расписание</li><li class="hl">Институты</li><li>Стипендии и поддержка</li><li>Справки и документы</li><li>Практика и карьера</li><li>Мобильность, ВУЦ, ДПО</li></ul></div>
+      <div class="ia__col"><h3>Наука</h3><ul class="clean"><li>Направления исследований</li><li class="hl">Лаборатории и центры</li><li>Аспирантура и защиты</li><li>Гранты и конкурсы</li><li>Публикации и журналы</li><li>Для индустрии</li></ul></div>
+      <div class="ia__col"><h3>Жизнь в УрФУ</h3><ul class="clean"><li class="hl">Кампус и карта</li><li class="hl">Афиша</li><li>Общежития</li><li>Спорт, творчество, клубы</li><li>Здоровье и питание</li><li>Поддержка и инклюзия</li></ul></div>
+      <div class="ia__col"><h3>Об университете</h3><ul class="clean"><li>УрФУ сегодня: цифры</li><li class="hl">Новости</li><li>История</li><li>Партнёрам и выпускникам</li><li>Пресс-центр</li><li>Работа в УрФУ, контакты</li></ul></div>
+    </div>
+    <div class="moves">
+      <div><b>Один сайт вместо 38</b>Каталог программ, калькулятор ЕГЭ, обе магистратуры, обе аспирантуры, кампус, спорт и сайты 13 институтов — в одной дизайн-системе и одной шапке. Институт — шаблон страницы, а не отдельный сайт.</div>
+      <div><b>Служебное — в хаб сотрудника</b>Распоряжения, порядок ГПХ, бланки, Wi-Fi, издательский центр, автостоянки. Обязательные «Сведения об образовательной организации» — в футере, колонка «Официально».</div>
+      <div><b>Поиск — равноправная навигация</b>⌘K или «/» ищет по 700+ записям: программы, страницы, институты, группы расписания, сервисы. Не больше трёх кликов до любой топ-задачи.</div>
+    </div>
+    <div class="was">
+      <div class="was__old"><span>Студентам</span><span>Абитуриентам</span><span>Школьникам</span><span>Сотрудникам</span><span>Выпускникам</span><span>Партнерам</span><span>Работодателям</span><span>СМИ</span><span>Об университете</span><span>Новый кампус</span><span>Наука</span><span>Образование</span><span>Международная деятельность</span><span>Инновации</span><span>Эндаумент</span><span>Творчество</span><span>Спорт</span><span>Устойчивое развитие</span><span>Институты</span><span>Филиалы</span><span>Контакты</span><span>Обратная связь</span></div>
+      <div class="was__arrow">→</div>
+      <div class="was__new"><span>Поступление</span><span>Обучение</span><span>Наука</span><span>Жизнь в УрФУ</span><span>Об университете</span></div>
+    </div>
+  </div>
+  <footer class="s-foot"><span>● — страницы, свёрстанные в прототипе. Полная карта — research/IA.md в репозитории</span><span>5</span></footer>
+</section>
+
+<!-- ======================= 6 · NAVIGATION ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">05</span><h2 class="s-title">Навигация</h2><span class="s-kicker">Шапка · мега-меню · поиск · телефон</span></header>
+  <div class="body nav3">
+    <div><img class="shot" src="shots/home-megamenu.png" alt="Мега-меню раздела «Поступление»"><p class="cap"><b>Мега-меню по клику, а не по наведению.</b> Два главных действия, полный список раздела — не больше 13 пунктов, — и плашка с ближайшим событием. Работает с клавиатуры.</p></div>
+    <div><img class="shot" src="shots/home-search.png" alt="Поиск по сайту"><p class="cap"><b>Поиск ⌘K.</b> Результаты по группам, поиск по коду направления («09.03.04»), стрелки и Enter. Пустой запрос показывает частые задачи.</p></div>
+    <div><img class="shot" src="shots/mobile-menu.png" alt="Мобильное меню"><p class="cap"><b>Телефон.</b> Аббревиатура вместо длинного логотипа, быстрые действия сверху, разделы аккордеоном, зоны нажатия от 44 px.</p></div>
+  </div>
+  <footer class="s-foot"><span>Шапка липкая и прячется при прокрутке вниз; активный раздел подчёркнут красным</span><span>6</span></footer>
+</section>
+
+<!-- ======================= 7 · LOGO ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">06</span><h2 class="s-title">Логотип «Точная У»</h2><span class="s-kicker">Эволюция, а не замена</span></header>
+  <div class="body logo-grid">
+    <div>
+      <div class="ba" style="grid-template-columns:1fr">
+        <div><span class="label">Было</span><img src="../../research/brand/original/urfu-sign-current.svg" alt="Нынешний знак"></div>
+        <div><span class="label">Стало</span><img src="../logo/urfu-sign-color.svg" alt="Обновлённый знак"></div>
+      </div>
+    </div>
+    <div>
+      <img class="shot" src="../logo/construction.svg" alt="Построение знака">
+      <p class="cap"><b>Построение.</b> Оба штриха — под наклоном 1:2 (26,57°). Тем же углом в интерфейсе режутся диагонали и маркеры. «Галочка» обрывается раньше встречи с основным штрихом — та самая «прерванная линия» из брендбука.</p>
+    </div>
+    <div>
+      <ul class="bullets">
+        <li>Сохранено главное из брендбука 2025 года: «У» с прерванной линией, красный знак и графит, трёхстрочный блок, имя Б.Н. Ельцина.</li>
+        <li>Знак собран из трёх простых форм на модульной сетке, только вектор; «галочка» есть во всех версиях.</li>
+        <li>Цвет знака #E50046 стал акцентом всей системы — в брендбуке у «синего» три разных HEX, а красного знака в палитре нет.</li>
+        <li>Надпись — Golos Text SemiBold в кривых, тем же шрифтом набран интерфейс. Появились фавикон и иконка приложения.</li>
+      </ul>
+      <div class="versions">
+        <div><img src="../logo/urfu-short-ru-color.svg" alt=""></div>
+        <div><img src="../logo/urfu-abbr-color.svg" alt=""></div>
+        <div class="dark"><img src="../logo/urfu-full-ru-white.svg" alt=""></div>
+        <div class="red"><img src="../logo/urfu-sign-white.svg" alt="" style="max-height:13mm"></div>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><span>20 SVG-файлов: полная, короткая, английская версии, аббревиатура, знак, фавикон — design/logo в репозитории</span><span>7</span></footer>
+</section>
+
+<!-- ======================= 8 · DESIGN SYSTEM ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">07</span><h2 class="s-title">Дизайн-система «Конструктив»</h2><span class="s-kicker">Токены · типографика · компоненты</span></header>
+  <div class="body ds">
+    <div style="display:grid; gap:5mm; align-content:start">
+      <p class="lead">Екатеринбург — один из главных городов конструктивизма. Отсюда строгая сетка, толстые графитовые линейки вместо теней и одна красная диагональ на экран под наклоном знака.</p>
+      <div class="sw">
+        <div><i style="background:#E50046"></i><b>Красный знака</b><br>#E50046</div>
+        <div><i style="background:#1D1D1B"></i><b>Графит</b><br>#1D1D1B</div>
+        <div><i style="background:#E8E7E2"></i><b>Бетон</b><br>#E8E7E2</div>
+        <div><i style="background:#F4F3EF"></i><b>Бумага</b><br>#F4F3EF</div>
+        <div><i style="background:#174496"></i><b>Синий · наука</b><br>#174496</div>
+      </div>
+      <div class="type-sample">
+        <span style="font:800 26pt/1 var(--font-display); letter-spacing:-0.04em">9 855 мест</span>
+        <span class="label">Unbounded 700–800 — заголовки и цифры</span>
+        <span style="font:400 11pt/1.4 var(--font-text)">Подберите программу по баллам ЕГЭ и сразу узнайте стоимость.</span>
+        <span class="label">Golos Text 400–700 — текст и интерфейс</span>
+      </div>
+      <ul class="bullets" style="font-size:9pt">
+        <li>Брендбук предписывает для цифровой среды Montserrat, а сайт набран Open Sans. Мы предлагаем пару с хорошей кириллицей: Golos Text совпадает с надписью логотипа, Unbounded даёт плакатный характер.</li>
+        <li>Все пары текста и фона — не ниже 4,5:1 в светлой и тёмной теме. В разделе «Наука» акцентом становится синий, как закреплено в брендбуке.</li>
+      </ul>
+    </div>
+    <div style="display:grid; gap:3mm; align-content:start">
+      <img class="shot" src="shots/ds-components.png" alt="Компоненты дизайн-системы">
+      <p class="label" style="margin-top:2mm">18 компонентов</p>
+      <div class="comp"><span>Кнопки</span><span>Быстрые действия</span><span>Метки и статусы</span><span>Поля и балл ЕГЭ</span><span>«Я — …»</span><span>Заголовок раздела</span><span>Цифры</span><span>Карточка программы</span><span>Новость</span><span>Событие</span><span>Шапка и мега-меню</span><span>Крошки, вкладки</span><span>Аккордеон</span><span>Таблица</span><span>Уведомление</span><span>Поиск ⌘K</span><span>Футер</span><span>Диагональ</span></div>
+    </div>
+  </div>
+  <footer class="s-foot"><span>tokens.css и components.css — один источник для сайта, спецификации и Figma; тёмная тема из коробки</span><span>8</span></footer>
+</section>
+
+<!-- ======================= 9 · SCREENS 1 ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">08</span><h2 class="s-title">Ключевые экраны: поступление</h2><span class="s-kicker">Прототип · nekrasovnd.github.io/urfu-redesign</span></header>
+  <div class="body screens screens--4">
+    <div><img class="shot" src="shots/home.png" alt=""><p class="cap"><b>Главная.</b> Первый экран по роли, подбор по баллам прямо на главной, цифры, разделы, новости, афиша, наука, кампус, 13 институтов.</p></div>
+    <div><img class="shot" src="shots/match.png" alt=""><p class="cap"><b>Подбор программы.</b> 11 предметов, фильтры, сортировка по запасу баллов, «почти подходят» — где не хватает до 10 баллов. 207 реальных программ внутри направлений.</p></div>
+    <div><img class="shot" src="shots/programs.png" alt=""><p class="cap"><b>Каталог.</b> 662 программы, сгруппированные по направлениям: код, пороги, цена, все программы и институты направления в одном блоке.</p></div>
+    <div><img class="shot" src="shots/program.png" alt=""><p class="cap"><b>Карточка программы.</b> Факты, проверка баллов, траектория, профессии, партнёры, шаги поступления, вопросы, контакты, похожие программы.</p></div>
+  </div>
+  <footer class="s-foot"><span>Все цифры на экранах — реальные данные urfu.ru на 28.10.2026</span><span>9</span></footer>
+</section>
+
+<!-- ======================= 10 · SCREENS 2 ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">09</span><h2 class="s-title">Ключевые экраны: учёба, новости, кампус</h2><span class="s-kicker">10 типов страниц + главная</span></header>
+  <div class="body screens screens--mix">
+    <div class="g9"><div><img class="shot" src="shots/schedule.png" alt=""><p class="cap"><b>Расписание.</b> группа и личная траектория, экспорт в календарь</p></div><div><img class="shot" src="shots/hub.png" alt=""><p class="cap"><b>Хаб студента.</b> 24 сервиса по задачам, ближайшие пары</p></div><div><img class="shot" src="shots/news.png" alt=""><p class="cap"><b>Новости.</b> главный материал, рубрики, «СМИ о нас»</p></div><div><img class="shot" src="shots/article.png" alt=""><p class="cap"><b>Статья.</b> лонгрид раздела «Наука» в синей схеме</p></div><div><img class="shot" src="shots/events.png" alt=""><p class="cap"><b>Афиша.</b> список и календарь, фильтры</p></div><div><img class="shot" src="shots/events-cal.png" alt=""><p class="cap"><b>Календарь афиши.</b> события на сетке месяца</p></div><div><img class="shot" src="shots/institute.png" alt=""><p class="cap"><b>Институт.</b> один шаблон для 13 институтов</p></div><div><img class="shot" src="shots/campus.png" alt=""><p class="cap"><b>Кампус.</b> корпус по номеру аудитории</p></div><div><img class="shot" src="shots/notfound.png" alt=""><p class="cap"><b>404.</b> честно о прототипе, ведёт к готовым страницам</p></div></div>
+    <div class="phones"><img class="shot" src="shots/home-mobile.png" alt="Главная на телефоне"><img class="shot" src="shots/schedule-mobile.png" alt="Расписание на телефоне"></div>
+  </div>
+  <footer class="s-foot"><span>Справа — телефон: главная и расписание по дням</span><span>10</span></footer>
+</section>
+
+<!-- ======================= 11 · NUMBERS ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">10</span><h2 class="s-title">Скорость и доступность</h2><span class="s-kicker">Lighthouse 12.2.1 · мобильный профиль</span></header>
+  <div class="body" style="display:grid; gap:6mm; align-content:start">
+    <div class="ba-nums">
+      <div><span class="label">Производительность</span><s>23</s><span class="big">96–97</span></div>
+      <div><span class="label">Доступность</span><s>73</s><span class="big">100</span></div>
+      <div><span class="label">Вес главной</span><s>11,1 МБ</s><span class="big">219 КБ</span></div>
+      <div><span class="label">Запросов при загрузке</span><s>294</s><span class="big">12</span></div>
+    </div>
+    <div class="grid2" style="grid-template-columns: 1.1fr 1fr; align-items:start">
+      <table class="lh">
+        <thead><tr><th>Страница</th><th style="text-align:right">Скорость, моб.</th><th style="text-align:right">Скорость, деск.</th><th style="text-align:right">Доступность</th></tr></thead>
+        <tbody>
+          <tr class="old"><td>urfu.ru — главная сейчас</td><td class="n">23</td><td class="n">22</td><td class="n">73</td></tr>
+          <tr><td>Главная</td><td class="n">96–97</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Подбор программы</td><td class="n">95</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Каталог программ</td><td class="n">97</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Карточка программы</td><td class="n">94</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Расписание</td><td class="n">92</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Хаб студента</td><td class="n">90</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Новости · статья</td><td class="n">98 · 97</td><td class="n">99 · 100</td><td class="n">100</td></tr>
+          <tr><td>Афиша</td><td class="n">88</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Институт · кампус</td><td class="n">96 · 98</td><td class="n">100</td><td class="n">100</td></tr>
+        </tbody>
+      </table>
+      <div>
+        <p class="label" style="margin-bottom:2mm">Что сделано для доступности</p>
+        <ul class="bullets">
+          <li>Один H1 на странице, хлебные крошки, семантичная разметка и роли вкладок.</li>
+          <li>Кольцо фокуса на всём интерактивном, мега-меню и поиск работают с клавиатуры.</li>
+          <li>Контраст не ниже 4,5:1 в обеих темах; статус никогда не передаётся только цветом.</li>
+          <li>Зоны нажатия от 44 px, вместо отдельной «версии для слабовидящих» — доступный основной сайт.</li>
+          <li>Учёт prefers-reduced-motion и тёмной темы системы.</li>
+          <li>Статичная сборка без тяжёлого JavaScript, шрифты раздаются с сайта.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <footer class="s-foot"><span>Отчёты Lighthouse «было» и «стало» — research/lighthouse в репозитории</span><span>11</span></footer>
+</section>
+
+<!-- ======================= 12 · ROLLOUT ======================= -->
+<section class="slide corner">
+  <header class="s-head"><span class="s-num">11</span><h2 class="s-title">Как внедрять</h2><span class="s-kicker">Предлагаемый порядок</span></header>
+  <div class="body">
+    <div class="phases">
+      <div class="phase"><b>1</b><h3>Дизайн-система и шаблоны</h3>Токены и компоненты уже в коде и не зависят от CMS: их можно подключить к текущему порталу и к новым разделам.</div>
+      <div class="phase"><b>2</b><h3>Поступление к приёму-2027</h3>Подбор программы, каталог и карточки программ на данных калькулятора ЕГЭ и каталога — главный сценарий сезона.</div>
+      <div class="phase"><b>3</b><h3>Институты и поддомены</h3>13 институтов переходят на один шаблон; магистратура, аспирантура, кампус и спорт вливаются в основной сайт.</div>
+      <div class="phase"><b>4</b><h3>Сервисы студента</h3>Расписание с личной траекторией и хаб сервисов связываются с личным кабинетом; служебное — в хаб сотрудника.</div>
+    </div>
+    <div class="links">
+      <div><span class="label">Прототип</span><b>nekrasovnd.github.io/urfu-redesign</b></div>
+      <div><span class="label">Репозиторий</span><b>github.com/nekrasovnd/urfu-redesign</b></div>
+      <div><span class="label">Автор</span><b><span class="fill" style="color:#1D1D1B">ФИО · телефон или Telegram</span></b></div>
+    </div>
+    <p class="closing">Сайт по задачам людей,<br>а не по оргструктуре. <span>Один для всех.</span></p>
+  </div>
+  <footer class="s-foot"><span>Конструктив · редизайн сайта УрФУ · октябрь 2026</span><span>12</span></footer>
+</section>
+
+</body>
+</html>

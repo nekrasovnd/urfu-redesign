@@ -12,3 +12,4 @@ Thumbs.db
 research/lighthouse/**/*.json
 research/lighthouse/new/*.html
 !research/lighthouse/new/home-*.report.html
+design/concept/preview/
