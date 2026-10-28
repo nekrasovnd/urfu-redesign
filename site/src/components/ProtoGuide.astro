@@ -1,13 +1,16 @@
 ---
 // Guide to the competition prototype: which pages are built, and a switch between
 // «только готовые» (links to unbuilt pages hidden in lists, dimmed elsewhere) and «вся структура».
-import { protoPages, builtRoutes } from '../data/site';
+import { protoPages, builtRoutes, sections } from '../data/site';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const current = Astro.url.pathname.replace(base, '').replace(/\/$/, '') || '/';
+const isBuilt = (href: string) => builtRoutes.includes(href.split(/[?#]/)[0].replace(/\/$/, '') || '/');
+const structure = sections.map(s => ({ ...s, children: s.children.map(c => ({ ...c, built: isBuilt(c.href) })) }));
+const totalPages = structure.reduce((n, s) => n + s.children.length, 0);
 ---
 <div class="proto" data-proto-guide>
   <button class="proto__toggle" type="button" aria-expanded="false" aria-controls="proto-panel" data-proto-open>
-    <span class="proto__dot" aria-hidden="true"></span>Прототип · {protoPages.length} страниц
+    <span class="proto__dot" aria-hidden="true"></span><span class="proto__label-ready">Прототип · {protoPages.length} страниц</span><span class="proto__label-full">Вся структура сайта</span>
   </button>
   <div class="proto__panel" id="proto-panel" role="dialog" aria-label="Гид по прототипу" hidden>
     <p class="proto__title">Гид по прототипу</p>
@@ -16,11 +19,25 @@ const current = Astro.url.pathname.replace(base, '').replace(/\/$/, '') || '/';
       <button type="button" data-proto-mode="ready" aria-pressed="true">Только готовые</button>
       <button type="button" data-proto-mode="full" aria-pressed="false">Вся структура</button>
     </div>
+    <p class="proto__count" data-proto-count aria-live="polite"></p>
     <ol class="proto__list">
       {protoPages.map(p => (
         <li><a href={p.href} aria-current={p.href === current ? 'page' : undefined}><span>{p.label}</span><small>{p.type}</small></a></li>
       ))}
     </ol>
+    <div class="proto__map">
+      <p class="t-small">Новая структура сайта: 5 разделов, {totalPages} страниц. <b>Готово</b> — свёрстано в прототипе, остальное откроет страницу-заглушку.</p>
+      {structure.map(s => (
+        <section>
+          <p class="proto__sec">{s.label}</p>
+          <ul>
+            {s.children.map(c => (
+              <li class:list={{ 'is-built': c.built }}><a href={c.href}>{c.label}{c.external && ' ↗'}</a>{c.built && <small>готово</small>}</li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
     <p class="t-caption t-muted">Ссылки со стрелкой ↗ ведут на действующие сайты УрФУ.</p>
   </div>
   <p class="proto__toast" role="status" aria-live="polite" data-proto-toast hidden></p>
@@ -34,6 +51,9 @@ const current = Astro.url.pathname.replace(base, '').replace(/\/$/, '') || '/';
   const openBtn = guide.querySelector<HTMLButtonElement>('[data-proto-open]')!;
   const panel = guide.querySelector<HTMLElement>('#proto-panel')!;
   const toast = guide.querySelector<HTMLElement>('[data-proto-toast]')!;
+  const count = guide.querySelector<HTMLElement>('[data-proto-count]')!;
+  const plural = (n: number, one: string, few: string, many: string) =>
+    n % 10 === 1 && n % 100 !== 11 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? few : many;
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   const built = new Set<string>(JSON.parse(document.getElementById('proto-routes')!.textContent!));
 
@@ -51,6 +71,12 @@ const current = Astro.url.pathname.replace(base, '').replace(/\/$/, '') || '/';
     // Inactive in «только готовые»: say so to assistive tech too.
     document.querySelectorAll('a[data-unbuilt]').forEach(l => mode === 'ready' ? l.setAttribute('aria-disabled', 'true') : l.removeAttribute('aria-disabled'));
     guide.querySelectorAll<HTMLButtonElement>('[data-proto-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.protoMode === mode)));
+    // What the switch did on this very page — most of it is in menus and the footer, out of sight.
+    const n = [...document.querySelectorAll('a[data-unbuilt]')].filter(a => !a.closest('[data-proto-guide]')).length;
+    const links = `${n} ${plural(n, 'ссылка', 'ссылки', 'ссылок')}`;
+    count.textContent = mode === 'ready'
+      ? `На этой странице скрыто или приглушено ${links} на несвёрстанные разделы — в меню, подвале и быстрых действиях.`
+      : `Показана вся структура: на этой странице ${links} ведут на разделы, которых нет в прототипе, — они откроют страницу-заглушку.`;
     try { localStorage.setItem(KEY, mode); } catch {}
   }
   guide.querySelectorAll<HTMLButtonElement>('[data-proto-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.protoMode!)));
