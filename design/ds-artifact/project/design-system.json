@@ -1,0 +1,33 @@
+{
+  "v": 3,
+  "layout": "files",
+  "createdOnFiles": { "v": 1, "at": "2026-10-28T01:05:00Z" },
+  "title": "УрФУ · Конструктив",
+  "namespace": "UrFU",
+  "libraries": [],
+  "sections": {},
+  "groups": ["Logos"],
+  "assetGroups": {
+    "Logos": {
+      "name": "Logos",
+      "tile": "l",
+      "order": ["urfu-short-ru-color.svg", "urfu-short-ru-white.svg", "urfu-full-ru-color.svg", "urfu-full-ru-white.svg", "urfu-abbr-color.svg", "urfu-short-en-color.svg", "urfu-sign-color.svg", "urfu-sign-white.svg", "favicon.svg", "app-icon.svg", "construction.svg"],
+      "files": {
+        "urfu-short-ru-color.svg": { "name": "urfu-short-ru-color.svg", "blob": "1ce52d90ee77e5d3b96705ca0e8357b5", "size": 16148, "type": "image/svg+xml" },
+        "urfu-short-ru-white.svg": { "name": "urfu-short-ru-white.svg", "blob": "97e8bfd1ae5633596d1a02e42e0def71", "size": 16148, "type": "image/svg+xml" },
+        "urfu-full-ru-color.svg": { "name": "urfu-full-ru-color.svg", "blob": "7cb4a174d2a2466f0da4a7eeb0f4ef58", "size": 34974, "type": "image/svg+xml" },
+        "urfu-full-ru-white.svg": { "name": "urfu-full-ru-white.svg", "blob": "ccb53ee4bc8f8cad1d334a163ac44e76", "size": 34974, "type": "image/svg+xml" },
+        "urfu-abbr-color.svg": { "name": "urfu-abbr-color.svg", "blob": "de0a94bdb8d54fb48a7a1d29e4c81175", "size": 2835, "type": "image/svg+xml" },
+        "urfu-short-en-color.svg": { "name": "urfu-short-en-color.svg", "blob": "9477af2437934744dca514137a0e9136", "size": 11532, "type": "image/svg+xml" },
+        "urfu-sign-color.svg": { "name": "urfu-sign-color.svg", "blob": "1a52bf1cfcf6be7ddca46fe0c7700937", "size": 299, "type": "image/svg+xml" },
+        "urfu-sign-white.svg": { "name": "urfu-sign-white.svg", "blob": "007a831f5e2598c5694b37b1e71946bd", "size": 299, "type": "image/svg+xml" },
+        "favicon.svg": { "name": "favicon.svg", "blob": "fa83f7a40cdb2e5c3c7dba233d4d0085", "size": 377, "type": "image/svg+xml" },
+        "app-icon.svg": { "name": "app-icon.svg", "blob": "f123ae4e3816f994176ef52f968e5f02", "size": 386, "type": "image/svg+xml" },
+        "construction.svg": { "name": "construction.svg", "blob": "855d39ce8ef3ceadde96d684966afb1e", "size": 3822, "type": "image/svg+xml" }
+      }
+    }
+  },
+  "blobs": {},
+  "docs": { "sections": [] },
+  "lastChange": { "by": "Claude", "at": "2026-10-28T01:05:00Z", "via": "Claude Code", "note": "Первая версия: токены, брендбук, 18 компонентов, логотипы" }
+}

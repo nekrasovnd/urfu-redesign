@@ -1,0 +1,42 @@
+---
+import '@fontsource/golos-text/400.css';
+import '@fontsource/golos-text/500.css';
+import '@fontsource/golos-text/600.css';
+import '@fontsource/golos-text/700.css';
+import '@fontsource/unbounded/700.css';
+import '@fontsource/unbounded/800.css';
+import '@ds/tokens.css';
+import '@ds/components.css';
+import '../styles/site.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchPalette from '../components/SearchPalette.astro';
+
+interface Props { title: string; description: string; section?: string; mode?: 'science' }
+const { title, description, section, mode } = Astro.props;
+const fullTitle =title === 'УрФУ' ? 'Уральский федеральный университет — УрФУ' : `${title} — УрФУ`;
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#E8E7E2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#151514" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="ru_RU" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body data-mode={mode}>
+    <a class="skip-link" href="#main">Перейти к содержанию</a>
+    <Header current={section} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <SearchPalette />
+  </body>
+</html>

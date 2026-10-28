@@ -1,0 +1,138 @@
+---
+import Logo from './Logo.astro';
+import { sections, sitemap } from '../data/site';
+interface Props { current?: string }
+const { current } = Astro.props;
+const promo: Record<string, { label: string; title: string; text: string; href: string }> = {
+  admission: { label: 'Ближайшее', title: 'Дни открытых дверей', text: '23–30 января 2027 · расскажем о поступлении в 2027 году', href: '/events' },
+  study: { label: 'Скоро', title: 'Зимняя сессия', text: 'Расписание экзаменов появится в личном кабинете за месяц до начала', href: '/study/schedule' },
+  research: { label: 'Приём заявок', title: 'Премия губернатора для молодых учёных', text: 'До 1 ноября 2026', href: '/research/grants' },
+  life: { label: 'В кампусе', title: '18 общежитий', text: '13 800 мест для иногородних студентов', href: '/life/housing' },
+  about: { label: 'Цифры', title: '106 лет', text: 'С 19 октября 1920 года — от декрета об Уральском университете до нового кампуса', href: '/about' },
+};
+---
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="site-header__logo" href="/" aria-label="УрФУ — на главную">
+      <Logo variant="short-ru" height={44} class="logo-desktop" />
+      <Logo variant="abbr" height={30} class="logo-mobile" />
+    </a>
+
+    <nav class="nav" aria-label="Основная навигация">
+      {sections.map(s => (
+        <button class="nav__item" type="button" aria-expanded="false" aria-controls={`mm-${s.id}`} data-mm-trigger={s.id} aria-current={current === s.id ? 'page' : undefined}>{s.label}</button>
+      ))}
+    </nav>
+
+    <div class="header-tools">
+      <button class="search-trigger" type="button" data-search-open>
+        <svg class="search-trigger__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <span class="search-trigger__text">Поиск по сайту</span>
+        <span class="kbd" aria-hidden="true">⌘K</span>
+      </button>
+      <a class="header-lang" href="/en/" lang="en" aria-label="EN — English version">EN</a>
+      <a class="btn btn--ink btn--sm header-lk" href="https://istudent.urfu.ru/">Личный кабинет</a>
+      <button class="btn btn--sm menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>Меню</button>
+    </div>
+  </div>
+
+  {sections.map(s => {
+    const featured = s.children.filter(c => c.featured);
+    const rest = s.children.filter(c => !c.featured);
+    const p = promo[s.id];
+    return (
+      <div class="megamenu" id={`mm-${s.id}`} data-mm={s.id} hidden>
+        <div class="container megamenu__inner">
+          <div>
+            <p class="megamenu__lead">{s.lead}</p>
+            <div class="megamenu__featured">
+              {featured.map((c, i) => (
+                <a class={`action${i === 0 ? ' action--primary' : ''}`} href={c.href}><span>{c.label}</span><span aria-hidden="true">→</span></a>
+              ))}
+            </div>
+          </div>
+          <ul class="megamenu__list">
+            {rest.map(c => <li><a href={c.href}>{c.label}{c.external && <span class="visually-hidden"> (внешний сайт)</span>}</a></li>)}
+            <li><a href={s.href}><b>Весь раздел «{s.label}»</b></a></li>
+          </ul>
+          <a class="megamenu__promo" href={p.href}>
+            <span class="t-label">{p.label}</span>
+            <span class="t-h3">{p.title}</span>
+            <span>{p.text}</span>
+          </a>
+        </div>
+      </div>
+    );
+  })}
+
+  <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
+    <div class="container mobile-menu__inner">
+      <div class="mobile-menu__quick">
+        <a class="action action--primary" href="/admission/match"><span>Подобрать программу по баллам</span><span aria-hidden="true">→</span></a>
+        <a class="action" href="/study/schedule"><span>Расписание</span><span aria-hidden="true">→</span></a>
+      </div>
+      <div class="accordion">
+        {sections.map(s => (
+          <details>
+            <summary>{s.label}</summary>
+            <ul class="mobile-menu__list">
+              {s.children.map(c => <li><a href={c.href}>{c.label}</a></li>)}
+            </ul>
+          </details>
+        ))}
+      </div>
+      <div class="mobile-menu__foot">
+        <a class="btn btn--ink" href="https://istudent.urfu.ru/">Личный кабинет</a>
+        <a class="btn" href="/en/" lang="en">English</a>
+      </div>
+      <p class="t-small t-muted">Контакт-центр <a class="link" href="tel:88001005044">8-800-100-50-44</a></p>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const triggers = [...header.querySelectorAll<HTMLButtonElement>('[data-mm-trigger]')];
+  const panels = [...header.querySelectorAll<HTMLElement>('[data-mm]')];
+  const menuBtn = header.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+  const mobile = header.querySelector<HTMLElement>('[data-mobile-menu]')!;
+
+  function closeMega() {
+    triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
+    panels.forEach(p => (p.hidden = true));
+  }
+  function openMega(id: string) {
+    closeMega();
+    header.querySelector(`[data-mm-trigger="${id}"]`)?.setAttribute('aria-expanded', 'true');
+    const panel = header.querySelector<HTMLElement>(`[data-mm="${id}"]`);
+    if (panel) panel.hidden = false;
+  }
+  triggers.forEach(t => t.addEventListener('click', () => {
+    t.getAttribute('aria-expanded') === 'true' ? closeMega() : openMega(t.dataset.mmTrigger!);
+  }));
+  document.addEventListener('click', e => { if (!header.contains(e.target as Node)) closeMega(); });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const open = triggers.find(t => t.getAttribute('aria-expanded') === 'true');
+    closeMega();
+    open?.focus();
+    if (!mobile.hidden) { toggleMobile(false); menuBtn.focus(); }
+  });
+
+  function toggleMobile(open = mobile.hidden) {
+    mobile.hidden = !open;
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.textContent = open ? 'Закрыть' : 'Меню';
+    document.documentElement.classList.toggle('menu-open', open);
+  }
+  menuBtn.addEventListener('click', () => toggleMobile());
+
+  // Hide the header while scrolling down, bring it back on the way up.
+  let lastY = scrollY;
+  addEventListener('scroll', () => {
+    const y = scrollY;
+    const anyOpen = !mobile.hidden || triggers.some(t => t.getAttribute('aria-expanded') === 'true');
+    header.classList.toggle('is-hidden', y > lastY && y > 240 && !anyOpen);
+    lastY = y;
+  }, { passive: true });
+</script>

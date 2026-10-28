@@ -1,0 +1,35 @@
+---
+import { university } from '../data/site';
+const cols = [
+  { title: 'Для кого', links: [['Абитуриентам', '/admission'], ['Студентам', '/study/hub'], ['Сотрудникам', '/staff'], ['Школьникам', '/admission/prep'], ['Партнёрам', '/about/partners'], ['Выпускникам', '/about/alumni'], ['СМИ', '/about/press']] },
+  { title: 'Быстро', links: [['Расписание', '/study/schedule'], ['Личный кабинет', 'https://istudent.urfu.ru/'], ['Приёмная комиссия', '/admission/contacts'], ['Карта кампуса', '/life/campus'], ['Контакты', '/contacts']] },
+  { title: 'Университет', links: [['Новости', '/news'], ['Афиша', '/events'], ['Работа в УрФУ', '/about/careers'], ['Поддержать университет', '/about/alumni'], ['Бренд и символика', '/about/brand']] },
+  { title: 'Официально', links: [['Сведения об образовательной организации', '/sveden'], ['Противодействие коррупции', '/anticorruption'], ['Обращения граждан', '/appeals'], ['Закупки', '/procurement'], ['Политика конфиденциальности', '/privacy']] },
+];
+const c = university.contacts;
+const social = [['ВКонтакте', university.social.vk], ['Telegram', university.social.telegram], ['Дзен', university.social.dzen], ['Rutube', university.social.rutube]];
+---
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-top">
+      <img src="/logo/urfu-full-ru-white.svg" alt="Уральский федеральный университет имени первого Президента России Б.Н. Ельцина" class="footer-logo" loading="lazy" />
+      <div class="footer-contact">
+        <a class="site-footer__phone" href="tel:88001005044">{c.contact_center}</a>
+        <p class="t-small footer-dim">Контакт-центр, {c.contact_center_note.toLowerCase()} · {c.hours}</p>
+        <p class="t-small"><a href={`mailto:${c.email}`}>{c.email}</a> · {c.address}</p>
+      </div>
+    </div>
+    <nav class="site-footer__cols" aria-label="Ссылки в подвале">
+      {cols.map(col => (
+        <div>
+          <h3>{col.title}</h3>
+          <ul>{col.links.map(([t, h]) => <li><a href={h}>{t}</a></li>)}</ul>
+        </div>
+      ))}
+    </nav>
+    <div class="footer-bottom">
+      <ul class="footer-social">{social.map(([t, h]) => <li><a href={h}>{t}</a></li>)}</ul>
+      <p class="t-caption footer-dim">© ФГАОУ ВО «УрФУ имени первого Президента России Б.Н. Ельцина». Концепт редизайна, 2026.</p>
+    </div>
+  </div>
+</footer>

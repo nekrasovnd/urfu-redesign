@@ -1,0 +1,334 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/match.css';
+import { directions, instituteAbbr, university } from '../../data/site';
+import programsJson from '@content/programs.json';
+
+// ---------- Data: EGE thresholds (calcege.my1.urfu.ru) joined with the programme catalogue ----------
+const LEVELS = new Set(['бакалавриат', 'базовое высшее образование', 'специалитет']);
+const progByCode = new Map<string, { n: string; i: string }[]>();
+for (const p of programsJson as { code: string | null; name: string; institute: string; level: string }[]) {
+  if (!p.code || !LEVELS.has(p.level)) continue;
+  const list = progByCode.get(p.code) ?? [];
+  const i = instituteAbbr(p.institute);
+  if (!list.some(x => x.n === p.name && x.i === i)) list.push({ n: p.name, i });
+  progByCode.set(p.code, list);
+}
+
+const SUBJECTS = ['Русский язык', 'Математика', 'Информатика', 'Физика', 'Обществознание', 'Химия', 'Биология', 'История', 'Иностранный язык', 'Литература', 'География'];
+const SHORT: Record<string, string> = { 'Русский язык': 'Русский', 'Иностранный язык': 'Иностранный', 'Обществознание': 'Общество' };
+
+const dirs = directions.map((d, idx) => ({
+  id: idx,
+  c: d.code, n: d.name, l: d.level, p: d.max_cost_rub,
+  r: d.required.map(x => [x.subject, x.min] as [string, number]),
+  o: d.choose_one.map(x => [x.subject, x.min] as [string, number]),
+  pr: progByCode.get(d.code) ?? [],
+}));
+const institutes = [...new Set(dirs.flatMap(d => d.pr.map(p => p.i)))].sort((a, b) => a.localeCompare(b, 'ru'));
+const DETAIL: Record<string, string> = { '09.03.04': '/programs/software-engineering' };
+const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
+const minCost = Math.min(...dirs.filter(d => d.p).map(d => d.p!));
+const c = university.contacts;
+---
+<Base title="Подбор программы по баллам ЕГЭ" section="admission"
+  description="Введите баллы ЕГЭ и узнайте, на какие направления бакалавриата и специалитета УрФУ можно подать документы: минимальные баллы, стоимость и программы.">
+
+  <div class="container match-head">
+    <ol class="breadcrumbs">
+      <li><a href="/">Главная</a></li><li><a href="/admission">Поступление</a></li><li aria-current="page">Подбор программы</li>
+    </ol>
+    <h1 class="t-h1">Подбор программы по баллам ЕГЭ</h1>
+    <p class="t-lead">Укажите баллы по предметам, которые сдали или собираетесь сдавать. Покажем направления, на которые можно подать документы, минимальные баллы, стоимость обучения и программы внутри каждого направления.</p>
+  </div>
+
+  <div class="container match-layout">
+    <!-- ============ Scores & filters ============ -->
+    <aside class="match-panel" aria-label="Баллы и фильтры">
+      <form class="match-form" data-match-form novalidate onsubmit="return false">
+        <fieldset class="match-scores">
+          <legend class="match-legend">Мои баллы ЕГЭ</legend>
+          <p class="field__hint">Оставьте поле пустым, если не сдаёте предмет.</p>
+          <div class="score-list">
+            {SUBJECTS.map((s, i) => (
+              <label class="score-row" for={`sc-${i}`}>
+                <span class="score-row__name">{s}{i < 2 && <span class="score-row__req">обязательный</span>}</span>
+                <input class="input input--score score-row__input" id={`sc-${i}`} name={s} type="number" inputmode="numeric" min="0" max="100" placeholder="—"
+                  value={s === 'Русский язык' ? '82' : s === 'Математика' ? '76' : s === 'Информатика' ? '80' : ''} />
+              </label>
+            ))}
+          </div>
+          <p class="field__error" data-score-error hidden>Балл ЕГЭ — от 0 до 100.</p>
+        </fieldset>
+
+        <fieldset class="match-filter">
+          <legend class="match-legend">Уровень</legend>
+          <div class="segmented" role="group" aria-label="Уровень образования">
+            <button type="button" data-level="" aria-pressed="true">Все</button>
+            <button type="button" data-level="бакалавриат" aria-pressed="false">Бакалавриат</button>
+            <button type="button" data-level="специалитет" aria-pressed="false">Специалитет</button>
+          </div>
+        </fieldset>
+
+        <fieldset class="match-filter">
+          <legend class="match-legend">Стоимость в год, если не пройду на бюджет</legend>
+          <select class="select" id="cost" name="cost" aria-label="Максимальная стоимость">
+            <option value="">Любая</option>
+            <option value="250000">до 250 000 ₽</option>
+            <option value="300000">до 300 000 ₽</option>
+            <option value="350000">до 350 000 ₽</option>
+          </select>
+          <label class="check"><input type="checkbox" id="has-cost" name="hasCost" /> Только с известной стоимостью</label>
+        </fieldset>
+
+        <fieldset class="match-filter">
+          <legend class="match-legend">Институт</legend>
+          <div class="match-chips" role="group" aria-label="Институт">
+            {institutes.map(i => <button class="chip" type="button" data-inst={i} aria-pressed="false">{i}</button>)}
+          </div>
+        </fieldset>
+
+        <button class="btn btn--sm" type="button" data-reset>Сбросить фильтры</button>
+      </form>
+    </aside>
+
+    <!-- ============ Results ============ -->
+    <section class="match-results" aria-labelledby="results-title">
+      <div class="results-bar">
+        <h2 class="results-count" id="results-title" aria-live="polite">
+          <span class="results-count__n" data-count>—</span>
+          <span class="results-count__label" data-count-label>направлений подходят</span>
+        </h2>
+        <div class="results-sort">
+          <label class="field__label" for="sort">Сортировка</label>
+          <select class="select" id="sort">
+            <option value="margin">По запасу баллов</option>
+            <option value="cheap">Сначала дешевле</option>
+            <option value="expensive">Сначала дороже</option>
+            <option value="name">По названию</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="notice notice--info">
+        <span class="notice__mark" aria-hidden="true"></span>
+        <div>
+          <p class="notice__title">Это минимальные баллы для подачи документов, а не проходные</p>
+          <p class="notice__text">Проходной балл зависит от конкурса и обычно выше. Пороги и стоимость — по данным калькулятора ЕГЭ УрФУ для приёма-2026; правила приёма-2027 опубликуют до 1 ноября 2026 года.</p>
+        </div>
+      </div>
+
+      <div class="match-list" data-list="ok">
+        {dirs.map(d => (
+          <article class="match-card" data-id={d.id} data-code={d.c} data-level={d.l} data-cost={d.p ?? ''} data-inst={[...new Set(d.pr.map(p => p.i))].join('|')} data-name={d.n}>
+            <div class="match-card__top">
+              <span class="match-card__code">{d.c} · {d.l === 'специалитет' ? 'Специалитет' : 'Бакалавриат'}</span>
+              <span class="match-card__status" data-status></span>
+            </div>
+            <h3 class="match-card__title">{d.n}</h3>
+
+            <div class="exams">
+              {d.r.map(([s, m]) => (
+                <div class="exam" data-subj={s} data-min={m}>
+                  <span class="exam__name">{SHORT[s] ?? s}</span>
+                  <span class="exam__bar" aria-hidden="true"><i class="exam__min" style={`left:${m}%`}></i><i class="exam__fill"></i></span>
+                  <span class="exam__val"><b data-val>—</b> / {m}</span>
+                </div>
+              ))}
+              {d.o.length > 0 && (
+                <div class="exam-group">
+                  <span class="exam-group__label">Один предмет на выбор</span>
+                  {d.o.map(([s, m]) => (
+                    <div class="exam exam--opt" data-subj={s} data-min={m}>
+                      <span class="exam__name">{SHORT[s] ?? s}</span>
+                      <span class="exam__bar" aria-hidden="true"><i class="exam__min" style={`left:${m}%`}></i><i class="exam__fill"></i></span>
+                      <span class="exam__val"><b data-val>—</b> / {m}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {d.pr.length > 0 && (
+              <div class="match-card__programs">
+                <span class="t-label t-muted">{d.pr.length === 1 ? 'Программа' : `Программы · ${d.pr.length}`}</span>
+                <ul>{d.pr.slice(0, 4).map(p => <li>{p.n} <span>{p.i}</span></li>)}{d.pr.length > 4 && <li class="more">и ещё {d.pr.length - 4}</li>}</ul>
+              </div>
+            )}
+
+            <div class="match-card__foot">
+              <span class="match-card__price">{d.p ? `до ${rub(d.p)} в год` : 'Стоимость уточняется'}</span>
+              <a class="btn btn--sm btn--ink" href={DETAIL[d.c] ?? `/programs?code=${d.c}`}>Подробнее о направлении</a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="match-empty" data-empty hidden>
+        <p class="t-h3">По этим баллам и фильтрам ничего не нашлось</p>
+        <p class="t-body t-muted">Проверьте, что указаны русский язык и математика или обществознание, и снимите фильтры по стоимости и институту. Ниже — направления, до которых не хватает совсем немного.</p>
+      </div>
+
+      <details class="match-close" data-close-wrap>
+        <summary><span class="t-h3">Почти подходят</span> <span class="match-close__n" data-close-count></span></summary>
+        <p class="t-small t-muted">Не хватает до 10 баллов по одному или нескольким предметам. Ещё есть время подтянуть их или сдать ЕГЭ повторно.</p>
+        <div class="match-list match-list--close" data-list="close"></div>
+      </details>
+
+      <div class="contact-strip match-contact">
+        <div>
+          <p class="t-label t-muted">Остались вопросы о поступлении</p>
+          <a class="contact-strip__phone" href="tel:+73433754474">{c.admissions.phone}</a>
+        </div>
+        <dl>
+          <div><dt>Приёмная комиссия</dt><dd>Екатеринбург, ул. Мира, 19, кабинет ГУК-100</dd></div>
+          <div><dt>Контакт-центр</dt><dd>{c.contact_center}, звонок бесплатный</dd></div>
+          <div><dt>Стоимость</dt><dd>от {rub(minCost)} в год, есть скидки и кредит</dd></div>
+        </dl>
+      </div>
+    </section>
+  </div>
+
+  <script type="application/json" id="match-data" set:html={JSON.stringify(dirs.map(d => ({ id: d.id, r: d.r, o: d.o, p: d.p, n: d.n })))} />
+</Base>
+
+<script>
+  type Dir = { id: number; r: [string, number][]; o: [string, number][]; p: number | null; n: string };
+  const dirs: Dir[] = JSON.parse(document.getElementById('match-data')!.textContent!);
+  const form = document.querySelector<HTMLFormElement>('[data-match-form]')!;
+  const okList = document.querySelector<HTMLElement>('[data-list="ok"]')!;
+  const closeList = document.querySelector<HTMLElement>('[data-list="close"]')!;
+  const closeWrap = document.querySelector<HTMLDetailsElement>('[data-close-wrap]')!;
+  const cards = new Map([...document.querySelectorAll<HTMLElement>('.match-card')].map(el => [+el.dataset.id!, el]));
+  const inputs = [...form.querySelectorAll<HTMLInputElement>('.score-row__input')];
+  const STORE = 'urfu-scores';
+  let level = '';
+  const insts = new Set<string>();
+
+  // ---------- Prefill: URL from the homepage widget, then saved scores ----------
+  const byName = (n: string) => inputs.find(i => i.name === n);
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE) || 'null');
+    if (saved) inputs.forEach(i => (i.value = saved[i.name] ?? ''));
+  } catch {}
+  const q = new URLSearchParams(location.search);
+  if (q.has('ru') || q.has('ma')) {
+    inputs.forEach(i => (i.value = ''));
+    if (q.get('ru')) byName('Русский язык')!.value = q.get('ru')!;
+    if (q.get('ma')) byName('Математика')!.value = q.get('ma')!;
+    if (q.get('s') && q.get('sv') && byName(q.get('s')!)) byName(q.get('s')!)!.value = q.get('sv')!;
+  }
+
+  const plural = (n: number, a: string, b: string, c: string) => (n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c);
+
+  function scores() {
+    const s: Record<string, number> = {};
+    let bad = false;
+    for (const i of inputs) {
+      if (i.value === '') continue;
+      const v = Number(i.value);
+      const invalid = !Number.isFinite(v) || v < 0 || v > 100;
+      i.setAttribute('aria-invalid', String(invalid));
+      if (invalid) { bad = true; continue; }
+      s[i.name] = v;
+    }
+    form.querySelector<HTMLElement>('[data-score-error]')!.hidden = !bad;
+    return s;
+  }
+
+  // Evaluate one direction: status, margin (points above thresholds) and deficit (points missing).
+  function evaluate(d: Dir, s: Record<string, number>) {
+    let deficit = 0, margin = 0, missing = 0;
+    for (const [subj, min] of d.r) {
+      if (!(subj in s)) { missing++; continue; }
+      const diff = s[subj] - min;
+      diff >= 0 ? (margin += diff) : (deficit -= diff);
+    }
+    if (d.o.length) {
+      const taken = d.o.filter(([subj]) => subj in s);
+      if (!taken.length) missing++;
+      else {
+        const best = Math.max(...taken.map(([subj, min]) => s[subj] - min));
+        best >= 0 ? (margin += best) : (deficit -= best);
+      }
+    }
+    const status = missing ? 'none' : deficit === 0 ? 'ok' : deficit <= 10 ? 'close' : 'none';
+    return { status, margin, deficit };
+  }
+
+  function paintExams(card: HTMLElement, s: Record<string, number>) {
+    card.querySelectorAll<HTMLElement>('.exam').forEach(ex => {
+      const v = s[ex.dataset.subj!];
+      const min = +ex.dataset.min!;
+      ex.querySelector('[data-val]')!.textContent = v === undefined ? '—' : String(v);
+      ex.classList.toggle('is-pass', v !== undefined && v >= min);
+      ex.classList.toggle('is-fail', v !== undefined && v < min);
+      ex.classList.toggle('is-empty', v === undefined);
+      ex.querySelector<HTMLElement>('.exam__fill')!.style.width = `${v ?? 0}%`;
+    });
+  }
+
+  function update() {
+    const s = scores();
+    try { localStorage.setItem(STORE, JSON.stringify(Object.fromEntries(inputs.map(i => [i.name, i.value])))); } catch {}
+    const maxCost = Number((form.querySelector('#cost') as HTMLSelectElement).value) || Infinity;
+    const needCost = (form.querySelector('#has-cost') as HTMLInputElement).checked;
+    const sort = (document.querySelector('#sort') as HTMLSelectElement).value;
+
+    const ok: { d: Dir; m: number }[] = [], close: { d: Dir; m: number; def: number }[] = [];
+    for (const d of dirs) {
+      const card = cards.get(d.id)!;
+      const passesFilters =
+        (!level || card.dataset.level === level) &&
+        (d.p === null ? !needCost : d.p <= maxCost) &&
+        (!insts.size || card.dataset.inst!.split('|').some(i => insts.has(i)));
+      const e = evaluate(d, s);
+      paintExams(card, s);
+      const st = card.querySelector<HTMLElement>('[data-status]')!;
+      st.className = 'match-card__status';
+      if (!passesFilters || e.status === 'none') { card.hidden = true; continue; }
+      card.hidden = false;
+      if (e.status === 'ok') { ok.push({ d, m: e.margin }); st.textContent = `Запас ${e.margin} ${plural(e.margin, 'балл', 'балла', 'баллов')}`; st.classList.add('is-ok'); }
+      else { close.push({ d, m: e.margin, def: e.deficit }); st.textContent = `Не хватает ${e.deficit} ${plural(e.deficit, 'балла', 'баллов', 'баллов')}`; st.classList.add('is-close'); }
+    }
+
+    const cmp = (a: { d: Dir; m: number }, b: { d: Dir; m: number }) =>
+      sort === 'cheap' ? (a.d.p ?? 1e9) - (b.d.p ?? 1e9) :
+      sort === 'expensive' ? (b.d.p ?? -1) - (a.d.p ?? -1) :
+      sort === 'name' ? a.d.n.localeCompare(b.d.n, 'ru') : b.m - a.m;
+    ok.sort(cmp).forEach(x => okList.append(cards.get(x.d.id)!));
+    close.sort((a, b) => (a as any).def - (b as any).def).forEach(x => closeList.append(cards.get(x.d.id)!));
+
+    document.querySelector('[data-count]')!.textContent = String(ok.length);
+    document.querySelector('[data-count-label]')!.textContent =
+      `${plural(ok.length, 'направление подходит', 'направления подходят', 'направлений подходят')} из ${dirs.length}`;
+    document.querySelector<HTMLElement>('[data-empty]')!.hidden = ok.length > 0;
+    closeWrap.hidden = close.length === 0;
+    closeWrap.querySelector('[data-close-count]')!.textContent = String(close.length);
+    if (!ok.length && close.length) closeWrap.open = true;
+  }
+
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+  document.querySelector('#sort')!.addEventListener('change', update);
+  form.querySelectorAll<HTMLButtonElement>('[data-level]').forEach(b => b.addEventListener('click', () => {
+    level = b.dataset.level!;
+    form.querySelectorAll('[data-level]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    update();
+  }));
+  form.querySelectorAll<HTMLButtonElement>('[data-inst]').forEach(b => b.addEventListener('click', () => {
+    const i = b.dataset.inst!;
+    insts.has(i) ? insts.delete(i) : insts.add(i);
+    b.setAttribute('aria-pressed', String(insts.has(i)));
+    update();
+  }));
+  form.querySelector('[data-reset]')!.addEventListener('click', () => {
+    level = ''; insts.clear();
+    form.querySelectorAll('[data-level]').forEach((x, i) => x.setAttribute('aria-pressed', String(i === 0)));
+    form.querySelectorAll('[data-inst]').forEach(x => x.setAttribute('aria-pressed', 'false'));
+    (form.querySelector('#cost') as HTMLSelectElement).value = '';
+    (form.querySelector('#has-cost') as HTMLInputElement).checked = false;
+    update();
+  });
+  update();
+</script>

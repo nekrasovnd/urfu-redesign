@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Дизайн-система УрФУ · Конструктив</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@700;800&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+  /* Specimen-only layout */
+  .spec { padding-block: var(--s-8); display: grid; gap: var(--section-gap); }
+  .spec-hero { padding-block: var(--s-8) var(--s-7); }
+  .spec-hero .t-display { max-width: 12ch; }
+  .spec-block { display: grid; gap: var(--s-6); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; }
+  .cols-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--s-6); }
+  .cols-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--s-6); }
+  .swatch { display: grid; gap: 6px; font-size: 14px; }
+  .swatch i { display: block; height: 88px; border: var(--rule-thin) solid var(--rule-soft); }
+  .swatch code { font: 500 12px/1.3 var(--font-text); color: var(--fg-muted); }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--s-4); }
+  .type-row { display: grid; grid-template-columns: 160px 1fr; gap: var(--s-5); align-items: baseline; padding-block: var(--s-4); border-bottom: var(--rule-thin) solid var(--rule-soft); }
+  .type-row > span:first-child { font: 500 13px/1.3 var(--font-text); color: var(--fg-muted); }
+  @media (max-width: 599px) { .type-row { grid-template-columns: 1fr; gap: var(--s-2); } }
+  .space-row { display: flex; align-items: center; gap: var(--s-4); font: 500 13px var(--font-text); }
+  .space-row i { display: block; height: 16px; background: var(--accent); }
+  .logo-tile { display: grid; place-items: center; min-height: 200px; padding: var(--s-6); border: var(--rule-thin) solid var(--rule-soft); background: var(--surface); }
+  .logo-tile.dark { background: #1D1D1B; } .logo-tile.blue { background: #174496; } .logo-tile.red { background: #E50046; }
+  .logo-tile img { max-height: 120px; width: auto; }
+  .img-ph { width: 100%; height: 100%; background: repeating-linear-gradient(-63.43deg, var(--surface-2) 0 14px, var(--surface) 14px 28px); }
+  .demo-header { position: relative; border: var(--rule-thin) solid var(--rule-soft); }
+  .demo-header .site-header { position: relative; top: 0; }
+  .demo-header .megamenu { position: relative; }
+  .cmdk-demo { display: grid; justify-items: center; padding: var(--s-7) var(--s-4); background: rgb(21 21 20 / .55); }
+</style>
+</head>
+<body>
+
+<header class="container spec-hero diagonal" style="--accent: var(--c-red)">
+  <p class="t-label t-muted">Редизайн urfu.ru · дизайн-система · версия 1.0 · 28.10.2026</p>
+  <h1 class="t-display" style="margin-top: var(--s-5)">Конструктив</h1>
+  <p class="t-lead" style="margin-top: var(--s-5)">Строгая сетка, толстые линейки и диагональ под наклоном знака «У». Цвета взяты из логотипа и брендбука, шрифты — Unbounded для заголовков и цифр, Golos Text для всего остального.</p>
+</header>
+
+<main class="container spec">
+
+  <!-- Logo -->
+  <section class="spec-block" id="logo">
+    <div class="section-head"><span class="section-head__index">01</span><h2 class="section-head__title">Логотип</h2></div>
+    <div class="cols-3">
+      <div class="logo-tile"><img src="../logo/urfu-short-ru-color.svg" alt="Логотип УрФУ, короткая версия"></div>
+      <div class="logo-tile"><img src="../logo/urfu-full-ru-color.svg" alt="Логотип УрФУ, полная версия"></div>
+      <div class="logo-tile"><img src="../logo/urfu-abbr-color.svg" alt="УрФУ, аббревиатура" style="max-height:80px"></div>
+      <div class="logo-tile dark"><img src="../logo/urfu-short-ru-white.svg" alt="Логотип на графите"></div>
+      <div class="logo-tile blue"><img src="../logo/urfu-short-en-white.svg" alt="Английская версия на синем"></div>
+      <div class="logo-tile red"><img src="../logo/urfu-sign-white.svg" alt="Знак на красном" style="max-height:96px"></div>
+    </div>
+    <div class="cols-2">
+      <img src="../logo/construction.svg" alt="Построение знака на сетке с наклоном 1:2">
+      <div class="prose">
+        <p>Оба штриха знака идут под наклоном 1:2 — это 26,57° от вертикали. Тем же углом в интерфейсе режутся диагонали, плашки и маркеры уведомлений: <code>--slope</code>.</p>
+        <p>Охранное поле — две x-высоты верхнего блока. Минимум: короткая версия 100 px, аббревиатура 56 px, знак 16 px.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Color -->
+  <section class="spec-block" id="color">
+    <div class="section-head"><span class="section-head__index">02</span><h2 class="section-head__title">Цвет</h2></div>
+    <div class="swatches">
+      <div class="swatch"><i style="background:#E50046"></i><b>Красный знака</b><code>--c-red · #E50046</code><code>заливки, текст ≥ 24 px</code></div>
+      <div class="swatch"><i style="background:#C4003C"></i><b>Красный текст</b><code>--c-red-text · #C4003C</code><code>4.97:1 на бетоне</code></div>
+      <div class="swatch"><i style="background:#1D1D1B"></i><b>Графит</b><code>--c-ink · #1D1D1B</code><code>13.6:1 на бетоне</code></div>
+      <div class="swatch"><i style="background:#E8E7E2"></i><b>Бетон</b><code>--c-concrete · #E8E7E2</code><code>фон страницы</code></div>
+      <div class="swatch"><i style="background:#F4F3EF"></i><b>Бумага</b><code>--c-paper · #F4F3EF</code><code>карточки, поля</code></div>
+      <div class="swatch"><i style="background:#DCDAD4"></i><b>Бетон 2</b><code>--c-concrete-2 · #DCDAD4</code><code>подложки</code></div>
+      <div class="swatch"><i style="background:#5E5B55"></i><b>Камень</b><code>--c-stone · #5E5B55</code><code>5.46:1, вторичный текст</code></div>
+      <div class="swatch"><i style="background:#174496"></i><b>Синий</b><code>--c-blue · #174496</code><code>наука, фокус, 7.4:1</code></div>
+      <div class="swatch"><i style="background:#1E7A46"></i><b>Зелёный</b><code>--c-green · #1E7A46</code><code>приём открыт</code></div>
+      <div class="swatch"><i style="background:#9A5B00"></i><b>Янтарь</b><code>--c-amber · #9A5B00</code><code>скоро дедлайн</code></div>
+    </div>
+    <p class="t-small t-muted" style="max-width:var(--measure)">Один акцент на экран. Красный — главное действие и одна графическая диагональ, всё остальное графит на бетоне. В разделе «Наука» (<code>data-mode="science"</code>) акцентом становится синий, как закреплено в брендбуке.</p>
+  </section>
+
+  <!-- Type -->
+  <section class="spec-block" id="type">
+    <div class="section-head"><span class="section-head__index">03</span><h2 class="section-head__title">Типографика</h2></div>
+    <div>
+      <div class="type-row"><span>Display · Unbounded 800</span><span class="t-display">9 855 мест</span></div>
+      <div class="type-row"><span>H1 · Unbounded 700</span><span class="t-h1">Поступление-2027</span></div>
+      <div class="type-row"><span>H2 · Unbounded 700</span><span class="t-h2">Программы бакалавриата</span></div>
+      <div class="type-row"><span>H3 · Unbounded 700</span><span class="t-h3">Программная инженерия</span></div>
+      <div class="type-row"><span>H4 · Golos 600 · 20</span><span class="t-h4">Экзамены и минимальные баллы</span></div>
+      <div class="type-row"><span>Lead · Golos 400 · 22</span><span class="t-lead">Подберите программу по баллам ЕГЭ и сразу узнайте стоимость, сроки и число бюджетных мест.</span></div>
+      <div class="type-row"><span>Body · Golos 400 · 17</span><span class="t-body">Карбоновый полигон работает на территории Коуровской астрономической лаборатории УрФУ пять лет. Учёные измеряют потоки парниковых газов и оценивают запасы углерода в почве и древесине.</span></div>
+      <div class="type-row"><span>Small · Golos 400 · 15</span><span class="t-small">Очно, 4 года · русский язык · ИРИТ-РтФ, ул. Мира, 32</span></div>
+      <div class="type-row"><span>Caption · Golos 500 · 13</span><span class="t-caption">Фото: пресс-служба УрФУ</span></div>
+      <div class="type-row"><span>Label · Golos 600 · 12</span><span class="t-label">Приём открыт до 20 июля</span></div>
+    </div>
+    <p class="t-small t-muted" style="max-width:var(--measure)">Заголовки — с прописной буквы, без CAPS (правило брендбука). Капсом набираются только метки 12 px с разрядкой 0,08 em. Выравнивание всегда по левому краю.</p>
+  </section>
+
+  <!-- Space & grid -->
+  <section class="spec-block" id="space">
+    <div class="section-head"><span class="section-head__index">04</span><h2 class="section-head__title">Отступы и сетка</h2></div>
+    <div class="cols-2">
+      <div style="display:grid;gap:10px">
+        <div class="space-row"><i style="width:4px"></i>--s-1 · 4</div>
+        <div class="space-row"><i style="width:8px"></i>--s-2 · 8</div>
+        <div class="space-row"><i style="width:12px"></i>--s-3 · 12</div>
+        <div class="space-row"><i style="width:16px"></i>--s-4 · 16</div>
+        <div class="space-row"><i style="width:24px"></i>--s-5 · 24</div>
+        <div class="space-row"><i style="width:32px"></i>--s-6 · 32</div>
+        <div class="space-row"><i style="width:48px"></i>--s-7 · 48</div>
+        <div class="space-row"><i style="width:64px"></i>--s-8 · 64</div>
+        <div class="space-row"><i style="width:96px"></i>--s-9 · 96</div>
+        <div class="space-row"><i style="width:128px"></i>--s-10 · 128</div>
+      </div>
+      <div class="prose">
+        <p><b>Сетка:</b> 12 колонок на десктопе (контейнер 1312 px, поля 64, гаттер 24), 8 — на планшете, 4 — на телефоне (поля и гаттер 16).</p>
+        <p><b>Линейки:</b> 3 px — заголовки разделов, рамки карточек, шапка; 1 px — строки списков и таблиц.</p>
+        <p><b>Углы:</b> прямые. Скругление 2 px — только у полей ввода, круг — только у аватаров и точек статуса.</p>
+        <p><b>Тени:</b> плакатная тень без размытия (6 × 6 px графитом) — только у меню, модалок и карточки при наведении.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buttons -->
+  <section class="spec-block" id="buttons">
+    <div class="section-head"><span class="section-head__index">05</span><h2 class="section-head__title">Кнопки и ссылки</h2></div>
+    <div class="row">
+      <a class="btn btn--primary btn--lg" href="#buttons">Подобрать программу <span class="arrow" aria-hidden="true">→</span></a>
+      <a class="btn btn--primary" href="#buttons">Подать документы</a>
+      <a class="btn btn--ink" href="#buttons">Открыть программу</a>
+      <a class="btn" href="#buttons">Все программы</a>
+      <a class="btn btn--ghost" href="#buttons">Сравнить</a>
+      <a class="btn btn--sm" href="#buttons">Фильтры</a>
+      <button class="btn" disabled>Недоступно</button>
+    </div>
+    <p class="t-body">Текстовая <a class="link" href="#buttons">ссылка с толстым красным подчёркиванием</a> внутри абзаца. Горячая клавиша поиска: <span class="kbd">⌘</span> <span class="kbd">K</span></p>
+  </section>
+
+  <!-- Tags & forms -->
+  <section class="spec-block" id="forms">
+    <div class="section-head"><span class="section-head__index">06</span><h2 class="section-head__title">Метки и формы</h2></div>
+    <div class="row">
+      <span class="tag">Бакалавриат</span><span class="tag tag--accent">Бюджет</span><span class="tag tag--soft">Очно</span>
+      <button class="chip" aria-pressed="true">ИРИТ-РтФ <span class="count">11</span></button>
+      <button class="chip" aria-pressed="false">ИнЭУ <span class="count">9</span></button>
+      <button class="chip" aria-pressed="false">УГИ <span class="count">24</span></button>
+      <span class="status status--open">Приём открыт</span><span class="status status--soon">Осталось 3 дня</span><span class="status status--closed">Завершено</span>
+    </div>
+    <div class="cols-3">
+      <div class="field"><label class="field__label" for="f-name">Программа или направление</label><input class="input" id="f-name" placeholder="Например, программная инженерия"><span class="field__hint">Ищем по названию и коду, например 09.03.04</span></div>
+      <div class="field"><label class="field__label" for="f-inst">Институт</label><select class="select" id="f-inst"><option>Все институты</option><option>ИРИТ-РтФ</option><option>ИнЭУ</option></select></div>
+      <div class="field"><label class="field__label" for="f-score">Математика (профиль)</label><input class="input input--score" id="f-score" value="76" inputmode="numeric" aria-invalid="false"><span class="field__hint">Минимум для подачи — 40</span></div>
+    </div>
+    <div class="row">
+      <label class="check"><input type="checkbox" checked> Только бюджетные места</label>
+      <label class="check"><input type="checkbox"> Есть общежитие</label>
+    </div>
+    <div class="row">
+      <span class="t-label">Я —</span>
+      <div class="segmented" role="group" aria-label="Роль">
+        <button aria-pressed="true">абитуриент</button><button aria-pressed="false">студент</button><button aria-pressed="false">сотрудник</button><button aria-pressed="false">партнёр</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data -->
+  <section class="spec-block" id="data">
+    <div class="section-head"><span class="section-head__index">07</span><h2 class="section-head__title">Цифры</h2><a class="btn btn--ghost section-head__more" href="#data">УрФУ в цифрах</a></div>
+    <div class="stats">
+      <div class="stat stat--accent"><span class="stat__value">9 855</span><span class="stat__label">бюджетных мест в 2026 году</span></div>
+      <div class="stat"><span class="stat__value">50 000</span><span class="stat__label">студентов</span></div>
+      <div class="stat"><span class="stat__value">164</span><span class="stat__label">научные лаборатории</span></div>
+      <div class="stat"><span class="stat__value">18</span><span class="stat__label">общежитий на 13 800 мест</span></div>
+    </div>
+  </section>
+
+  <!-- Cards -->
+  <section class="spec-block" id="cards">
+    <div class="section-head"><span class="section-head__index">08</span><h2 class="section-head__title">Карточки</h2></div>
+    <div class="cols-3">
+      <a class="card card-program" href="#cards">
+        <span class="card-program__code">09.03.04 · ИРИТ-РтФ</span>
+        <span class="card-program__title">Программная инженерия</span>
+        <span class="card-program__meta"><span>Бакалавриат</span><span>Очно, 4 года</span><span>Русский</span></span>
+        <span class="card-program__exams"><span class="tag tag--soft">Русский ≥ 40</span><span class="tag tag--soft">Математика ≥ 40</span><span class="tag tag--soft">Информатика ≥ 46 или физика ≥ 41</span></span>
+        <span class="card-program__foot"><span class="card-program__price">до 390 000 ₽/год</span><span class="status status--open">Приём с 20 июня</span></span>
+      </a>
+      <a class="card-news" href="#cards">
+        <span class="card-news__media"><span class="img-ph" role="img" aria-label="Фото карбонового полигона"></span></span>
+        <span class="card-news__meta"><span>23 октября</span><span>Наука</span></span>
+        <span class="card-news__title">Учёные вуза создали карту потоков углекислого газа на территории России</span>
+        <span class="card-news__lead">Карбоновому полигону УрФУ исполняется пять лет</span>
+      </a>
+      <div>
+        <a class="card-event" href="#cards"><span class="card-event__date"><span class="card-event__day">12</span><span class="card-event__month">ноя</span></span><span><span class="card-event__title">Российские регионы в фокусе перемен</span><span class="card-event__meta"><span>12–14 ноября</span><span>Конференция</span></span></span></a>
+        <a class="card-event" href="#cards"><span class="card-event__date"><span class="card-event__day">26</span><span class="card-event__month">ноя</span></span><span><span class="card-event__title">Уральский фестиваль кибербезопасности</span><span class="card-event__meta"><span class="status status--open">Регистрация открыта</span></span></span></a>
+        <a class="card-event" href="#cards"><span class="card-event__date"><span class="card-event__day">23</span><span class="card-event__month">янв</span></span><span><span class="card-event__title">Дни открытых дверей</span><span class="card-event__meta"><span>23–30 января</span><span>Для абитуриентов</span></span></span></a>
+      </div>
+    </div>
+    <div class="action-list" style="max-width:640px">
+      <a class="action action--primary" href="#cards"><span>Подобрать программу по баллам ЕГЭ<small>113 направлений, пороги и стоимость</small></span><span aria-hidden="true">→</span></a>
+      <a class="action" href="#cards"><span>Стоимость и скидки</span><span aria-hidden="true">→</span></a>
+      <a class="action" href="#cards"><span>Общежития</span><span aria-hidden="true">→</span></a>
+      <a class="action" href="#cards"><span>Приёмная комиссия<small>+7 (343) 375-44-74 · ГУК-100</small></span><span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <section class="spec-block" id="nav">
+    <div class="section-head"><span class="section-head__index">09</span><h2 class="section-head__title">Навигация</h2></div>
+    <div class="demo-header">
+      <header class="site-header">
+        <div class="container site-header__inner">
+          <a class="site-header__logo" href="#nav"><img src="../logo/urfu-short-ru-color.svg" alt="Уральский федеральный университет"></a>
+          <nav class="nav" aria-label="Основная">
+            <button class="nav__item" aria-expanded="true">Поступление</button>
+            <button class="nav__item" aria-expanded="false">Обучение</button>
+            <button class="nav__item" aria-expanded="false">Наука</button>
+            <button class="nav__item" aria-expanded="false">Жизнь в УрФУ</button>
+            <button class="nav__item" aria-expanded="false">Об университете</button>
+          </nav>
+          <div class="header-tools">
+            <button class="search-trigger"><span class="search-trigger__text">Поиск</span><span class="kbd">⌘K</span></button>
+            <a class="btn btn--ink btn--sm" href="#nav">Личный кабинет</a>
+            <button class="btn btn--sm menu-toggle">Меню</button>
+          </div>
+        </div>
+        <div class="megamenu">
+          <div class="container megamenu__inner">
+            <div>
+              <p class="megamenu__lead">Подберите программу по баллам, узнайте стоимость и сроки</p>
+              <div class="megamenu__featured">
+                <a class="action action--primary" href="#nav"><span>Подобрать по баллам ЕГЭ</span><span aria-hidden="true">→</span></a>
+                <a class="action" href="#nav"><span>Все программы</span><span aria-hidden="true">→</span></a>
+              </div>
+            </div>
+            <ul class="megamenu__list">
+              <li><a href="#nav">Бакалавриат и специалитет</a></li><li><a href="#nav">Магистратура</a></li><li><a href="#nav">Аспирантура</a></li><li><a href="#nav">Колледж (СПО)</a></li><li><a href="#nav">Перевод и восстановление</a></li><li><a href="#nav">Стоимость, скидки и кредит</a></li><li><a href="#nav">Льготы, квоты и целевое</a></li><li><a href="#nav">Олимпиады и подготовка</a></li><li><a href="#nav">Списки поступающих</a></li><li><a href="#nav">Приёмная комиссия</a></li><li><a href="#nav">International applicants</a></li>
+            </ul>
+            <div class="megamenu__promo">
+              <span class="t-label">Ближайшее</span>
+              <span class="t-h3">Дни открытых дверей</span>
+              <span>23–30 января 2027 · расскажем о поступлении в 2027 году</span>
+            </div>
+          </div>
+        </div>
+      </header>
+    </div>
+    <div class="cols-2">
+      <ol class="breadcrumbs"><li><a href="#nav">Главная</a></li><li><a href="#nav">Поступление</a></li><li><a href="#nav">Все программы</a></li><li aria-current="page">Программная инженерия</li></ol>
+      <nav class="pagination" aria-label="Страницы"><a href="#nav">←</a><span aria-current="page">1</span><a href="#nav">2</a><a href="#nav">3</a><span>…</span><a href="#nav">12</a><a href="#nav">→</a></nav>
+    </div>
+    <div class="tabs" role="tablist"><button role="tab" aria-selected="true">О программе</button><button role="tab" aria-selected="false">Экзамены и баллы</button><button role="tab" aria-selected="false">Что изучают</button><button role="tab" aria-selected="false">Карьера</button><button role="tab" aria-selected="false">Контакты</button></div>
+  </section>
+
+  <!-- Disclosure / table / notice -->
+  <section class="spec-block" id="content">
+    <div class="section-head"><span class="section-head__index">10</span><h2 class="section-head__title">Контентные блоки</h2></div>
+    <div class="cols-2">
+      <div class="accordion">
+        <details open><summary>Сколько стоит обучение?</summary><div class="accordion__body">Стоимость зависит от программы: от 165 000 до 390 000 ₽ в год для бакалавриата. Есть скидки за баллы ЕГЭ и образовательный кредит с господдержкой.</div></details>
+        <details><summary>Когда начинается приём документов?</summary><div class="accordion__body">Сроки приёма-2027 будут опубликованы до 1 ноября 2026 года.</div></details>
+        <details><summary>Есть ли общежитие для иногородних?</summary><div class="accordion__body">У УрФУ 18 общежитий на 13 800 мест.</div></details>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Пара</th><th>Время</th><th>Дисциплина</th><th>Ауд.</th></tr></thead>
+          <tbody>
+            <tr><td>3</td><td>12:00–13:30</td><td>Прикладная физическая культура</td><td>—</td></tr>
+            <tr><td>4</td><td>14:15–15:45</td><td>Прикладная физическая культура</td><td>—</td></tr>
+            <tr><td>7</td><td>19:15–20:40</td><td>Введение в профессиональную деятельность</td><td>I105</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="notice"><span class="notice__mark" aria-hidden="true"></span><div><p class="notice__title">Сроки приёма-2027 опубликуют до 1 ноября</p><p class="notice__text">Подпишитесь на уведомления — пришлём, как только правила приёма будут утверждены.</p></div></div>
+  </section>
+
+  <!-- Search -->
+  <section class="spec-block" id="search">
+    <div class="section-head"><span class="section-head__index">11</span><h2 class="section-head__title">Поиск ⌘K</h2></div>
+    <div class="cmdk-demo">
+      <div class="cmdk" role="dialog" aria-label="Поиск по сайту">
+        <div class="cmdk__input"><span aria-hidden="true">⌕</span><input value="програм" aria-label="Запрос"><span class="kbd">Esc</span></div>
+        <div class="cmdk__results">
+          <p class="cmdk__group t-label t-muted">Программы</p>
+          <a class="cmdk__item" aria-selected="true" href="#search"><span>Программная инженерия</span><small>09.03.04 · ИРИТ-РтФ</small></a>
+          <a class="cmdk__item" href="#search"><span>Прикладная информатика</span><small>09.03.03 · ИРИТ-РтФ</small></a>
+          <p class="cmdk__group t-label t-muted">Страницы</p>
+          <a class="cmdk__item" href="#search"><span>Подбор программы по баллам</span><small>Поступление</small></a>
+          <p class="cmdk__group t-label t-muted">Группы расписания</p>
+          <a class="cmdk__item" href="#search"><span>РИ-250902</span><small>ИРИТ-РтФ · 2 курс</small></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container" style="display:grid;gap:var(--s-7)">
+    <div class="row" style="justify-content:space-between;align-items:end">
+      <img src="../logo/urfu-full-ru-white.svg" alt="Уральский федеральный университет имени первого Президента России Б.Н. Ельцина" style="height:96px;width:auto">
+      <div><p class="site-footer__phone">8-800-100-50-44</p><p class="t-small" style="opacity:.7">Контакт-центр, звонок по России бесплатный · contact@urfu.ru</p></div>
+    </div>
+    <div class="site-footer__cols">
+      <div><h3>Для кого</h3><ul><li><a href="#">Абитуриентам</a></li><li><a href="#">Студентам</a></li><li><a href="#">Сотрудникам</a></li><li><a href="#">Партнёрам</a></li><li><a href="#">СМИ</a></li></ul></div>
+      <div><h3>Быстро</h3><ul><li><a href="#">Расписание</a></li><li><a href="#">Личный кабинет</a></li><li><a href="#">Приёмная комиссия</a></li><li><a href="#">Карта кампуса</a></li></ul></div>
+      <div><h3>Университет</h3><ul><li><a href="#">Новости</a></li><li><a href="#">Афиша</a></li><li><a href="#">Работа в УрФУ</a></li><li><a href="#">Поддержать университет</a></li></ul></div>
+      <div><h3>Официально</h3><ul><li><a href="#">Сведения об образовательной организации</a></li><li><a href="#">Противодействие коррупции</a></li><li><a href="#">Обращения граждан</a></li></ul></div>
+    </div>
+    <p class="t-caption" style="color:inherit;opacity:.6">© УрФУ имени первого Президента России Б.Н. Ельцина · 620062, Екатеринбург, ул. Мира, 19</p>
+  </div>
+</footer>
+</body>
+</html>

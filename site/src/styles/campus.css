@@ -1,0 +1,78 @@
+/* /life/campus — кампус и карта */
+
+.cp-head { display: grid; gap: var(--s-4); padding-block: var(--s-6) var(--s-6); }
+.cp-head__row { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7); align-items: end; margin-top: var(--s-3); }
+.cp-head__row .t-lead { margin-top: var(--s-4); }
+.cp-room { display: grid; gap: var(--s-2); padding: var(--s-5); background: var(--surface); border: var(--rule-thick) solid var(--rule); box-shadow: var(--shadow-pop); }
+.cp-room__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--s-2); }
+.cp-room .input { font: 700 20px/1 var(--font-display); letter-spacing: -0.01em; text-transform: uppercase; }
+.cp-room .input::placeholder { text-transform: none; font: 400 16px var(--font-text); }
+.cp-room [data-room-result] { font-size: 15px; min-height: 2.8em; }
+
+/* ---------- Schematic map ---------- */
+.cp-map-wrap { padding-bottom: var(--s-6); }
+.cp-map { border: var(--rule-thick) solid var(--rule); background: var(--surface); padding: var(--s-4); overflow-x: auto; }
+.cp-map svg { display: block; width: 100%; min-width: 640px; height: auto; }
+.cp-map__note { margin-top: var(--s-3); font: 500 var(--fs-caption)/1.35 var(--font-text); color: var(--fg-muted); }
+.cp-zone { fill: var(--bg); stroke: var(--rule); stroke-width: 1.5; }
+.cp-zone--new { fill: var(--surface-2); stroke-dasharray: 6 4; }
+.cp-zone-label { font: 800 20px var(--font-display); fill: var(--fg); letter-spacing: -0.02em; }
+.cp-street { stroke: var(--rule-soft); stroke-width: 10; }
+.cp-street-label { font: 600 11px var(--font-text); fill: var(--fg-muted); letter-spacing: .06em; text-transform: uppercase; }
+.cp-link { stroke: var(--rule); stroke-width: 2; stroke-dasharray: 2 6; fill: none; }
+.cp-pin rect { fill: var(--fg); transition: fill var(--dur-1) var(--ease); }
+.cp-pin text { font: 800 13px var(--font-display); fill: var(--bg); pointer-events: none; }
+.cp-pin:hover rect, .cp-pin:focus-visible rect, .cp-pin.is-selected rect { fill: var(--accent); }
+.cp-pin:focus-visible { outline: none; }
+.cp-pin:focus-visible rect { stroke: var(--focus); stroke-width: 3; }
+.cp-pin[data-pin="campus"] text { font-size: 26px; }
+
+/* ---------- Buildings ---------- */
+.cp-list { display: grid; gap: var(--s-8); padding-top: var(--s-7); }
+.cp-zone-block { display: grid; gap: var(--s-5); }
+.cp-zone-block__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2) var(--s-5); padding-top: var(--s-4); border-top: var(--rule-thick) solid var(--rule); }
+.cp-buildings { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--gutter); }
+.cp-building { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5); border: var(--rule-thick) solid var(--rule); background: var(--surface); scroll-margin-top: 120px; transition: box-shadow var(--dur-2) var(--ease), transform var(--dur-2) var(--ease); }
+.cp-building.is-selected { box-shadow: 6px 6px 0 var(--accent); transform: translate(-3px, -3px); }
+.cp-building__head { display: flex; flex-wrap: wrap; gap: var(--s-2); justify-content: space-between; align-items: center; }
+.cp-building__addr { font: 700 15px/1.2 var(--font-display); color: var(--accent-text); }
+.cp-building__rooms { display: flex; gap: 4px; }
+.cp-building__rooms .tag { height: 24px; font-family: var(--font-display); }
+.cp-building__title { font: 700 var(--fs-h3)/1.15 var(--font-display); letter-spacing: -0.015em; }
+.cp-building__units { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 15px; color: var(--fg-muted); }
+.cp-building .btn { justify-self: start; margin-top: var(--s-2); }
+
+/* ---------- New campus ---------- */
+.cp-new { position: relative; isolation: isolate; overflow: hidden; margin-top: var(--section-gap); padding-block: var(--s-9); background: var(--c-ink); color: #ECEAE4; }
+.cp-new::after { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; right: -6%; width: 30%; background: var(--c-red); transform: skewX(var(--slope)); }
+.cp-new__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-8); align-items: end; }
+.cp-new__title { font: 800 var(--fs-h1)/1 var(--font-display); letter-spacing: -0.035em; margin-top: var(--s-4); }
+.cp-new__text { margin-top: var(--s-5); max-width: 50ch; font-size: var(--fs-lead); line-height: 1.5; opacity: .9; }
+.cp-new__cta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-6); }
+.cp-new .btn--light { --btn-bg: #ECEAE4; --btn-fg: #1D1D1B; --btn-bd: #ECEAE4; }
+.cp-new .btn--light:hover { --btn-bg: transparent; --btn-fg: #ECEAE4; }
+.cp-new__ghost { --btn-fg: #ECEAE4; text-decoration-color: #ECEAE4; }
+.cp-new__ghost:hover { --btn-fg: #ECEAE4; }
+.cp-new__facts { display: grid; grid-template-columns: 1fr 1fr; margin: 0; background: #ECEAE4; color: #1D1D1B; border: var(--rule-thick) solid #ECEAE4; }
+.cp-new__facts div { padding: var(--s-4) var(--s-5); border-bottom: 1px solid #1D1D1B; }
+.cp-new__facts div:nth-child(odd) { border-right: 1px solid #1D1D1B; }
+.cp-new__facts div:nth-last-child(-n+2) { border-bottom: 0; }
+.cp-new__facts dt { font: 600 var(--fs-label)/1.2 var(--font-text); letter-spacing: var(--tracking-label); text-transform: uppercase; color: #5E5B55; }
+.cp-new__facts dd { margin: 6px 0 0; font: 800 clamp(30px, 3.4vw, 48px)/1 var(--font-display); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+
+.cp-more { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); padding-block: var(--section-gap); }
+.cp-more .campus-tile { min-height: 180px; }
+
+@media (max-width: 1099px) {
+  .cp-head__row, .cp-new__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-6); }
+  .cp-new::after { width: 18%; right: -12%; }
+}
+@media (max-width: 599px) {
+  .cp-room { padding: var(--s-4); }
+  .cp-map { padding: var(--s-2); }
+  .cp-more { grid-template-columns: minmax(0, 1fr); }
+  .cp-new__facts { grid-template-columns: minmax(0, 1fr); }
+  .cp-new__facts div:nth-child(odd) { border-right: 0; }
+  .cp-new__facts div:nth-last-child(2) { border-bottom: 1px solid #1D1D1B; }
+  .cp-new::after { display: none; }
+}

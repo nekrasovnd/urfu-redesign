@@ -1,0 +1,149 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/hub.css';
+import services from '@content/student-services.json';
+import { schedule, events, university, day, monthShort, dateRange } from '../../data/site';
+
+const total = services.groups.reduce((s, g) => s + g.items.length, 0);
+const studentEvents = events.filter(e => e.audience.includes('Студенты') && e.date >= '2026-10-28').slice(0, 4);
+const pairOf = (n: number) => schedule.pairs.find(p => p.n === n);
+const lessons = [...schedule.events].sort((a, b) => (a.date + a.pair).localeCompare(b.date + b.pair))
+  .map(l => ({ ...l, time: pairOf(l.pair) ? `${pairOf(l.pair)!.start}–${pairOf(l.pair)!.end}` : 'Онлайн' }));
+const apps = university.apps;
+const QUEST = 'https://quest.my1.urfu.ru/questionary/3306e4b0-6e43-11f1-bef0-1b09cff11077/form';
+---
+<Base title="Студенческие сервисы" section="study" description={`Все сервисы для студентов УрФУ на одной странице: личный кабинет, расписание, стипендии, справки, общежития, библиотека, практика — ${total} сервисов по задачам.`}>
+
+  <div class="container hub-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/study">Обучение</a></li><li aria-current="page">Студенческие сервисы</li></ol>
+    <div class="hub-head__row">
+      <div>
+        <h1 class="t-h1">Студенческие сервисы</h1>
+        <p class="t-lead">Всё, что нужно студенту каждый день, на одной странице: {total} сервисов вместо поиска по меню и поддоменам.</p>
+      </div>
+      <div class="hub-search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <label class="visually-hidden" for="hub-q">Найти сервис</label>
+        <input id="hub-q" type="search" placeholder="Найти сервис: справка, стипендия, Wi-Fi…" autocomplete="off" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Dashboard row ============ -->
+  <section class="container hub-dash" aria-label="Главное на сегодня">
+    <div class="hub-today" data-today>
+      <div class="hub-today__head">
+        <h2 class="t-h3">Ближайшие пары</h2>
+        <span class="t-caption">Группа {schedule.group.title}</span>
+      </div>
+      <div class="hub-today__list">
+        {lessons.map((l, i) => (
+          <div class="lesson" data-date={l.date} hidden={i > 2}>
+            <span class="lesson__time">{l.time}<small>{new Date(l.date + 'T00:00:00Z').getUTCDate()} {monthShort(l.date)}</small></span>
+            <span><span class="lesson__title">{l.title}</span><br /><span class="lesson__meta">{[l.type, l.room && `ауд. ${l.room}`].filter(Boolean).join(' · ')}</span></span>
+          </div>
+        ))}
+      </div>
+      <a class="btn btn--sm" href="/study/schedule">Всё расписание <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+
+    <a class="hub-lk" href="https://istudent.urfu.ru/">
+      <span class="t-label">Личный кабинет</span>
+      <span class="hub-lk__title">Оценки, траектория и личное расписание</span>
+      <span class="hub-lk__text">Здесь же — рейтинг внеучебной деятельности и заявки. Вход по учётной записи УрФУ.</span>
+      <span class="btn btn--primary" style="justify-self:start">Войти <span aria-hidden="true">↗</span></span>
+    </a>
+
+    <div class="hub-app">
+      <span class="t-label t-muted">Мобильное приложение</span>
+      <p class="hub-app__title">{apps.name}</p>
+      <p class="t-small t-muted">Расписание и уведомления в телефоне.</p>
+      <ul class="hub-app__stores">
+        <li><a class="btn btn--sm" href={apps.ios}>App Store</a></li>
+        <li><a class="btn btn--sm" href={apps.android}>Google Play</a></li>
+        <li><a class="btn btn--sm" href={apps.rustore}>RuStore</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="container">
+    <a class="notice hub-quest" href={QUEST}>
+      <span class="notice__mark" aria-hidden="true"></span>
+      <div><p class="notice__title">Анкетирование студентов: расскажите, что можно улучшить в университете</p><p class="notice__text">Опрос университета для студентов — откроется на сайте анкетирования УрФУ.</p></div>
+    </a>
+  </div>
+
+  <!-- ============ Services ============ -->
+  <div class="container hub-services" data-services>
+    {services.groups.map(g => (
+      <section class="hub-group" data-group aria-labelledby={`g-${g.id}`}>
+        <div class="section-head section-head--plain"><h2 class="section-head__title" id={`g-${g.id}`}>{g.title}</h2><span class="hub-group__n t-caption">{g.items.length} сервисов</span></div>
+        <ul class="hub-tiles">
+          {g.items.map(s => (
+            <li data-q={`${s.t} ${s.d}`.toLowerCase().replace(/ё/g, 'е')}>
+              <a class="hub-tile" href={s.h}>
+                <span class="hub-tile__title">{s.t}</span>
+                <span class="hub-tile__desc">{s.d}</span>
+                <span class="hub-tile__go" aria-hidden="true">{s.ext ? '↗' : '→'}</span>
+                {s.ext && <span class="visually-hidden"> (откроется сайт сервиса)</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+    <div class="match-empty hub-empty" data-hub-empty hidden>
+      <p class="t-h3">Такого сервиса не нашли</p>
+      <p class="t-body t-muted">Попробуйте другое слово или поищите по всему сайту — <button class="link hub-empty__search" type="button" data-search-open>открыть поиск</button>.</p>
+    </div>
+  </div>
+
+  <!-- ============ Events & help ============ -->
+  <section class="container hub-bottom" aria-label="События и помощь">
+    <div>
+      <div class="section-head section-head--plain"><h2 class="section-head__title">Ближайшие события для студентов</h2><a class="btn btn--ghost section-head__more" href="/events">Афиша</a></div>
+      <div>
+        {studentEvents.map(e => (
+          <a class="card-event" href="/events">
+            <span class="card-event__date"><span class="card-event__day">{day(e.date)}</span><span class="card-event__month">{monthShort(e.date)}</span></span>
+            <span><span class="card-event__title">{e.title}</span><span class="card-event__meta"><span>{dateRange(e.date, e.date_end)}</span><span>{e.type}</span><span class="status status--open">{e.status}</span></span></span>
+          </a>
+        ))}
+      </div>
+    </div>
+    <div class="hub-help">
+      <p class="t-label">Нужна помощь</p>
+      <p class="hub-help__title">Горячая линия для студентов</p>
+      <p>Вопросы по учёбе, общежитию и стипендии — ответят или подскажут, куда обратиться.</p>
+      <a class="btn btn--light" href="https://urfu.ru/ru/students/social/gorjachaja-linija-dlja-studentov/">Связаться ↗</a>
+      <p class="t-small hub-help__dim">Контакт-центр: {university.contacts.contact_center}<br />Техподдержка: {university.contacts.support.phone} · {university.contacts.support.email}</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Upcoming lessons: hide the ones already in the past (keep at least two).
+  const today = new Date().toISOString().slice(0, 10);
+  const rows = [...document.querySelectorAll<HTMLElement>('[data-today] .lesson')];
+  const future = rows.filter(r => r.dataset.date! >= today);
+  (future.length >= 2 ? future : rows).slice(0, 3).forEach(r => r.classList.add('is-shown'));
+  rows.forEach(r => (r.hidden = !r.classList.contains('is-shown')));
+
+  // Filter services.
+  const q = document.querySelector<HTMLInputElement>('#hub-q')!;
+  q.addEventListener('input', () => {
+    const words = q.value.toLowerCase().replace(/ё/g, 'е').trim().split(/\s+/).filter(Boolean);
+    let shown = 0;
+    document.querySelectorAll<HTMLElement>('[data-group]').forEach(g => {
+      let n = 0;
+      g.querySelectorAll<HTMLElement>('[data-q]').forEach(li => {
+        const ok = words.every(w => li.dataset.q!.includes(w));
+        li.hidden = !ok;
+        if (ok) n++;
+      });
+      g.hidden = n === 0;
+      shown += n;
+    });
+    document.querySelector<HTMLElement>('[data-hub-empty]')!.hidden = shown > 0;
+  });
+</script>

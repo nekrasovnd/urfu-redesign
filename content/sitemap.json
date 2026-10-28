@@ -1,0 +1,133 @@
+{
+  "_about": "Новая информационная архитектура сайта УрФУ. Единый источник для шапки, мега-меню, мобильного меню, футера и поиска. proto=true — страница входит в прототип конкурса.",
+  "utility": [
+    { "id": "search", "label": "Поиск", "hint": "⌘K или /", "href": "/search" },
+    { "id": "lk", "label": "Личный кабинет", "href": "https://istudent.urfu.ru/", "external": true },
+    { "id": "lang", "label": "EN", "href": "/en/" },
+    { "id": "a11y", "label": "Настройки отображения", "hint": "размер текста, контраст, анимация — вместо отдельной версии для слабовидящих" }
+  ],
+  "main": [
+    {
+      "id": "admission", "label": "Поступление", "href": "/admission", "proto": true,
+      "lead": "Подберите программу по баллам, узнайте стоимость и сроки",
+      "children": [
+        { "label": "Подобрать программу по баллам ЕГЭ", "href": "/admission/match", "proto": true, "featured": true },
+        { "label": "Все программы", "href": "/programs", "proto": true, "featured": true },
+        { "label": "Как поступить: бакалавриат и специалитет", "href": "/admission/bachelor" },
+        { "label": "Магистратура", "href": "/admission/master" },
+        { "label": "Аспирантура", "href": "/admission/phd" },
+        { "label": "Колледж (СПО)", "href": "/admission/college" },
+        { "label": "Перевод и восстановление", "href": "/admission/transfer" },
+        { "label": "Стоимость, скидки и кредит", "href": "/admission/cost" },
+        { "label": "Льготы, квоты и целевое обучение", "href": "/admission/quotas" },
+        { "label": "Олимпиады и подготовка", "href": "/admission/prep" },
+        { "label": "Списки поступающих", "href": "/admission/lists" },
+        { "label": "Приёмная комиссия и вопросы", "href": "/admission/contacts" },
+        { "label": "International applicants", "href": "/en/admission" }
+      ]
+    },
+    {
+      "id": "study", "label": "Обучение", "href": "/study",
+      "lead": "Институты, расписание и всё, что нужно студенту каждый день",
+      "children": [
+        { "label": "Студенческие сервисы", "href": "/study/hub", "proto": true, "featured": true },
+        { "label": "Расписание", "href": "/study/schedule", "proto": true, "featured": true },
+        { "label": "Институты", "href": "/institutes", "proto": true },
+        { "label": "Стипендии и материальная поддержка", "href": "/study/scholarships" },
+        { "label": "Справки и документы", "href": "/study/documents" },
+        { "label": "Практика и карьера", "href": "/study/career" },
+        { "label": "Академическая мобильность", "href": "/study/mobility" },
+        { "label": "Библиотека", "href": "https://lib.urfu.ru/", "external": true },
+        { "label": "Военный учебный центр", "href": "/study/military-center" },
+        { "label": "Дополнительное образование и онлайн-курсы", "href": "/study/continuing" }
+      ]
+    },
+    {
+      "id": "research", "label": "Наука", "href": "/research",
+      "lead": "164 лаборатории, проекты мирового уровня и аспирантура",
+      "children": [
+        { "label": "Направления исследований", "href": "/research/areas" },
+        { "label": "Лаборатории и центры", "href": "/research/labs", "proto": true, "featured": true },
+        { "label": "Аспирантура и защиты", "href": "/research/phd" },
+        { "label": "Гранты и конкурсы", "href": "/research/grants" },
+        { "label": "Публикации и журналы", "href": "/research/publications" },
+        { "label": "Молодёжная наука", "href": "/research/youth" },
+        { "label": "Для индустрии: заказать исследование", "href": "/research/industry" }
+      ]
+    },
+    {
+      "id": "life", "label": "Жизнь в УрФУ", "href": "/life",
+      "lead": "Кампус, общежития, спорт, клубы и события",
+      "children": [
+        { "label": "Кампус и карта", "href": "/life/campus", "proto": true, "featured": true },
+        { "label": "Афиша", "href": "/events", "proto": true, "featured": true },
+        { "label": "Общежития", "href": "/life/housing" },
+        { "label": "Спорт", "href": "/life/sport" },
+        { "label": "Творчество и клубы", "href": "/life/clubs" },
+        { "label": "Волонтёрство и студсовет", "href": "/life/community" },
+        { "label": "Здоровье и питание", "href": "/life/health" },
+        { "label": "Поддержка и инклюзия", "href": "/life/support" }
+      ]
+    },
+    {
+      "id": "about", "label": "Об университете", "href": "/about", "proto": true,
+      "lead": "106 лет истории, 50 000 студентов и новый кампус",
+      "children": [
+        { "label": "УрФУ сегодня: цифры и рейтинги", "href": "/about", "proto": true, "featured": true },
+        { "label": "Новости", "href": "/news", "proto": true, "featured": true },
+        { "label": "История", "href": "/about/history" },
+        { "label": "Руководство и структура", "href": "/about/leadership" },
+        { "label": "Люди: преподаватели и учёные", "href": "/people", "proto": true },
+        { "label": "Партнёрам и работодателям", "href": "/about/partners" },
+        { "label": "Выпускникам и эндаумент", "href": "/about/alumni" },
+        { "label": "Пресс-центр", "href": "/about/press" },
+        { "label": "Устойчивое развитие", "href": "/about/sustainability" },
+        { "label": "Филиалы", "href": "/about/branches" },
+        { "label": "Работа в УрФУ", "href": "/about/careers" },
+        { "label": "Контакты", "href": "/contacts" }
+      ]
+    }
+  ],
+  "roles": [
+    { "id": "applicant", "label": "Абитуриент", "landing": "/admission", "quick": ["/admission/match", "/programs", "/admission/cost", "/life/housing", "/admission/contacts"] },
+    { "id": "student", "label": "Студент", "landing": "/study/hub", "quick": ["/study/schedule", "https://istudent.urfu.ru/", "/study/scholarships", "/study/documents", "/events"] },
+    { "id": "staff", "label": "Сотрудник", "landing": "/staff", "quick": ["/study/schedule?mode=teacher", "/staff/documents", "/research/grants", "/staff/it"] },
+    { "id": "school", "label": "Школьник", "landing": "/admission/prep", "quick": ["/admission/prep", "/events?audience=school", "/admission/match"] },
+    { "id": "partner", "label": "Партнёр", "landing": "/about/partners", "quick": ["/research/industry", "/study/career", "/about/partners"] },
+    { "id": "alumni", "label": "Выпускник", "landing": "/about/alumni", "quick": ["/about/alumni", "/admission/master", "/study/continuing"] },
+    { "id": "press", "label": "СМИ", "landing": "/about/press", "quick": ["/about/press", "/news", "/about/brand"] }
+  ],
+  "staff_hub": {
+    "_note": "Служебное уходит из публичной навигации в хаб сотрудника (вход через роль, футер и ЛК).",
+    "href": "/staff",
+    "children": ["Документы и бланки", "Расписание преподавателя", "IT и Wi-Fi", "Кадры и вакансии", "Охрана труда", "Повышение квалификации", "Учёный совет", "Профсоюз", "Услуги издательского центра", "Автостоянки"]
+  },
+  "footer": {
+    "columns": [
+      { "title": "Для кого", "links": ["Абитуриентам", "Студентам", "Сотрудникам", "Школьникам", "Партнёрам", "Выпускникам", "СМИ"] },
+      { "title": "Быстро", "links": ["Расписание", "Личный кабинет", "Приёмная комиссия", "Карта кампуса", "Контакты"] },
+      { "title": "Университет", "links": ["Новости", "Афиша", "Работа в УрФУ", "Поддержать университет", "Бренд и символика"] },
+      { "title": "Официально", "links": ["Сведения об образовательной организации", "Противодействие коррупции", "Обращения граждан", "Закупки", "Политика конфиденциальности"] }
+    ],
+    "contact": { "phone": "8-800-100-50-44", "email": "contact@urfu.ru", "address": "Екатеринбург, ул. Мира, 19" }
+  },
+  "templates": {
+    "_note": "13 страниц прототипа = главная + 12 типов страниц",
+    "home": "/",
+    "hub": "/admission",
+    "tool": "/admission/match",
+    "catalog": "/programs",
+    "detail": "/programs/software-engineering",
+    "institute": "/institutes/irit-rtf",
+    "news_list": "/news",
+    "article": "/news/60431",
+    "calendar": "/events",
+    "dashboard": "/study/hub",
+    "data": "/study/schedule",
+    "lab": "/research/labs/carbon-polygon",
+    "person": "/people/example",
+    "map": "/life/campus",
+    "about": "/about",
+    "extra": ["/search", "/404", "/en/", "/about/brand"]
+  }
+}

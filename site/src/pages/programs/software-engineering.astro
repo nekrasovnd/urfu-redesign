@@ -1,0 +1,247 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/program.css';
+import sample from '@content/program-sample.json';
+import { programs, institutes, university, figures } from '../../data/site';
+
+// Programme page template, filled with «Программная инженерия» (09.03.04, ИРИТ-РтФ).
+// Sources: programms.edu.urfu.ru/ru/9797/ (description, partners, trajectory) and calcege (thresholds, price).
+const inst = institutes.find(i => i.abbr === 'ИРИТ-РтФ')!;
+const ex = sample.exams;
+const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
+const sameDirection = programs.filter(p => p.code === sample.code && p.name !== sample.name && (p.level === 'Бакалавриат'));
+const related = programs
+  .filter(p => p.level === 'Бакалавриат' && p.institute === 'ИРИТ-РтФ' && p.code?.startsWith('09.03') && p.name !== sample.name)
+  .slice(0, 4);
+const c = university.contacts;
+
+const steps = [
+  { t: 'Сдайте ЕГЭ', d: 'Русский язык и математику, плюс информатику или физику. Минимум — 40, 40 и 46 или 41 балл.' },
+  { t: 'Подайте документы', d: 'Через Госуслуги или лично в приёмной комиссии на Мира, 19. Можно выбрать до 5 направлений.' },
+  { t: 'Следите за списками', d: 'Конкурсные списки обновляются каждый день на странице «Списки поступающих».' },
+  { t: 'Подайте согласие', d: 'До окончания приёма на бюджет подайте согласие на зачисление на выбранную программу.' },
+];
+
+const faq = [
+  { q: 'Сколько стоит обучение на платной основе?', a: `До ${rub(sample.max_cost_rub_per_year)} в год. Есть скидки за высокие баллы ЕГЭ и образовательный кредит с господдержкой под 3 % годовых.` },
+  { q: 'Можно ли поменять специализацию после поступления?', a: 'Да. Со второго курса вы выбираете курсы по выбору и собираете индивидуальную траекторию, а на старших курсах её можно скорректировать.' },
+  { q: 'Есть ли общежитие?', a: `У УрФУ ${figures.dormitories} общежитий на ${figures.dorm_places} мест для иногородних студентов.` },
+  { q: 'Где проходят занятия?', a: `В корпусе ИРИТ-РтФ: ${inst.address}, Екатеринбург.` },
+];
+---
+<Base title={`${sample.name} — бакалавриат`} section="admission"
+  description={`Программа бакалавриата «${sample.name}» (${sample.code}) в ИРИТ-РтФ УрФУ: экзамены и минимальные баллы ЕГЭ, стоимость до ${rub(sample.max_cost_rub_per_year)} в год, партнёры и карьера.`}>
+
+  <!-- ============ HERO ============ -->
+  <section class="container pg-hero">
+    <ol class="breadcrumbs">
+      <li><a href="/">Главная</a></li><li><a href="/admission">Поступление</a></li><li><a href="/programs">Программы</a></li><li aria-current="page">{sample.name}</li>
+    </ol>
+    <div class="pg-hero__grid">
+      <div class="pg-hero__main">
+        <p class="pg-code">{sample.code} · {sample.level} · {sample.institute}</p>
+        <h1 class="t-display pg-title">{sample.name}</h1>
+        <p class="t-lead">{sample.about_short}</p>
+        <div class="pg-cta">
+          <a class="btn btn--primary btn--lg" href="/admission/bachelor">Подать документы <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--lg" href="#exams">Проверить свои баллы</a>
+        </div>
+      </div>
+      <dl class="pg-facts">
+        <div><dt>Уровень</dt><dd>{sample.level}</dd></div>
+        <div><dt>Форма и срок</dt><dd>{sample.form}, {sample.duration_years} года</dd></div>
+        <div><dt>Стоимость</dt><dd>до {rub(sample.max_cost_rub_per_year)} <small>в год</small></dd></div>
+        <div><dt>Язык</dt><dd>{sample.language}</dd></div>
+        <div><dt>Институт</dt><dd>ИРИТ-РтФ <small>радиоэлектроники и IT</small></dd></div>
+        <div><dt>Набор</dt><dd>с 2019 года</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ LOCAL NAV ============ -->
+  <nav class="pg-nav" aria-label="Разделы страницы">
+    <div class="container"><div class="tabs pg-tabs">
+      <a href="#about" aria-current="true">О программе</a>
+      <a href="#exams">Экзамены и баллы</a>
+      <a href="#study">Как устроено обучение</a>
+      <a href="#career">Карьера и партнёры</a>
+      <a href="#faq">Вопросы</a>
+      <a href="#contacts">Контакты</a>
+    </div></div>
+  </nav>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="container pg-section" id="about">
+    <div class="pg-two">
+      <h2 class="t-h2">О программе</h2>
+      <div class="prose">
+        <p class="t-lead" style="color:var(--fg)">Программная инженерия рассматривает разработку как инженерный процесс: от анализа потребностей пользователя до внедрения и сопровождения продукта.</p>
+        <p>Выпускник контролирует все этапы производства IT-продукта — от формирования требований вместе с заказчиком до ввода в эксплуатацию. Поэтому в работе сочетаются проектно-аналитические, программистские, управленческие и консультационные задачи.</p>
+        <p>Программу проектируют вместе с индустриальными партнёрами: банками, разработчиками корпоративного ПО и компаниями в сфере информационной безопасности.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXAMS ============ -->
+  <section class="pg-band" id="exams" aria-labelledby="exams-title">
+    <div class="container pg-exams">
+      <div>
+        <h2 class="t-h2" id="exams-title">Экзамены и минимальные баллы</h2>
+        <p class="t-body t-muted" style="margin-top: var(--s-3)">Введите свои баллы — сразу увидите, можно ли подать документы. Это минимальные баллы для подачи, проходной балл по конкурсу обычно выше.</p>
+      </div>
+      <form class="pg-check" data-check novalidate onsubmit="return false">
+        <p class="t-label t-muted">Обязательные</p>
+        {ex.required.map((e, i) => (
+          <label class="pg-check__row" for={`pc-${i}`}>
+            <span class="pg-check__subj">{e.subject}</span>
+            <span class="pg-check__min">минимум {e.min}</span>
+            <input class="input input--score" id={`pc-${i}`} data-subj={e.subject} data-min={e.min} type="number" inputmode="numeric" min="0" max="100" placeholder="—" />
+          </label>
+        ))}
+        <p class="t-label t-muted" style="margin-top: var(--s-3)">Один предмет на выбор</p>
+        {ex.choose_one.map((e, i) => (
+          <label class="pg-check__row" for={`po-${i}`}>
+            <span class="pg-check__subj">{e.subject}</span>
+            <span class="pg-check__min">минимум {e.min}</span>
+            <input class="input input--score" id={`po-${i}`} data-subj={e.subject} data-min={e.min} data-opt type="number" inputmode="numeric" min="0" max="100" placeholder="—" />
+          </label>
+        ))}
+        <p class="pg-check__result" data-result aria-live="polite">Введите баллы по русскому, математике и одному предмету на выбор.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ STUDY ============ -->
+  <section class="container pg-section" id="study">
+    <div class="section-head section-head--plain"><h2 class="section-head__title">Как устроено обучение</h2></div>
+    <div class="pg-study">
+      <div class="pg-study__lead">
+        <p class="t-label t-accent">Индивидуальная траектория</p>
+        <p class="t-h3" style="margin-top: var(--s-3)">Со второго курса вы сами собираете часть учебного плана</p>
+        <p class="t-body t-muted" style="margin-top: var(--s-3)">{sample.iot}</p>
+      </div>
+      <ol class="pg-years">
+        <li><b>1 курс</b><span>Базовые дисциплины: математика, программирование, основы инженерии ПО. Общая подготовка для всех студентов направления.</span></li>
+        <li><b>2 курс</b><span>Первые курсы по выбору — начинает складываться индивидуальная траектория. Проектный практикум с реальными заказчиками.</span></li>
+        <li><b>3 курс</b><span>Специализация по выбранному треку, проекты с партнёрами программы, учебная и производственная практика.</span></li>
+        <li><b>4 курс</b><span>Преддипломная практика у работодателя и выпускная квалификационная работа. Траекторию ещё можно скорректировать.</span></li>
+      </ol>
+    </div>
+    <p class="t-caption" style="margin-top: var(--s-4)">Состав дисциплин по курсам — пример структуры; точный учебный план публикуется в разделе «Документы» программы.</p>
+  </section>
+
+  <!-- ============ CAREER ============ -->
+  <section class="container pg-section" id="career">
+    <div class="section-head section-head--plain"><h2 class="section-head__title">Карьера и партнёры</h2></div>
+    <div class="pg-career">
+      <div>
+        <p class="t-label t-muted">Кем работают выпускники</p>
+        <ul class="pg-roles">{sample.career.map(r => <li>{r}</li>)}</ul>
+      </div>
+      <div>
+        <p class="t-label t-muted">Партнёры программы</p>
+        <ul class="pg-partners">{sample.partners.map(p => <li>{p}</li>)}</ul>
+        <p class="t-label t-muted" style="margin-top: var(--s-5)">Что делают партнёры</p>
+        <ul class="pg-formats">{sample.partner_formats.map(f => <li>{f}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO APPLY ============ -->
+  <section class="container pg-section" aria-labelledby="apply-title">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="apply-title">Как поступить</h2><a class="btn btn--ghost section-head__more" href="/admission/bachelor">Правила приёма</a></div>
+    <ol class="pg-steps">
+      {steps.map((s, i) => <li><span class="pg-steps__n">{String(i + 1).padStart(2, '0')}</span><b>{s.t}</b><span>{s.d}</span></li>)}
+    </ol>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="container pg-section" id="faq">
+    <div class="pg-two">
+      <h2 class="t-h2">Вопросы</h2>
+      <div class="accordion">
+        {faq.map((f, i) => <details open={i === 0}><summary>{f.q}</summary><div class="accordion__body">{f.a}</div></details>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACTS ============ -->
+  <section class="container pg-section" id="contacts">
+    <div class="section-head section-head--plain"><h2 class="section-head__title">Контакты</h2></div>
+    <div class="pg-contacts">
+      <div class="card">
+        <p class="t-label t-muted">Руководитель программы и тьюторы</p>
+        <p class="t-h4">Учебный офис программы</p>
+        <p class="t-small">{sample.contacts_location}</p>
+        <p class="t-small t-muted">Тьюторы помогают выбрать курсы и выстроить траекторию.</p>
+      </div>
+      <div class="card">
+        <p class="t-label t-muted">Институт</p>
+        <p class="t-h4">ИРИТ-РтФ</p>
+        <p class="t-small">{inst.address}, Екатеринбург</p>
+        <p class="t-small"><a class="link" href={`tel:${inst.phone.replace(/[^\d+]/g, '')}`}>{inst.phone}</a> · {inst.email}</p>
+      </div>
+      <div class="card">
+        <p class="t-label t-muted">Приёмная комиссия</p>
+        <p class="t-h4"><a class="link" href="tel:+73433754474">{c.admissions.phone}</a></p>
+        <p class="t-small">{c.admissions.address}, Екатеринбург</p>
+        <p class="t-small t-muted">{c.hours}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED ============ -->
+  <section class="container pg-section pg-last" aria-labelledby="rel-title">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="rel-title">Похожие программы</h2><a class="btn btn--ghost section-head__more" href="/programs?q=09.03">Все программы 09.03</a></div>
+    <div class="pg-related">
+      {[...sameDirection, ...related].filter((p, i, a) => a.findIndex(x => x.name === p.name && x.code === p.code) === i).slice(0, 4).map(p => (
+        <a class="card card-program" href={p.url ?? '/programs'}>
+          <span class="card-program__code">{p.code} · {p.institute}</span>
+          <span class="card-program__title">{p.name}</span>
+          <span class="card-program__meta"><span>{p.direction}</span></span>
+          <span class="card-program__foot"><span class="card-program__price">{p.cost ? `до ${rub(p.cost)}/год` : 'Стоимость уточняется'}</span><span aria-hidden="true">↗</span></span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Local nav: highlight the section in view.
+  const tabs = [...document.querySelectorAll<HTMLAnchorElement>('.pg-tabs a')];
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) tabs.forEach(t => t.hash === '#' + e.target.id ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current'));
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  tabs.forEach(t => { const s = document.querySelector(t.hash); if (s) io.observe(s); });
+
+  // Score check against this programme's thresholds; shares saved scores with /admission/match.
+  const form = document.querySelector<HTMLFormElement>('[data-check]')!;
+  const inputs = [...form.querySelectorAll<HTMLInputElement>('input')];
+  const result = form.querySelector<HTMLElement>('[data-result]')!;
+  try {
+    const saved = JSON.parse(localStorage.getItem('urfu-scores') || 'null');
+    if (saved) inputs.forEach(i => (i.value = saved[i.dataset.subj!] ?? ''));
+  } catch {}
+  function check() {
+    const val = (i: HTMLInputElement) => (i.value === '' ? null : Number(i.value));
+    const req = inputs.filter(i => !i.hasAttribute('data-opt'));
+    const opt = inputs.filter(i => i.hasAttribute('data-opt'));
+    inputs.forEach(i => { const v = val(i); i.classList.toggle('is-pass', v !== null && v >= +i.dataset.min!); i.classList.toggle('is-fail', v !== null && v < +i.dataset.min!); });
+    if (req.some(i => val(i) === null) || opt.every(i => val(i) === null)) {
+      result.className = 'pg-check__result';
+      result.textContent = 'Введите баллы по русскому, математике и одному предмету на выбор.';
+      return;
+    }
+    const short = req.filter(i => val(i)! < +i.dataset.min!).map(i => `${i.dataset.subj} — не хватает ${+i.dataset.min! - val(i)!}`);
+    const bestOpt = opt.filter(i => val(i) !== null).map(i => val(i)! - +i.dataset.min!).sort((a, b) => b - a)[0];
+    if (bestOpt < 0) short.push(`предмет на выбор — не хватает ${-bestOpt}`);
+    if (short.length) { result.className = 'pg-check__result is-fail'; result.textContent = `Пока не проходите по минимальным баллам: ${short.join('; ')}.`; }
+    else {
+      const margin = req.reduce((s, i) => s + val(i)! - +i.dataset.min!, 0) + bestOpt;
+      result.className = 'pg-check__result is-pass';
+      result.textContent = `Можно подавать документы. Запас над минимумом — ${margin} баллов в сумме.`;
+    }
+  }
+  form.addEventListener('input', check);
+  check();
+</script>

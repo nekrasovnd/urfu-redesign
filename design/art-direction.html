@@ -1,0 +1,533 @@
+<title>Арт-дирекшн УрФУ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700;800&family=Geologica:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Montserrat:wght@600;700;800&family=Onest:wght@400;500;600&display=swap">
+<style>
+/* Layout: страница-сравнение. Сверху три полосы-направления (описание слева, живой макет справа на одинаковом контенте), ниже — эскизы знака и итоговая таблица. */
+:root{
+  --bg:#F5F5F2; --fg:#1B1C1F; --muted:#5F6168; --line:#DADAD5; --card:#FFFFFF; --chip:#EBEBE6; --focus:#174496;
+  --f-ui:'Golos Text', 'Segoe UI', system-ui, sans-serif;
+  --f-mono:'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --urfu-red:#E50046; --urfu-blue:#174496; --urfu-ink:#1D1D1B;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#131417;--fg:#ECECE9;--muted:#A3A5AB;--line:#2D2F34;--card:#1B1D21;--chip:#24262B;--focus:#9DB8FF;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131417;--fg:#ECECE9;--muted:#A3A5AB;--line:#2D2F34;--card:#1B1D21;--chip:#24262B;--focus:#9DB8FF;color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:16px;line-height:1.5}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+.eyebrow{font:500 12px/1.2 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- Intro ---------- */
+.intro{padding-block:56px 40px;border-bottom:1px solid var(--line)}
+.intro .wrap{display:grid;gap:28px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:end}
+.intro h1{font:700 clamp(34px,5vw,58px)/1.02 var(--f-ui);letter-spacing:-.025em;margin-top:14px}
+.intro p{color:var(--muted);max-width:60ch}
+.legend{display:grid;gap:10px}
+.legend div{display:flex;gap:12px;align-items:baseline;border-top:1px solid var(--line);padding-top:10px}
+.legend b{font:600 13px var(--f-mono);min-width:2.2em}
+@media (max-width:860px){.intro .wrap{grid-template-columns:1fr}}
+
+/* ---------- Direction band ---------- */
+.dir{padding-block:56px;border-bottom:1px solid var(--line)}
+.dir .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:40px;align-items:start}
+@media (max-width:960px){.dir .wrap{grid-template-columns:1fr}}
+.dir-info{display:grid;gap:22px;min-width:0}
+.dir-letter{display:flex;gap:14px;align-items:baseline}
+.dir-letter span{font:600 14px var(--f-mono);color:var(--muted)}
+.dir h2{font-size:clamp(28px,3.4vw,40px);line-height:1.05;letter-spacing:-.02em}
+.dir .thesis{font-size:17px;max-width:46ch}
+.dir .roots{color:var(--muted);font-size:15px;max-width:52ch}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.sw{display:grid;gap:6px;font-size:13px}
+.sw i{display:block;height:44px;border:1px solid var(--line)}
+.sw code{font:12px var(--f-mono);color:var(--muted)}
+.type-spec{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:16px}
+.type-spec .big{font-size:40px;line-height:1}
+.type-spec small{font:12px var(--f-mono);color:var(--muted)}
+.pros{display:grid;grid-template-columns:1fr 1fr;gap:14px;font-size:14px}
+.pros h4{margin:0 0 6px;font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.pros ul{margin:0;padding-left:18px;display:grid;gap:4px}
+@media (max-width:520px){.pros{grid-template-columns:1fr}}
+
+/* ---------- Mock (shared skeleton) ---------- */
+.mock{container-type:inline-size;border:1px solid var(--line);overflow:hidden;min-width:0}
+.m-head{display:flex;align-items:center;gap:18px;padding:14px 20px}
+.m-logo{display:flex;align-items:center;gap:8px;font-weight:700;white-space:nowrap}
+.m-logo svg{width:16px;height:20px}
+.m-nav{display:flex;gap:16px;font-size:13px;flex:1;white-space:nowrap}
+.m-search{margin-left:auto;font-size:12px;white-space:nowrap}
+.m-burger{display:none;margin-left:auto;font-size:13px}
+.m-hero{position:relative;overflow:hidden;padding:28px 20px 26px}
+.m-hero > *{position:relative;z-index:1}
+.m-role{font-size:13px;margin-bottom:12px}
+.m-hero h3{max-width:15ch}
+.m-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:22px;max-width:520px}
+.m-actions a{text-decoration:none;font-size:14px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px}
+.m-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.m-stats div{padding:16px 20px;display:grid;gap:2px}
+.m-stats b{font-variant-numeric:tabular-nums}
+.m-stats span{font-size:12px}
+.m-card{margin:18px 20px 22px;display:grid;gap:10px;padding:16px 18px}
+.m-card .row{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
+.m-card h4{margin:0;font-size:19px;line-height:1.15}
+.m-card .exams{font-size:13px}
+.m-card .foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.m-card .btn{text-decoration:none;font-size:13px;padding:9px 14px}
+@container (max-width:600px){
+  .m-nav,.m-search{display:none}
+  .m-burger{display:inline}
+  .m-actions{grid-template-columns:1fr}
+  .m-stats div{padding:12px 14px}
+}
+
+/* ---------- A · Конструктив ---------- */
+.dA{--p:#E8E7E2;--ink:#1D1D1B;--red:#E50046;--blue:#174496;--mute:#5E5B55;
+  --fd:'Unbounded','Arial Black',sans-serif;--fb:'Golos Text','Segoe UI',sans-serif;
+  background:var(--p);color:var(--ink);font-family:var(--fb)}
+.dA .m-head{border-bottom:3px solid var(--ink)}
+.dA .m-logo{font-family:var(--fd);font-size:14px;color:var(--ink)}
+.dA .m-logo svg{color:var(--red)}
+.dA .m-nav{font-weight:600}
+.dA .m-search{border:2px solid var(--ink);padding:4px 8px;font-weight:600}
+.dA .m-hero::after{content:"";position:absolute;z-index:0;top:-30%;right:-6%;width:30%;height:170%;background:var(--red);transform:skewX(-28deg)}
+.dA .m-hero::before{content:"";position:absolute;z-index:0;top:0;right:30%;width:3px;height:100%;background:var(--ink);transform:skewX(-28deg)}
+.dA .m-role{font-weight:600}
+.dA .m-role u{text-decoration-thickness:3px;text-underline-offset:4px;text-decoration-color:var(--red)}
+.dA h3{font-family:var(--fd);font-weight:700;font-size:clamp(24px,5.2cqi,42px);line-height:1.04;letter-spacing:-.025em;max-width:14ch}
+.dA .m-actions{gap:0;border-top:3px solid var(--ink)}
+.dA .m-actions a{border-bottom:1px solid var(--ink);font-weight:600;background:var(--p)}
+.dA .m-actions a:first-child{background:var(--ink);color:var(--p)}
+.dA .m-actions a:nth-child(odd){border-right:1px solid var(--ink)}
+.dA .m-stats{border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+.dA .m-stats div+div{border-left:3px solid var(--ink)}
+.dA .m-stats b{font-family:var(--fd);font-weight:800;font-size:clamp(22px,4.2cqi,34px);letter-spacing:-.03em}
+.dA .m-stats div:first-child b{color:var(--red)}
+.dA .m-stats span{color:var(--mute)}
+.dA .m-card{border:3px solid var(--ink);background:#F4F3EF}
+.dA .m-card .code{font-family:var(--fd);font-weight:700;font-size:13px;color:var(--red)}
+.dA .m-card h4{font-family:var(--fd);font-weight:700;letter-spacing:-.02em}
+.dA .m-card .row{color:var(--mute)}
+.dA .m-card .btn{background:var(--red);color:#fff;font-weight:700}
+.dA .m-card .price{font-family:var(--fd);font-weight:700}
+
+/* ---------- B · Чертёж ---------- */
+.dB{--p:#F2F4F8;--ink:#0F1E3A;--blue:#174496;--line:#C7D1E1;--red:#E50046;--mute:#53617A;
+  --fd:'Geologica','Segoe UI',sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace;
+  color:var(--ink);font-family:var(--fd);
+  background-color:var(--p);
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:24px 24px;background-position:-1px -1px}
+.dB .m-head{background:var(--p);border-bottom:1px solid var(--blue)}
+.dB .m-logo{color:var(--blue);font-weight:700}
+.dB .m-nav{font-weight:500}
+.dB .m-search{font-family:var(--fm);font-size:11px;border:1px solid var(--blue);color:var(--blue);padding:4px 8px}
+.dB .m-hero{background:linear-gradient(90deg,var(--p) 62%,transparent)}
+.dB .m-coords{font:500 11px var(--fm);letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;display:flex;flex-wrap:wrap;gap:6px 16px}
+.dB .m-role{font-family:var(--fm);font-size:12px;color:var(--mute)}
+.dB .m-role u{color:var(--blue);text-decoration-style:dotted;text-underline-offset:4px}
+.dB h3{font-weight:600;font-size:clamp(24px,5cqi,40px);line-height:1.08;letter-spacing:-.015em;max-width:16ch}
+.dB h3 em{font-style:normal;color:var(--blue)}
+.dB .m-actions a{background:#fff;border:1px solid var(--line);font-weight:500;align-items:baseline}
+.dB .m-actions a small{font:11px var(--fm);color:var(--mute)}
+.dB .m-actions a:first-child{border-color:var(--blue);background:var(--blue);color:#fff}
+.dB .m-actions a:first-child small{color:#C9D7F3}
+.dB .m-stats{background:var(--p);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dB .m-stats div{position:relative}
+.dB .m-stats div::after{content:"";position:absolute;left:20px;right:20px;bottom:8px;height:6px;border-left:1px solid var(--blue);border-right:1px solid var(--blue);background:linear-gradient(var(--blue),var(--blue)) center/100% 1px no-repeat}
+.dB .m-stats b{font-weight:600;font-size:clamp(22px,4cqi,32px);color:var(--blue);padding-bottom:6px}
+.dB .m-stats span{font-family:var(--fm);font-size:11px;color:var(--mute)}
+.dB .m-card{background:#fff;border:1px solid var(--line);position:relative}
+.dB .m-card::before,.dB .m-card::after{content:"";position:absolute;width:12px;height:12px;border:1px solid var(--blue)}
+.dB .m-card::before{top:-5px;left:-5px;border-right:0;border-bottom:0}
+.dB .m-card::after{bottom:-5px;right:-5px;border-left:0;border-top:0}
+.dB .m-card .code{font:500 12px var(--fm);color:var(--blue)}
+.dB .m-card h4{font-weight:600}
+.dB .m-card .row{font-family:var(--fm);font-size:11.5px;color:var(--mute)}
+.dB .m-card .exams{font-family:var(--fm);font-size:12px}
+.dB .m-card .btn{border:1px solid var(--blue);color:var(--blue);font-weight:500}
+.dB .m-card .price{font:500 13px var(--fm)}
+.dB .m-card .price b{color:var(--ink);font-size:15px}
+
+/* ---------- C · Путь и Солнце ---------- */
+.dC{--p:#FFFFFF;--ink:#1D1D1B;--blue:#174496;--soft:#EEF2FA;--mute:#5C6170;
+  --sun:radial-gradient(circle at 38% 40%,#FFE45C 0%,#FFB238 22%,#F2652E 44%,#E5007E 68%,#C8004A 86%);
+  --fd:'Montserrat','Segoe UI',sans-serif;--fb:'Onest','Segoe UI',sans-serif;
+  background:var(--p);color:var(--ink);font-family:var(--fb)}
+.dC .m-logo{font-family:var(--fd);font-weight:800;color:var(--blue)}
+.dC .m-logo svg{color:var(--urfu-red)}
+.dC .m-nav{font-weight:500}
+.dC .m-search{background:var(--soft);border-radius:999px;padding:5px 12px;color:var(--mute)}
+.dC .m-hero{background:var(--blue);color:#fff;margin:0 12px;border-radius:20px;padding:30px 24px 28px}
+.dC .m-sun{position:absolute;z-index:0;width:min(58cqi,340px);aspect-ratio:1;right:-9%;top:-30%;border-radius:50%;background:var(--sun)}
+.dC .m-path{position:absolute;z-index:0;inset:0;width:100%;height:100%}
+.dC .m-role{font-weight:500;color:#D6E0F5}
+.dC .m-role u{color:#fff;text-underline-offset:4px}
+.dC h3{font-family:var(--fd);font-weight:800;font-size:clamp(24px,5cqi,40px);line-height:1.08;letter-spacing:-.02em;max-width:15ch}
+.dC .m-actions a{background:#fff;color:var(--ink);border-radius:12px;font-weight:500}
+.dC .m-actions a:first-child{background:var(--ink);color:#fff}
+.dC .m-stats div{padding-top:20px}
+.dC .m-stats b{font-family:var(--fd);font-weight:800;font-size:clamp(22px,4.2cqi,34px);color:var(--blue);letter-spacing:-.02em}
+.dC .m-stats span{color:var(--mute)}
+.dC .m-card{background:var(--soft);border-radius:16px;position:relative;overflow:hidden}
+.dC .m-card::after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-30px;top:-30px;background:var(--sun);opacity:.9}
+.dC .m-card .code{font-family:var(--fd);font-weight:700;font-size:12px;color:var(--blue)}
+.dC .m-card h4{font-family:var(--fd);font-weight:800;letter-spacing:-.01em;max-width:80%}
+.dC .m-card .row{color:var(--mute)}
+.dC .m-card .btn{background:var(--blue);color:#fff;border-radius:999px;font-weight:600}
+.dC .m-card .price{font-family:var(--fd);font-weight:700}
+
+/* ---------- Logo section ---------- */
+.logos{padding-block:64px 40px}
+.logos > .wrap > header{display:grid;gap:12px;margin-bottom:32px;max-width:70ch}
+.logos h2{font-size:clamp(28px,3.4vw,40px);letter-spacing:-.02em;line-height:1.05}
+.logos header p{color:var(--muted)}
+.signs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+@media (max-width:1000px){.signs{grid-template-columns:1fr}}
+.sign{background:var(--card);border:1px solid var(--line);display:grid;grid-template-rows:auto auto 1fr;min-width:0}
+.sign-stage{display:grid;place-items:center;padding:36px 20px;border-bottom:1px solid var(--line);position:relative;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:20px 20px;background-position:center}
+.sign-stage svg{width:120px;height:144px;color:var(--urfu-red)}
+.sign-stage .tag{position:absolute;left:12px;top:10px}
+.sign-body{padding:20px;display:grid;gap:10px}
+.sign-body h3{font-size:22px;letter-spacing:-.01em}
+.sign-body p{color:var(--muted);font-size:15px}
+.sign-body ul{margin:0;padding-left:18px;font-size:14px;color:var(--muted);display:grid;gap:3px}
+.sign-tests{padding:0 20px 20px;display:grid;gap:14px;align-content:start}
+.lockup{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid var(--line);color:var(--fg)}
+.lockup svg{flex:none;height:54px;width:45px;color:var(--urfu-red)}
+.lockup .wm{line-height:1.02;font-size:15px}
+.lockup.abbr svg{height:34px;width:28px}
+.lockup.abbr .wm{font-size:30px;letter-spacing:-.03em}
+.sizes{display:flex;align-items:flex-end;gap:16px;padding:12px 16px;border:1px solid var(--line)}
+.sizes svg{color:var(--urfu-red)}
+.sizes .fav{width:32px;height:32px;border-radius:7px;background:var(--urfu-red);display:grid;place-items:center}
+.sizes .fav svg{color:#fff;width:18px;height:22px}
+.sizes small{font:11px var(--f-mono);color:var(--muted);margin-left:auto}
+.grounds{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line)}
+.grounds div{display:grid;place-items:center;height:88px}
+.grounds svg{width:44px;height:53px}
+.g-ink{background:#1D1D1B;color:#fff}
+.g-blue{background:#174496;color:#fff}
+.g-red{background:#E50046;color:#fff}
+.g-red svg,.g-ink svg,.g-blue svg{--arm:#fff}
+
+.was{margin-top:20px;display:flex;flex-wrap:wrap;gap:20px;align-items:center;padding:18px 20px;border:1px dashed var(--line);color:var(--muted);font-size:14px}
+.was svg{width:40px;height:60px;color:var(--urfu-red);flex:none}
+.was p{max-width:80ch}
+
+/* ---------- Summary ---------- */
+.summary{padding-block:48px 72px}
+.summary h2{font-size:clamp(26px,3vw,34px);letter-spacing:-.02em;margin-bottom:20px}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:12px 14px;border-bottom:1px solid var(--line)}
+th{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+.pick{margin-top:24px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;padding:20px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--urfu-red)}
+.pick b{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--urfu-red);padding-top:3px}
+@media (max-width:560px){.pick{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){.m-actions a{transition:transform .15s ease}.m-actions a:hover{transform:translateX(3px)}}
+</style>
+
+<!-- ===== Signs as symbols ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="s1" viewBox="0 0 100 120">
+      <polygon points="6,10 28,10 66,84 50,90" fill="currentColor"/>
+      <path d="M58 86 C64 100 56 113 37 112" fill="none" stroke="currentColor" stroke-width="7.5" stroke-linecap="round"/>
+      <polygon points="78,10 96,10 72.2,44 54.2,44" fill="currentColor"/>
+    </symbol>
+    <symbol id="s2" viewBox="0 0 100 120">
+      <polygon points="8,8 32,8 80,112 56,112" fill="currentColor"/>
+      <polygon points="70,8 94,8 77.4,44 53.4,44" style="fill:var(--arm,#174496)"/>
+    </symbol>
+    <symbol id="s3" viewBox="0 0 100 120">
+      <path d="M18 12 L52 74 C60 89 62 104 51 112 C41 119 27 113 25 102" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="79" cy="20" r="9.5" fill="currentColor"/>
+    </symbol>
+    <symbol id="s0" viewBox="44 44 56 82">
+      <path fill="currentColor" fill-rule="evenodd" d="M46.7,49.17c6.24,0,8.88,4.35,11.68,9.02l22.96,39.37c1.08,1.97,2.15,4.34,2.12,6.56-.08,5.79-7.6,7.91-12.1,8.13-3.29.16-6.55-.61-9.48-1.930l-1.83,2.35c1.07,4.54,5.27,10.06,11.05,10.02,10.04-.07,15.31-9.25,19.34-16.73l7.47-13.85-21.69-37.2c-2-3.33,1.29-5.75,4.78-5.77l.8-3.08h-34.3l-.8,3.09Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ===== Intro ===== -->
+<section class="intro">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Редизайн urfu.ru · арт-дирекшн · 28 октября 2026</p>
+      <h1>Три характера для одного университета</h1>
+    </div>
+    <div class="legend">
+      <p>Во всех трёх макетах одинаковый контент: главная для абитуриента из новой структуры, реальные цифры и реальная программа. Меняется только визуальный язык. Знак выбирается отдельно: любой эскиз сочетается с любым направлением.</p>
+      <div><b>A</b><span>Конструктив — сетка, диагональ, крупная типографика</span></div>
+      <div><b>B</b><span>Чертёж — инженерная точность, синий, моноширинные метки</span></div>
+      <div><b>C</b><span>Путь и Солнце — развитие нынешнего брендбука</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== A ===== -->
+<section class="dir" id="a">
+  <div class="wrap">
+    <div class="dir-info">
+      <div class="dir-letter"><span>A</span><h2>Конструктив</h2></div>
+      <p class="thesis">Екатеринбург — столица конструктивизма, и сайт говорит на его языке: строгая сетка, толстые линейки, диагональ под углом знака «У», цифры как главный графический элемент.</p>
+      <p class="roots">Из чего выросло: Городок чекистов и Белая башня, плакаты 1920-х, наклон штриха в знаке УрФУ. Красный — из логотипа, графит — из брендбука, фон — бетон, а не бумага.</p>
+      <div class="swatches">
+        <div class="sw"><i style="background:#E50046"></i>Красный знака<code>#E50046</code></div>
+        <div class="sw"><i style="background:#1D1D1B"></i>Графит<code>#1D1D1B</code></div>
+        <div class="sw"><i style="background:#E8E7E2"></i>Бетон<code>#E8E7E2</code></div>
+        <div class="sw"><i style="background:#174496"></i>Синий (редко)<code>#174496</code></div>
+      </div>
+      <div class="type-spec">
+        <div class="big" style="font-family:'Unbounded',sans-serif;font-weight:800;letter-spacing:-.03em">9 855 мест</div>
+        <small>Unbounded 700–800 — заголовки и цифры</small>
+        <div style="font-family:'Golos Text',sans-serif;font-size:17px">Подберите программу по баллам ЕГЭ и сразу узнайте стоимость.</div>
+        <small>Golos Text 400–600 — текст и интерфейс</small>
+      </div>
+      <div class="pros">
+        <div><h4>Сильное</h4><ul><li>Запоминается с первого экрана</li><li>Корни в городе, а не в трендах</li><li>Хорошо держит плотные данные</li></ul></div>
+        <div><h4>Риски</h4><ul><li>Может казаться жёстким</li><li>Unbounded популярен в рунете</li><li>Отходит от шрифта брендбука</li></ul></div>
+      </div>
+    </div>
+
+    <div class="mock dA" role="img" aria-label="Макет главной в направлении Конструктив">
+      <div class="m-head">
+        <span class="m-logo"><svg aria-hidden="true"><use href="#s1"/></svg>УрФУ</span>
+        <nav class="m-nav"><span>Поступление</span><span>Обучение</span><span>Наука</span><span>Жизнь</span><span>Об университете</span></nav>
+        <span class="m-search">Поиск ⌘K</span><span class="m-burger">Меню</span>
+      </div>
+      <div class="m-hero">
+        <p class="m-role">Я — <u>абитуриент</u> ▾</p>
+        <h3>Поступление-2027: подберите программу по баллам</h3>
+        <div class="m-actions">
+          <a href="#a">Подобрать по баллам ЕГЭ <span>→</span></a>
+          <a href="#a">Стоимость обучения <span>→</span></a>
+          <a href="#a">Общежития <span>→</span></a>
+          <a href="#a">Приёмная комиссия <span>→</span></a>
+        </div>
+      </div>
+      <div class="m-stats">
+        <div><b>9 855</b><span>бюджетных мест в 2026</span></div>
+        <div><b>358</b><span>образовательных программ</span></div>
+        <div><b>18</b><span>общежитий</span></div>
+      </div>
+      <div class="m-card">
+        <span class="code">09.03.04 · ИРИТ-РтФ</span>
+        <h4>Программная инженерия</h4>
+        <div class="row"><span>Бакалавриат</span><span>Очно, 4 года</span><span>Русский язык</span></div>
+        <p class="exams">Русский 40 · Математика 40 · Информатика 46 или Физика 41</p>
+        <div class="foot"><span class="price">до 390 000 ₽ в год</span><a class="btn" href="#a">Открыть программу</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== B ===== -->
+<section class="dir" id="b">
+  <div class="wrap">
+    <div class="dir-info">
+      <div class="dir-letter"><span>B</span><h2>Чертёж</h2></div>
+      <p class="thesis">Университет инженеров и учёных показывает себя через точность: миллиметровая сетка, выносные линии, коды направлений и координаты как часть интерфейса. Синий ведёт, красный — только сигнал.</p>
+      <p class="roots">Из чего выросло: УПИ и его 200 000 инженеров, лабораторные журналы, ГОСТовские чертежи. Фирменный синий Pantone 293 C становится основным цветом.</p>
+      <div class="swatches">
+        <div class="sw"><i style="background:#174496"></i>Фирменный синий<code>#174496</code></div>
+        <div class="sw"><i style="background:#0F1E3A"></i>Тушь<code>#0F1E3A</code></div>
+        <div class="sw"><i style="background:#F2F4F8"></i>Калька<code>#F2F4F8</code></div>
+        <div class="sw"><i style="background:#C7D1E1"></i>Сетка<code>#C7D1E1</code></div>
+        <div class="sw"><i style="background:#E50046"></i>Сигнал<code>#E50046</code></div>
+      </div>
+      <div class="type-spec">
+        <div class="big" style="font-family:'Geologica',sans-serif;font-weight:600;letter-spacing:-.02em">164 лаборатории</div>
+        <small>Geologica 400–700 — заголовки и текст</small>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px">09.03.04 · 56.844° N 60.654° E · ауд. I105</div>
+        <small>JetBrains Mono — коды, данные, метки</small>
+      </div>
+      <div class="pros">
+        <div><h4>Сильное</h4><ul><li>Идеально для науки и данных</li><li>Опирается на фирменный синий</li><li>Спокойный, «взрослый» тон</li></ul></div>
+        <div><h4>Риски</h4><ul><li>Холоднее для абитуриентов</li><li>Сетка требует дисциплины</li><li>Меньше эмоций на главной</li></ul></div>
+      </div>
+    </div>
+
+    <div class="mock dB" role="img" aria-label="Макет главной в направлении Чертёж">
+      <div class="m-head">
+        <span class="m-logo"><svg aria-hidden="true" style="color:#174496;--arm:#174496"><use href="#s2"/></svg>УрФУ</span>
+        <nav class="m-nav"><span>Поступление</span><span>Обучение</span><span>Наука</span><span>Жизнь</span><span>Об университете</span></nav>
+        <span class="m-search">/ поиск ⌘K</span><span class="m-burger">Меню</span>
+      </div>
+      <div class="m-hero">
+        <p class="m-coords"><span>Поступление / 2027</span><span>Екатеринбург, Мира 19</span></p>
+        <p class="m-role">роль: <u>абитуриент</u> ▾</p>
+        <h3>Поступление-2027: <em>подберите программу</em> по баллам</h3>
+        <div class="m-actions">
+          <a href="#b">Подобрать по баллам <small>ЕГЭ → программа</small></a>
+          <a href="#b">Стоимость <small>₽ / год</small></a>
+          <a href="#b">Общежития <small>18 зданий</small></a>
+          <a href="#b">Приёмная комиссия <small>ГУК-100</small></a>
+        </div>
+      </div>
+      <div class="m-stats">
+        <div><b>9 855</b><span>бюджетных мест · 2026</span></div>
+        <div><b>358</b><span>программ</span></div>
+        <div><b>18</b><span>общежитий</span></div>
+      </div>
+      <div class="m-card">
+        <span class="code">[09.03.04] ИРИТ-РтФ</span>
+        <h4>Программная инженерия</h4>
+        <div class="row"><span>бакалавриат</span><span>очно · 4 года</span><span>RU</span></div>
+        <p class="exams">рус ≥40 · мат ≥40 · инф ≥46 | физ ≥41</p>
+        <div class="foot"><span class="price">до <b>390 000</b> ₽/год</span><a class="btn" href="#b">Открыть программу →</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== C ===== -->
+<section class="dir" id="c">
+  <div class="wrap">
+    <div class="dir-info">
+      <div class="dir-letter"><span>C</span><h2>Путь и Солнце</h2></div>
+      <p class="thesis">Нынешний брендбук, доведённый до цифрового продукта: синие поля, тёплое радиальное «Солнце» и линия «Путь» со «Спутником», которая ведёт взгляд к главному действию.</p>
+      <p class="roots">Из чего выросло: всё уже есть в руководстве по айдентике 2025 года — градиент, Путь, Montserrat. Мы наводим порядок в цветах и делаем один акцент на экран вместо градиентов на каждой плашке.</p>
+      <div class="swatches">
+        <div class="sw"><i style="background:#174496"></i>Синий<code>#174496</code></div>
+        <div class="sw"><i style="background:radial-gradient(circle at 38% 40%,#FFE45C,#FFB238 22%,#F2652E 44%,#E5007E 68%,#C8004A 86%)"></i>Солнце<code>радиальный</code></div>
+        <div class="sw"><i style="background:#1D1D1B"></i>Графит<code>#1D1D1B</code></div>
+        <div class="sw"><i style="background:#EEF2FA"></i>Дымка<code>#EEF2FA</code></div>
+      </div>
+      <div class="type-spec">
+        <div class="big" style="font-family:'Montserrat',sans-serif;font-weight:800;letter-spacing:-.02em">50 000 студентов</div>
+        <small>Montserrat 700–800 — заголовки, как в брендбуке</small>
+        <div style="font-family:'Onest',sans-serif;font-size:17px">Подберите программу по баллам ЕГЭ и сразу узнайте стоимость.</div>
+        <small>Onest 400–600 — текст и интерфейс</small>
+      </div>
+      <div class="pros">
+        <div><h4>Сильное</h4><ul><li>Совпадает с утверждённым стилем</li><li>Тёплый, дружелюбный к абитуриентам</li><li>Проще согласовать</li></ul></div>
+        <div><h4>Риски</h4><ul><li>Меньше «вау» — стиль уже знаком</li><li>Montserrat заезжен</li><li>Градиент легко переборщить</li></ul></div>
+      </div>
+    </div>
+
+    <div class="mock dC" role="img" aria-label="Макет главной в направлении Путь и Солнце">
+      <div class="m-head">
+        <span class="m-logo"><svg aria-hidden="true"><use href="#s3"/></svg>УрФУ</span>
+        <nav class="m-nav"><span>Поступление</span><span>Обучение</span><span>Наука</span><span>Жизнь</span><span>Об университете</span></nav>
+        <span class="m-search">Поиск ⌘K</span><span class="m-burger">Меню</span>
+      </div>
+      <div class="m-hero">
+        <span class="m-sun" aria-hidden="true"></span>
+        <svg class="m-path" viewBox="0 0 600 300" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 250 C 140 300, 260 120, 380 170 S 560 80, 640 40" fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke" opacity=".85"/><circle cx="380" cy="170" r="6" fill="#fff"/></svg>
+        <p class="m-role">Я — <u>абитуриент</u> ▾</p>
+        <h3>Поступление-2027: подберите программу по баллам</h3>
+        <div class="m-actions">
+          <a href="#c">Подобрать по баллам ЕГЭ <span>→</span></a>
+          <a href="#c">Стоимость обучения <span>→</span></a>
+          <a href="#c">Общежития <span>→</span></a>
+          <a href="#c">Приёмная комиссия <span>→</span></a>
+        </div>
+      </div>
+      <div class="m-stats">
+        <div><b>9 855</b><span>бюджетных мест в 2026</span></div>
+        <div><b>358</b><span>образовательных программ</span></div>
+        <div><b>18</b><span>общежитий</span></div>
+      </div>
+      <div class="m-card">
+        <span class="code">09.03.04 · ИРИТ-РтФ</span>
+        <h4>Программная инженерия</h4>
+        <div class="row"><span>Бакалавриат</span><span>Очно, 4 года</span><span>Русский язык</span></div>
+        <p class="exams">Русский 40 · Математика 40 · Информатика 46 или Физика 41</p>
+        <div class="foot"><span class="price">до 390 000 ₽ в год</span><a class="btn" href="#c">Открыть программу</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Logos ===== -->
+<section class="logos" id="logo">
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Обновлённый знак · эскизы</p>
+      <h2>Три способа обновить «У»</h2>
+      <p>Знак УрФУ — зарегистрированный товарный знак, поэтому все эскизы сохраняют главную идею брендбука: буква «У» с прерванной линией, которую глаз дорисовывает сам. Меняются отрисовка, характер и поведение в маленьких размерах. Это эскизы для выбора направления; финальную геометрию выверим после.</p>
+    </header>
+
+    <div class="signs">
+      <article class="sign">
+        <div class="sign-stage"><span class="tag eyebrow">Знак 1</span><svg role="img" aria-label="Эскиз знака 1"><use href="#s1"/></svg></div>
+        <div class="sign-body">
+          <h3>Точная «У»</h3>
+          <p>Эволюция нынешнего знака. Тот же силуэт и тот же наклон, но штрих собран из простых форм, «галочка» вернулась в основную версию, хвост стал легче.</p>
+          <ul><li>Узнаётся сразу — минимальный риск для бренда</li><li>Чистый вектор: читается от 16 px</li><li>Подходит к A и C</li></ul>
+        </div>
+        <div class="sign-tests">
+          <div class="lockup"><svg aria-hidden="true"><use href="#s1"/></svg><span class="wm" style="font-family:'Golos Text',sans-serif;font-weight:600">Уральский<br>федеральный<br>университет</span></div>
+          <div class="lockup abbr"><svg aria-hidden="true"><use href="#s1"/></svg><span class="wm" style="font-family:'Golos Text',sans-serif;font-weight:700">УрФУ</span></div>
+          <div class="sizes"><svg width="53" height="64" aria-hidden="true"><use href="#s1"/></svg><svg width="27" height="32" aria-hidden="true"><use href="#s1"/></svg><svg width="13" height="16" aria-hidden="true"><use href="#s1"/></svg><span class="fav"><svg aria-hidden="true"><use href="#s1"/></svg></span><small>64 · 32 · 16 · фавикон</small></div>
+          <div class="grounds"><div class="g-ink"><svg aria-hidden="true"><use href="#s1"/></svg></div><div class="g-blue"><svg aria-hidden="true"><use href="#s1"/></svg></div><div class="g-red"><svg aria-hidden="true"><use href="#s1"/></svg></div></div>
+        </div>
+      </article>
+
+      <article class="sign">
+        <div class="sign-stage"><span class="tag eyebrow">Знак 2</span><svg role="img" aria-label="Эскиз знака 2"><use href="#s2"/></svg></div>
+        <div class="sign-body">
+          <h3>Конструктив</h3>
+          <p>«У» из двух плоских брусков под одним углом, без скруглений. Разрыв между ними — та самая прерванная линия. Второй брусок можно красить в цвет института.</p>
+          <ul><li>Самый смелый и графичный</li><li>Двухцветность даёт систему для 13 институтов</li><li>Подходит к A и B</li></ul>
+        </div>
+        <div class="sign-tests">
+          <div class="lockup"><svg aria-hidden="true"><use href="#s2"/></svg><span class="wm" style="font-family:'Unbounded',sans-serif;font-weight:600;font-size:13px">Уральский<br>федеральный<br>университет</span></div>
+          <div class="lockup abbr"><svg aria-hidden="true"><use href="#s2"/></svg><span class="wm" style="font-family:'Unbounded',sans-serif;font-weight:700;font-size:26px">УрФУ</span></div>
+          <div class="sizes"><svg width="53" height="64" aria-hidden="true"><use href="#s2"/></svg><svg width="27" height="32" aria-hidden="true"><use href="#s2"/></svg><svg width="13" height="16" aria-hidden="true"><use href="#s2"/></svg><span class="fav"><svg aria-hidden="true" style="--arm:#fff"><use href="#s2"/></svg></span><small>64 · 32 · 16 · фавикон</small></div>
+          <div class="grounds"><div class="g-ink"><svg aria-hidden="true" style="color:#E50046"><use href="#s2"/></svg></div><div class="g-blue"><svg aria-hidden="true"><use href="#s2"/></svg></div><div class="g-red"><svg aria-hidden="true"><use href="#s2"/></svg></div></div>
+        </div>
+      </article>
+
+      <article class="sign">
+        <div class="sign-stage"><span class="tag eyebrow">Знак 3</span><svg role="img" aria-label="Эскиз знака 3"><use href="#s3"/></svg></div>
+        <div class="sign-body">
+          <h3>Путь и Спутник</h3>
+          <p>«У» нарисована одной линией — «Путём» из брендбука, а правая ветвь превратилась в «Спутник». Знак и графическая система становятся одним целым.</p>
+          <ul><li>Связывает логотип с графикой сайта</li><li>Легко анимировать: линия «прорисовывается»</li><li>Риск: уходит «галочка», нужна аккуратная защита изменения</li></ul>
+        </div>
+        <div class="sign-tests">
+          <div class="lockup"><svg aria-hidden="true"><use href="#s3"/></svg><span class="wm" style="font-family:'Montserrat',sans-serif;font-weight:700">Уральский<br>федеральный<br>университет</span></div>
+          <div class="lockup abbr"><svg aria-hidden="true"><use href="#s3"/></svg><span class="wm" style="font-family:'Montserrat',sans-serif;font-weight:800">УрФУ</span></div>
+          <div class="sizes"><svg width="53" height="64" aria-hidden="true"><use href="#s3"/></svg><svg width="27" height="32" aria-hidden="true"><use href="#s3"/></svg><svg width="13" height="16" aria-hidden="true"><use href="#s3"/></svg><span class="fav"><svg aria-hidden="true"><use href="#s3"/></svg></span><small>64 · 32 · 16 · фавикон</small></div>
+          <div class="grounds"><div class="g-ink"><svg aria-hidden="true"><use href="#s3"/></svg></div><div class="g-blue"><svg aria-hidden="true"><use href="#s3"/></svg></div><div class="g-red"><svg aria-hidden="true"><use href="#s3"/></svg></div></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="was">
+      <svg role="img" aria-label="Нынешний знак УрФУ"><use href="#s0"/></svg>
+      <p><b style="color:var(--fg)">Было.</b> Нынешний знак из официального SVG: растровая отрисовка на сайте, на сайтах институтов встречается синий вариант, отдельного варианта для фавикона нет, а цвет знака #E50046 отсутствует в палитре брендбука.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Summary ===== -->
+<section class="summary">
+  <div class="wrap">
+    <h2>Сравнение</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Направление</th><th>Характер</th><th>Для кого сильнее всего</th><th>Связь с брендбуком</th><th>Лучший знак</th></tr></thead>
+        <tbody>
+          <tr><td><b>A · Конструктив</b></td><td>смелый, городской, плакатный</td><td>абитуриенты, медиа, жюри конкурса</td><td>берёт цвета и наклон, меняет шрифт</td><td>1 или 2</td></tr>
+          <tr><td><b>B · Чертёж</b></td><td>точный, спокойный, научный</td><td>учёные, партнёры, магистратура</td><td>опирается на синий, меняет шрифт</td><td>2</td></tr>
+          <tr><td><b>C · Путь и Солнце</b></td><td>тёплый, дружелюбный, знакомый</td><td>школьники, родители, студенты</td><td>полностью совпадает</td><td>1 или 3</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pick">
+      <b>Моя рекомендация</b>
+      <p><b>A + знак 1.</b> Конструктив даёт работе узнаваемое лицо, которое нельзя спутать с другими вузами и которое объясняется одной фразой про Екатеринбург. Знак 1 оставляет товарный знак узнаваемым, поэтому смелость остаётся в интерфейсе, а не в логотипе. Приёмы B (моноширинные коды, сетка) можно взять для раздела «Наука» — брендбук и так закрепляет за наукой отдельную схему.</p>
+    </div>
+  </div>
+</section>

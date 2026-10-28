@@ -1,0 +1,158 @@
+/* УрФУ · Конструктив — design tokens.
+   Единственный источник значений для сайта, спецификации и Figma.
+   Шрифты подключаются отдельно:
+   https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@700;800&display=swap */
+
+:root {
+  /* ---------- Palette (raw) ---------- */
+  --c-red: #E50046;          /* знак «У»; заливки, крупный текст ≥ 24px, графика */
+  --c-red-text: #C4003C;     /* красный мелкий текст на бетоне (4.97:1) */
+  --c-red-press: #B8003A;    /* нажатие на красную кнопку */
+  --c-ink: #1D1D1B;          /* графит: текст, линейки, тёмные плашки */
+  --c-ink-2: #3A3936;        /* графит при наведении */
+  --c-concrete: #E8E7E2;     /* бетон: фон страницы */
+  --c-concrete-2: #DCDAD4;   /* бетон темнее: подложки, полосы таблиц */
+  --c-paper: #F4F3EF;        /* бумага: поднятые поверхности, карточки */
+  --c-white: #FFFFFF;
+  --c-stone: #5E5B55;        /* второстепенный текст на бетоне (5.46:1) */
+  --c-stone-line: #B9B6AE;   /* тонкие разделители */
+  --c-blue: #174496;         /* фирменный синий: наука, ссылки-сервисы, фокус */
+  --c-green: #1E7A46;        /* статус «открыт приём», успех */
+  --c-amber: #9A5B00;        /* «скоро дедлайн», предупреждение */
+
+  /* ---------- Semantic (light) ---------- */
+  --bg: var(--c-concrete);
+  --surface: var(--c-paper);
+  --surface-2: var(--c-concrete-2);
+  --surface-inverse: var(--c-ink);
+  --fg: var(--c-ink);
+  --fg-muted: var(--c-stone);
+  --fg-inverse: var(--c-concrete);
+  --rule: var(--c-ink);
+  --rule-soft: var(--c-stone-line);
+  --accent: var(--c-red);            /* заливка акцента */
+  --accent-hover: var(--c-red-press);
+  --on-accent: var(--c-white);       /* текст на акценте (4.75:1) */
+  --accent-text: var(--c-red-text);  /* акцентный текст ≤ 20px */
+  --link: var(--c-ink);
+  --link-underline: var(--c-red);
+  --info: var(--c-blue);
+  --success: var(--c-green);
+  --warning: var(--c-amber);
+  --focus: var(--c-blue);
+
+  /* ---------- Type ---------- */
+  --font-display: 'Unbounded', 'Arial Black', 'Segoe UI', sans-serif;
+  --font-text: 'Golos Text', 'Segoe UI', Roboto, Arial, sans-serif;
+
+  --fs-display: clamp(44px, 6.4vw, 104px);  /* Unbounded 800, lh 0.98, -0.035em */
+  --fs-h1: clamp(34px, 4.4vw, 68px);        /* Unbounded 700, lh 1.02, -0.03em */
+  --fs-h2: clamp(26px, 3vw, 44px);          /* Unbounded 700, lh 1.06, -0.025em */
+  --fs-h3: clamp(20px, 1.9vw, 28px);        /* Unbounded 700, lh 1.15, -0.015em */
+  --fs-h4: 20px;                            /* Golos 600, lh 1.3 */
+  --fs-lead: clamp(18px, 1.5vw, 22px);      /* Golos 400, lh 1.5 */
+  --fs-body: 17px;                          /* Golos 400, lh 1.55 */
+  --fs-small: 15px;                         /* Golos 400, lh 1.45 */
+  --fs-caption: 13px;                       /* Golos 500, lh 1.35 */
+  --fs-label: 12px;                         /* Golos 600, caps, +0.08em */
+  --fs-stat: clamp(36px, 4.6vw, 72px);      /* Unbounded 800, tabular */
+
+  --lh-tight: 1.02;
+  --lh-heading: 1.12;
+  --lh-text: 1.55;
+  --tracking-display: -0.035em;
+  --tracking-heading: -0.025em;
+  --tracking-label: 0.08em;
+  --measure: 66ch;
+
+  /* ---------- Space (4px base) ---------- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+  --section-gap: clamp(64px, 9vw, 128px);
+
+  /* ---------- Layout ---------- */
+  --container: 1312px;           /* 1440 − 2 × 64 */
+  --gutter: 24px;
+  --page-margin: clamp(16px, 4.4vw, 64px);
+  --header-h: 72px;
+  --cols: 12;                    /* 8 на планшете, 4 на телефоне */
+
+  /* ---------- Shape ---------- */
+  --rule-thick: 3px;             /* главные линейки, рамки карточек */
+  --rule-thin: 1px;
+  --radius-0: 0;                 /* по умолчанию — прямые углы */
+  --radius-s: 2px;               /* поля ввода */
+  --radius-round: 999px;         /* только аватары и точки статуса */
+  --slope: -26.565deg;           /* skewX: наклон 1:2 из знака «У» */
+  --tan-slope: 0.5;              /* для clip-path: смещение = 0.5 × высота */
+
+  /* ---------- Motion ---------- */
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+
+  /* ---------- Elevation & layers ---------- */
+  --shadow-pop: 6px 6px 0 var(--c-ink);   /* «плакатная» тень меню и модалок — без размытия */
+  --z-header: 50;
+  --z-menu: 60;
+  --z-modal: 80;
+  --z-toast: 90;
+}
+
+/* ---------- Dark theme ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #151514;
+    --surface: #1F1F1D;
+    --surface-2: #2A2A27;
+    --surface-inverse: #ECEAE4;
+    --fg: #ECEAE4;
+    --fg-muted: #A3A099;
+    --fg-inverse: #151514;
+    --rule: #ECEAE4;
+    --rule-soft: #3D3C38;
+    --accent-text: #FF5C87;
+    --link: #ECEAE4;
+    --link-underline: #FF3B73;
+    --info: #7FA2EB;
+    --success: #5CC28A;
+    --warning: #E8A23C;
+    --focus: #7FA2EB;
+    --shadow-pop: 6px 6px 0 #000;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #151514;
+  --surface: #1F1F1D;
+  --surface-2: #2A2A27;
+  --surface-inverse: #ECEAE4;
+  --fg: #ECEAE4;
+  --fg-muted: #A3A099;
+  --fg-inverse: #151514;
+  --rule: #ECEAE4;
+  --rule-soft: #3D3C38;
+  --accent-text: #FF5C87;
+  --link: #ECEAE4;
+  --link-underline: #FF3B73;
+  --info: #7FA2EB;
+  --success: #5CC28A;
+  --warning: #E8A23C;
+  --focus: #7FA2EB;
+  --shadow-pop: 6px 6px 0 #000;
+  color-scheme: dark;
+}
+
+/* ---------- Section modes ----------
+   Брендбук закрепляет за наукой свою схему: в разделе «Наука» акцент — синий. */
+[data-mode="science"] {
+  --accent: var(--c-blue);
+  --accent-hover: #0F3478;
+  --accent-text: var(--c-blue);
+  --link-underline: var(--c-blue);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) [data-mode="science"] { --accent: #2F5FC4; --accent-text: #7FA2EB; --link-underline: #7FA2EB; }
+}
+:root[data-theme="dark"] [data-mode="science"] { --accent: #2F5FC4; --accent-text: #7FA2EB; --link-underline: #7FA2EB; }

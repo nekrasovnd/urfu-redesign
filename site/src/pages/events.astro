@@ -1,0 +1,211 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/events.css';
+import { events, dateRange } from '../data/site';
+
+const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const MON_SHORT = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+const sorted = [...events].sort((a, b) => a.date.localeCompare(b.date));
+const audiences = ['Абитуриенты', 'Студенты', 'Школьники', 'Учёные'];
+const types = [...new Set(sorted.map(e => e.type))];
+const ym = (iso: string) => iso.slice(0, 7);
+const months = [...new Set(sorted.map(e => ym(e.date)))];
+// Calendar spans every month from the first to the last event, empty ones included.
+const calMonths: string[] = [];
+{
+  let [y, m] = months[0].split('-').map(Number);
+  const [ey, em] = months[months.length - 1].split('-').map(Number);
+  while (y < ey || (y === ey && m <= em)) { calMonths.push(`${y}-${String(m).padStart(2, '0')}`); m++; if (m > 12) { m = 1; y++; } }
+}
+const monthTitle = (k: string) => `${MONTHS[+k.slice(5) - 1]} ${k.slice(0, 4)}`;
+const slug = (e: { date: string; title: string }) => `ev-${e.date}-${e.title.toLowerCase().replace(/[^a-zа-яё0-9]+/gi, '-').replace(/^-|-$/g, '').slice(0, 30)}`;
+const isOpen = (s: string) => /заявк|регистрац|приём/i.test(s);
+
+function monthGrid(key: string) {
+  const [y, m] = key.split('-').map(Number);
+  const first = new Date(Date.UTC(y, m - 1, 1));
+  const lead = (first.getUTCDay() + 6) % 7;
+  const days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const cells: ({ d: number; iso: string; evs: typeof sorted } | null)[] = Array(lead).fill(null);
+  for (let d = 1; d <= days; d++) {
+    const iso = `${key}-${String(d).padStart(2, '0')}`;
+    cells.push({ d, iso, evs: sorted.filter(e => iso >= e.date && iso <= (e.date_end ?? e.date)) });
+  }
+  while (cells.length % 7) cells.push(null);
+  return cells;
+}
+const ics = sorted.map(e => ({ id: slug(e), t: e.title, s: e.date, e: e.date_end ?? e.date, d: `${e.type}. ${e.status}` }));
+---
+<Base title="Афиша" section="life" description="Афиша Уральского федерального университета: олимпиады, конференции, фестивали и дни открытых дверей для абитуриентов, студентов, школьников и учёных.">
+
+  <div class="container ev-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/life">Жизнь в УрФУ</a></li><li aria-current="page">Афиша</li></ol>
+    <div class="ev-head__row">
+      <h1 class="t-h1">Афиша</h1>
+      <div class="tabs ev-views" role="tablist" aria-label="Вид афиши">
+        <button role="tab" type="button" id="tab-list" aria-selected="true" aria-controls="ev-list" data-ev-view="list">Списком</button>
+        <button role="tab" type="button" id="tab-cal" aria-selected="false" aria-controls="ev-cal" data-ev-view="cal">Календарь</button>
+      </div>
+    </div>
+    <div class="ev-filters">
+      <div class="ev-filters__group" role="group" aria-label="Для кого">
+        <span class="t-label t-muted">Для кого</span>
+        <button class="chip" type="button" data-aud="" aria-pressed="true">Все</button>
+        {audiences.map(a => <button class="chip" type="button" data-aud={a} aria-pressed="false">{a}</button>)}
+      </div>
+      <div class="ev-filters__group" role="group" aria-label="Тип события">
+        <span class="t-label t-muted">Что</span>
+        <button class="chip" type="button" data-type="" aria-pressed="true">Всё</button>
+        {types.map(t => <button class="chip" type="button" data-type={t} aria-pressed="false">{t}</button>)}
+      </div>
+    </div>
+  </div>
+
+  <div class="container ev-layout">
+    <!-- ============ List ============ -->
+    <div class="ev-list" id="ev-list" role="tabpanel" aria-labelledby="tab-list">
+      {months.map(k => (
+        <section class="ev-month" data-month={k}>
+          <h2 class="ev-month__title">{monthTitle(k)}</h2>
+          {sorted.filter(e => ym(e.date) === k).map(e => (
+            <article class="ev-item" id={slug(e)} data-aud={e.audience.join('|')} data-type={e.type} data-end={e.date_end ?? e.date}>
+              <div class="ev-item__date">
+                <span class="ev-item__day">{+e.date.slice(8)}{e.date_end && <small>–{+e.date_end.slice(8)}</small>}</span>
+                <span class="ev-item__month">{MON_SHORT[+e.date.slice(5, 7) - 1]}{e.date_end && ym(e.date_end) !== ym(e.date) && ` – ${MON_SHORT[+e.date_end.slice(5, 7) - 1]}`}</span>
+              </div>
+              <div class="ev-item__body">
+                <h3 class="ev-item__title">{e.title}</h3>
+                <p class="ev-item__meta">
+                  <span>{dateRange(e.date, e.date_end)}</span>
+                  <span class="tag tag--soft">{e.type}</span>
+                  {e.audience.map(a => <span class="ev-item__aud">{a === 'Все' ? 'для всех' : a.toLowerCase()}</span>)}
+                </p>
+                <p class={isOpen(e.status) ? 'status status--open' : 'ev-item__note'} data-status>{e.status}</p>
+              </div>
+              <button class="btn btn--sm ev-item__ics" type="button" data-ics={slug(e)}>В календарь</button>
+            </article>
+          ))}
+        </section>
+      ))}
+      <div class="ev-empty" data-ev-empty hidden>
+        <p class="t-h3">Подходящих событий пока нет</p>
+        <p class="t-body t-muted">Снимите один из фильтров или загляните позже — афиша пополняется каждую неделю.</p>
+      </div>
+    </div>
+
+    <!-- ============ Calendar ============ -->
+    <div class="ev-cal" id="ev-cal" role="tabpanel" aria-labelledby="tab-cal" hidden>
+      <div class="ev-cal__nav">
+        <button class="btn btn--sm" type="button" data-cal-step="-1" aria-label="Предыдущий месяц">←</button>
+        <p class="ev-cal__title" aria-live="polite" data-cal-title>{monthTitle(calMonths[0])}</p>
+        <button class="btn btn--sm" type="button" data-cal-step="1" aria-label="Следующий месяц">→</button>
+      </div>
+      {calMonths.map((k, mi) => (
+        <div class="ev-cal__month" data-cal-month={mi} hidden={mi !== 0}>
+          <div class="ev-cal__grid" role="grid" aria-label={monthTitle(k)}>
+            {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map(d => <span class="ev-cal__dow" role="columnheader">{d}</span>)}
+            {monthGrid(k).map(c => c === null ? <span class="ev-cal__cell is-blank" aria-hidden="true"></span> : (
+              <div class={`ev-cal__cell${c.evs.length ? ' has-ev' : ''}`} role="gridcell" data-date={c.iso}>
+                <span class="ev-cal__d">{c.d}</span>
+                {c.evs.map(e => <a class="ev-cal__ev" href={`#${slug(e)}`} data-aud={e.audience.join('|')} data-type={e.type} data-goto={slug(e)}>{e.title}</a>)}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <aside class="ev-aside" aria-label="Главное событие">
+      <a class="ev-promo" href="#ev-2027-01-23-дни-открытых-дверей">
+        <span class="t-label">Для абитуриентов</span>
+        <span class="ev-promo__date">23–30<small>января 2027</small></span>
+        <span class="ev-promo__title">Дни открытых дверей</span>
+        <span class="ev-promo__text">Расскажем о поступлении в 2027 году: программы, баллы, стоимость, общежития.</span>
+      </a>
+      <p class="t-small t-muted">Хотите провести событие в УрФУ или разместить его в афише? Напишите в отдел по связям с общественностью — <a class="link" href="/about/press">контакты</a>.</p>
+    </aside>
+  </div>
+
+  <script type="application/json" id="ev-ics" set:html={JSON.stringify(ics)} />
+</Base>
+
+<script>
+  let aud = '', type = '';
+  const items = [...document.querySelectorAll<HTMLElement>('.ev-item')];
+  const calEvs = [...document.querySelectorAll<HTMLElement>('.ev-cal__ev')];
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Past events: keep them visible but mark as finished.
+  items.forEach(it => {
+    if (it.dataset.end! < today) {
+      it.classList.add('is-past');
+      const s = it.querySelector<HTMLElement>('[data-status]')!;
+      s.className = 'ev-item__note'; s.textContent = 'Завершено';
+    }
+  });
+  document.querySelectorAll<HTMLElement>(`.ev-cal__cell[data-date="${today}"]`).forEach(c => c.classList.add('is-today'));
+
+  const match = (el: HTMLElement) => (!aud || el.dataset.aud!.split('|').some(a => a === aud || a === 'Все')) && (!type || el.dataset.type === type);
+  function apply() {
+    let n = 0;
+    items.forEach(it => { const ok = match(it); it.hidden = !ok; if (ok) n++; });
+    document.querySelectorAll<HTMLElement>('.ev-month').forEach(m => (m.hidden = !m.querySelector('.ev-item:not([hidden])')));
+    calEvs.forEach(e => (e.hidden = !match(e)));
+    document.querySelectorAll<HTMLElement>('.ev-cal__cell[data-date]').forEach(c => c.classList.toggle('has-ev', !!c.querySelector('.ev-cal__ev:not([hidden])')));
+    document.querySelector<HTMLElement>('[data-ev-empty]')!.hidden = n > 0;
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-aud]').forEach(b => b.matches('button') && b.addEventListener('click', () => {
+    aud = b.dataset.aud!;
+    document.querySelectorAll('button[data-aud]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    apply();
+  }));
+  document.querySelectorAll<HTMLButtonElement>('button[data-type]').forEach(b => b.addEventListener('click', () => {
+    type = b.dataset.type!;
+    document.querySelectorAll('button[data-type]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    apply();
+  }));
+
+  // List / calendar view.
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('[data-ev-view]')];
+  const list = document.getElementById('ev-list')!, cal = document.getElementById('ev-cal')!;
+  function setView(v: string) {
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.evView === v)));
+    list.hidden = v !== 'list'; cal.hidden = v !== 'cal';
+  }
+  tabs.forEach(t => t.addEventListener('click', () => setView(t.dataset.evView!)));
+  calEvs.forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); setView('list');
+    const target = document.getElementById(a.dataset.goto!)!;
+    target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+    target.classList.add('is-flash'); setTimeout(() => target.classList.remove('is-flash'), 1600);
+  }));
+
+  // Month navigation in the calendar.
+  const months = [...document.querySelectorAll<HTMLElement>('[data-cal-month]')];
+  const title = document.querySelector<HTMLElement>('[data-cal-title]')!;
+  const titles = months.map(m => m.querySelector('[role="grid"]')!.getAttribute('aria-label')!);
+  let cm = Math.max(0, months.findIndex(m => m.querySelector(`[data-date^="${today.slice(0, 7)}"]`)));
+  function showMonth() {
+    months.forEach((m, i) => (m.hidden = i !== cm));
+    title.textContent = titles[cm];
+    document.querySelector<HTMLButtonElement>('[data-cal-step="-1"]')!.disabled = cm === 0;
+    document.querySelector<HTMLButtonElement>('[data-cal-step="1"]')!.disabled = cm === months.length - 1;
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-cal-step]').forEach(b => b.addEventListener('click', () => { cm = Math.min(months.length - 1, Math.max(0, cm + +b.dataset.calStep!)); showMonth(); }));
+  showMonth();
+
+  // Single-event .ics export.
+  const ics: { id: string; t: string; s: string; e: string; d: string }[] = JSON.parse(document.getElementById('ev-ics')!.textContent!);
+  document.querySelectorAll<HTMLButtonElement>('[data-ics]').forEach(b => b.addEventListener('click', () => {
+    const ev = ics.find(x => x.id === b.dataset.ics)!;
+    const d = (iso: string, add = 0) => { const x = new Date(iso + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + add); return x.toISOString().slice(0, 10).replace(/-/g, ''); };
+    const body = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//UrFU redesign//Events//RU', 'BEGIN:VEVENT', `UID:${ev.id}@urfu-redesign`, `DTSTAMP:${d(ev.s)}T000000Z`,
+      `DTSTART;VALUE=DATE:${d(ev.s)}`, `DTEND;VALUE=DATE:${d(ev.e, 1)}`, `SUMMARY:${ev.t}`, `DESCRIPTION:${ev.d}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([body], { type: 'text/calendar' }));
+    a.download = `${ev.id}.ics`; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }));
+
+  apply();
+</script>

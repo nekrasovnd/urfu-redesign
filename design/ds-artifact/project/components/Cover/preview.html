@@ -1,0 +1,37 @@
+<!-- @dsCard height=288 -->
+<div class="cv">
+  <style>
+    .cv { position: relative; width: 960px; height: 288px; background: var(--bg); overflow: hidden; }
+    .cv svg { position: absolute; left: 0; top: 0; }
+    .cv .red { fill: var(--accent); }
+    .cv .ink { fill: var(--fg); }
+    .cv .blue { fill: var(--c-blue); }
+    .cv .tint { fill: var(--surface-2); }
+    .cv .stripe { fill: var(--accent); }
+    .cv .text { position: absolute; left: 40px; top: 144px; max-width: 880px; }
+    .cv h1 { margin: 0; font: 700 56px/0.95 var(--font-display); letter-spacing: -0.03em; color: var(--fg); white-space: nowrap; }
+    .cv p { margin: 12px 0 0; font: 400 14px/1.4 var(--font-text); color: var(--fg-muted); }
+  </style>
+  <svg width="960" height="112" viewBox="0 0 960 112" aria-hidden="true">
+    <!-- blocks: accent (330 wide slab bleeding left), fg (120), c-blue (160), surface-2 (bleeding right); gaps = s-5 (24px)
+         arrangement: a strip of unequal parallelograms across the top band, every edge cut at slope (1:2 → 56px over 112px height)
+         pattern: «loud, bold, poster type → stripes» — five accent stripes at the same slope on the tint block, pitch s-6 (32px), width s-2 (8px); the README calls the diagonal the system's signature
+         scales: s-2, s-5, s-6, rule-thick; radius-0 everywhere -->
+    <defs><clipPath id="cv-tint"><polygon points="682,0 960,0 960,112 738,112"/></clipPath></defs>
+    <polygon class="red" points="0,0 330,0 386,112 0,112"/>
+    <polygon class="ink" points="354,0 474,0 530,112 410,112"/>
+    <polygon class="blue" points="498,0 658,0 714,112 554,112"/>
+    <polygon class="tint" points="682,0 960,0 960,112 738,112"/>
+    <g clip-path="url(#cv-tint)">
+      <polygon class="stripe" points="760,0 768,0 824,112 816,112"/>
+      <polygon class="stripe" points="792,0 800,0 856,112 848,112"/>
+      <polygon class="stripe" points="824,0 832,0 888,112 880,112"/>
+      <polygon class="stripe" points="856,0 864,0 920,112 912,112"/>
+      <polygon class="stripe" points="888,0 896,0 952,112 944,112"/>
+    </g>
+  </svg>
+  <div class="text">
+    <h1>УрФУ · Конструктив</h1>
+    <p>Строгая сетка, толстые линейки и диагональ под наклоном знака «У».</p>
+  </div>
+</div>

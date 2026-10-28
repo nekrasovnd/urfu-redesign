@@ -1,0 +1,187 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/programs.css';
+import { programs, institutes } from '../../data/site';
+
+// Catalogue grouped by direction (code): the current site lists 907 flat rows with 196 duplicates;
+// here every direction shows its programmes, institutes, thresholds and price in one place.
+const LEVELS = [
+  { id: 'bach', label: 'Бакалавриат и специалитет', match: ['Бакалавриат', 'Специалитет'] },
+  { id: 'master', label: 'Магистратура', match: ['Магистратура'] },
+  { id: 'phd', label: 'Аспирантура', match: ['Аспирантура'] },
+];
+const levelId = (l: string) => LEVELS.find(x => x.match.includes(l))?.id ?? 'other';
+
+type G = { key: string; code: string; direction: string; level: string; lid: string; cost: number | null; exams: any; items: typeof programs };
+const groups = new Map<string, G>();
+for (const p of programs) {
+  const lid = levelId(p.level);
+  if (lid === 'other' || !p.code) continue;
+  const key = `${lid}|${p.code}`;
+  if (!groups.has(key)) groups.set(key, { key, code: p.code, direction: p.direction, level: p.level, lid, cost: p.cost, exams: p.exams, items: [] });
+  groups.get(key)!.items.push(p);
+}
+const list = [...groups.values()].sort((a, b) => a.code.localeCompare(b.code, 'ru', { numeric: true }));
+list.forEach(g => g.items.sort((a, b) => a.name.localeCompare(b.name, 'ru')));
+const counts = Object.fromEntries(LEVELS.map(l => [l.id, list.filter(g => g.lid === l.id).reduce((s, g) => s + g.items.length, 0)]));
+const total = Object.values(counts).reduce((a, b) => a + b, 0);
+const instList = [...new Set(programs.map(p => p.institute))].filter(i => !/ /.test(i) || i.length < 20).sort((a, b) => a.localeCompare(b, 'ru'));
+const fields = [...new Set(programs.map(p => p.field).filter(f => f && f.length < 60 && !f.includes(',')))].sort((a, b) => a.localeCompare(b, 'ru'));
+
+const DETAIL: Record<string, string> = { 'Программная инженерия|09.03.04': '/programs/software-engineering' };
+const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
+const SHORT: Record<string, string> = { 'Русский язык': 'русский', 'Иностранный язык': 'иностранный' };
+const exName = (s: string) => SHORT[s] ?? s.toLowerCase();
+const norm = (s: string) => s.toLowerCase().replace(/ё/g, 'е');
+const progWord = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'программа' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'программы' : 'программ');
+---
+<Base title="Программы обучения" section="admission"
+  description={`Каталог образовательных программ УрФУ: ${total} ${progWord(total)} бакалавриата, специалитета, магистратуры и аспирантуры в 13 институтах — минимальные баллы ЕГЭ, стоимость и институт.`}>
+
+  <div class="container prog-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/admission">Поступление</a></li><li aria-current="page">Программы</li></ol>
+    <h1 class="t-h1">Программы обучения</h1>
+    <p class="t-lead">{total} {progWord(total)} в {institutes.length} институтах и 4 филиалах. Внутри направления — все его программы, минимальные баллы ЕГЭ и стоимость.</p>
+  </div>
+
+  <div class="prog-toolbar" data-toolbar>
+    <div class="container prog-toolbar__inner">
+      <div class="prog-search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <label class="visually-hidden" for="pq">Название программы или код направления</label>
+        <input id="pq" type="search" class="prog-search__input" placeholder="Название или код, например 09.03.04" autocomplete="off" />
+      </div>
+      <div class="segmented prog-levels" role="group" aria-label="Уровень образования">
+        {LEVELS.map((l, i) => <button type="button" data-level={l.id} aria-pressed={i === 0 ? 'true' : 'false'}>{l.label} <span class="prog-levels__n">{counts[l.id]}</span></button>)}
+      </div>
+      <div class="prog-filters">
+        <select class="select" id="pinst" aria-label="Институт"><option value="">Все институты</option>{instList.map(i => <option>{i}</option>)}</select>
+        <select class="select" id="pfield" aria-label="Область знаний"><option value="">Все области</option>{fields.map(f => <option>{f}</option>)}</select>
+      </div>
+    </div>
+  </div>
+
+  <div class="container prog-body">
+    <div class="prog-summary">
+      <p class="prog-count" aria-live="polite"><b data-count>{counts.bach}</b> <span data-count-label>программ</span></p>
+      <div class="prog-active" data-active></div>
+      <a class="action action--primary prog-match-cta" href="/admission/match" data-bach-only><span>Не знаете, с чего начать? Подберите по баллам ЕГЭ</span><span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="prog-groups">
+      {list.map(g => (
+        <section class="prog-group" data-lid={g.lid} hidden={g.lid !== 'bach'} aria-label={`${g.code} ${g.direction}`}>
+          <header class="prog-group__head">
+            <span class="prog-group__code">{g.code}</span>
+            <div class="prog-group__title">
+              <h2>{g.direction}</h2>
+              {g.exams && (
+                <p class="prog-group__exams">
+                  {g.exams.required.map((e: any) => `${exName(e.subject)} ≥ ${e.min}`).join(' · ')}
+                  {g.exams.choose.length > 0 && <> · {g.exams.choose.map((e: any) => `${exName(e.subject)} ≥ ${e.min}`).join(' или ')}</>}
+                </p>
+              )}
+            </div>
+            <span class="prog-group__cost">{g.cost ? <>до {rub(g.cost)}<small>в год</small></> : g.lid === 'bach' ? <small>стоимость уточняется</small> : ''}</span>
+          </header>
+          <ul class="prog-items">
+            {g.items.map(p => {
+              const href = DETAIL[`${p.name}|${p.code}`];
+              const link = href ?? p.url;
+              return (
+                <li class="prog-item" data-q={norm(`${p.name} ${p.code} ${p.direction} ${p.institute}`)} data-inst={p.institute} data-field={p.field} data-code={p.code}>
+                  <a href={link ?? '#'} class:list={['prog-item__link', { 'is-detail': href }]}>
+                    <span class="prog-item__name">{p.name}{href && <span class="tag tag--accent prog-item__badge">новая карточка</span>}</span>
+                    <span class="prog-item__meta">{p.level}{p.level !== 'Аспирантура' && ' · очно'} · {p.institute}</span>
+                    <span class="prog-item__go" aria-hidden="true">{href ? '→' : '↗'}</span>
+                    {!href && <span class="visually-hidden"> (страница на сайте УрФУ)</span>}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+
+    <div class="match-empty" data-empty hidden>
+      <p class="t-h3">Ничего не нашлось</p>
+      <p class="t-body t-muted">Проверьте написание или поищите по коду направления. Можно сбросить фильтры или <a class="link" href="/admission/match">подобрать программу по баллам ЕГЭ</a>.</p>
+      <button class="btn btn--sm" type="button" data-reset>Сбросить фильтры</button>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const items = [...document.querySelectorAll<HTMLElement>('.prog-item')];
+  const groups = [...document.querySelectorAll<HTMLElement>('.prog-group')];
+  const q = document.querySelector<HTMLInputElement>('#pq')!;
+  const inst = document.querySelector<HTMLSelectElement>('#pinst')!;
+  const field = document.querySelector<HTMLSelectElement>('#pfield')!;
+  const levelBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-level]')];
+  const active = document.querySelector<HTMLElement>('[data-active]')!;
+  let level = 'bach';
+  let code = '';
+
+  const params = new URLSearchParams(location.search);
+  if (params.get('code')) code = params.get('code')!;
+  if (params.get('q')) q.value = params.get('q')!;
+  if (params.get('level') && levelBtns.some(b => b.dataset.level === params.get('level'))) level = params.get('level')!;
+  if (/\.04\.\d\d$/.test(code)) level = 'master';
+  if (params.get('inst') && [...inst.options].some(o => o.value === params.get('inst'))) inst.value = params.get('inst')!;
+
+  const norm = (s: string) => s.toLowerCase().replace(/ё/g, 'е').trim();
+  const plural = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'программа' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'программы' : 'программ');
+  const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+
+  function apply() {
+    const words = norm(q.value).split(/\s+/).filter(Boolean);
+    let n = 0;
+    for (const g of groups) {
+      let visible = 0;
+      const inLevel = g.dataset.lid === level;
+      g.querySelectorAll<HTMLElement>('.prog-item').forEach(it => {
+        const ok = inLevel &&
+          (!code || it.dataset.code === code) &&
+          (!inst.value || it.dataset.inst === inst.value) &&
+          (!field.value || it.dataset.field === field.value) &&
+          words.every(w => it.dataset.q!.includes(w));
+        it.hidden = !ok;
+        if (ok) visible++;
+      });
+      g.hidden = visible === 0;
+      n += visible;
+    }
+    document.querySelector('[data-count]')!.textContent = String(n);
+    document.querySelector('[data-count-label]')!.textContent = plural(n);
+    document.querySelector<HTMLElement>('[data-empty]')!.hidden = n > 0;
+    document.querySelector<HTMLElement>('[data-bach-only]')!.hidden = level !== 'bach';
+    levelBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.level === level)));
+
+    const chips: string[] = [];
+    if (code) chips.push(`<button class="chip" type="button" aria-pressed="true" data-clear="code">Код ${esc(code)} <span aria-hidden="true">×</span><span class="visually-hidden">, убрать фильтр</span></button>`);
+    if (inst.value) chips.push(`<button class="chip" type="button" aria-pressed="true" data-clear="inst">${esc(inst.value)} <span aria-hidden="true">×</span><span class="visually-hidden">, убрать фильтр</span></button>`);
+    if (field.value) chips.push(`<button class="chip" type="button" aria-pressed="true" data-clear="field">${esc(field.value)} <span aria-hidden="true">×</span><span class="visually-hidden">, убрать фильтр</span></button>`);
+    active.innerHTML = chips.join('');
+  }
+
+  active.addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-clear]');
+    if (!b) return;
+    const k = b.dataset.clear;
+    if (k === 'code') { code = ''; history.replaceState(null, '', location.pathname); }
+    if (k === 'inst') inst.value = '';
+    if (k === 'field') field.value = '';
+    apply();
+  });
+  q.addEventListener('input', apply);
+  inst.addEventListener('change', apply);
+  field.addEventListener('change', apply);
+  levelBtns.forEach(b => b.addEventListener('click', () => { level = b.dataset.level!; apply(); }));
+  document.querySelector('[data-reset]')!.addEventListener('click', () => {
+    q.value = ''; inst.value = ''; field.value = ''; code = '';
+    history.replaceState(null, '', location.pathname);
+    apply();
+  });
+  apply();
+</script>

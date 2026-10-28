@@ -1,0 +1,107 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/news.css';
+import { news, dateLong } from '../../data/site';
+
+export function getStaticPaths() {
+  return news.map(n => ({ params: { id: String(n.id) } }));
+}
+
+const { id } = Astro.params;
+const n = news.find(x => String(x.id) === id)!;
+const full = 'summary' in n && Array.isArray((n as any).summary);
+const summary: string[] = full ? (n as any).summary : [];
+const isScience = n.tags.includes('Наука');
+const related = news.filter(x => x.id !== n.id && x.tags.some(t => n.tags.includes(t))).slice(0, 3);
+const more = related.length < 3 ? [...related, ...news.filter(x => x.id !== n.id && !related.includes(x))].slice(0, 3) : related;
+
+// Key facts for the longread, taken from the article (carbon polygon, 23.10.2026).
+const facts = n.id === 60431 ? [
+  { v: '5 лет', l: 'работает карбоновый полигон в Коуровке' },
+  { v: '+0,5 °C', l: 'за десятилетие растёт среднегодовая температура в Свердловской области' },
+  { v: 'Вся РФ', l: 'покрывает карта природных потоков CO₂, построенная моделью машинного обучения' },
+] : [];
+---
+<Base title={n.title} section="about" mode={isScience ? 'science' : undefined} description={`${n.lead}. ${dateLong(n.date)} 2026 — новости УрФУ.`}>
+  <div class="read-progress" aria-hidden="true"><span data-progress></span></div>
+
+  <article class="article">
+    <header class="container article-head">
+      <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/news">Новости</a></li><li aria-current="page">{n.tags[0]}</li></ol>
+      <div class="article-meta">
+        {n.tags.map(t => <a class="tag" href={`/news?tag=${encodeURIComponent(t)}`}>{t}</a>)}
+        <span class="t-caption"><time datetime={n.date}>{dateLong(n.date)} 2026</time>{'time' in n && `, ${(n as any).time}`}</span>
+      </div>
+      <h1 class="article-title">{n.title}</h1>
+      <p class="article-lead">{n.lead}</p>
+    </header>
+
+    <figure class="container article-figure">
+      <div class="article-figure__img">
+        <img src={n.image} alt={'quote_person' in n ? `${(n as any).quote_person} на конференции` : ''} referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" />
+      </div>
+      <figcaption>{'quote_person' in n ? `${(n as any).quote_person}. ` : ''}Фото: пресс-служба УрФУ</figcaption>
+    </figure>
+
+    <div class="container article-body">
+      <aside class="article-aside" aria-label="О материале">
+        {'author' in n && <p class="t-small"><span class="t-label t-muted">Текст</span><br />{(n as any).author}</p>}
+        <p class="t-small"><span class="t-label t-muted">Источник</span><br /><a class="link" href={n.url}>urfu.ru/novosti/{n.id}</a></p>
+        <button class="btn btn--sm" type="button" data-copy>Скопировать ссылку</button>
+        <p class="t-caption" data-copy-status aria-live="polite"></p>
+      </aside>
+
+      <div class="prose article-text">
+        {full ? (
+          <>
+            {summary.map((p, i) => <p class={i === 0 ? 'article-first' : ''}>{p}</p>)}
+            {facts.length > 0 && (
+              <section class="article-facts" aria-label="Главное в цифрах">
+                {facts.map(f => <div><b>{f.v}</b><span>{f.l}</span></div>)}
+              </section>
+            )}
+            <p class="t-small t-muted">Пересказ материала пресс-службы УрФУ. Полный текст с цитатами — <a class="link" href={n.url}>на сайте университета</a>.</p>
+          </>
+        ) : (
+          <>
+            <p class="article-first">{n.lead}.</p>
+            <div class="notice notice--info">
+              <span class="notice__mark" aria-hidden="true"></span>
+              <div><p class="notice__title">Это демонстрационная страница новости</p><p class="notice__text">В прототипе показаны заголовок, подзаголовок и фото. Полный текст — <a class="link" href={n.url}>на сайте УрФУ</a>.</p></div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  </article>
+
+  <section class="container article-related" aria-labelledby="rel-title">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="rel-title">Читайте также</h2><a class="btn btn--ghost section-head__more" href="/news">Все новости</a></div>
+    <div class="news-grid-list">
+      {more.map(r => (
+        <a class="card-news" href={`/news/${r.id}`}>
+          <span class="card-news__media"><img src={r.image} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" /></span>
+          <span class="card-news__meta"><span>{dateLong(r.date)}</span><span>{r.tags[0]}</span></span>
+          <span class="card-news__title">{r.title}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-progress]')!;
+  const art = document.querySelector<HTMLElement>('.article')!;
+  addEventListener('scroll', () => {
+    const r = art.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
+    bar.style.transform = `scaleX(${p})`;
+  }, { passive: true });
+
+  const btn = document.querySelector<HTMLButtonElement>('[data-copy]')!;
+  const status = document.querySelector<HTMLElement>('[data-copy-status]')!;
+  btn.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(location.href); status.textContent = 'Ссылка скопирована'; }
+    catch { status.textContent = location.href; }
+  });
+</script>

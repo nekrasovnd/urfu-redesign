@@ -1,0 +1,8 @@
+{
+  "name": "urfu-redesign-tools",
+  "private": true,
+  "type": "module",
+  "description": "Build scripts for logo and design assets",
+  "scripts": { "logo": "node build-logo.mjs" },
+  "devDependencies": { "opentype.js": "1.3.4" }
+}

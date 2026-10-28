@@ -1,0 +1,14 @@
+node_modules/
+site/dist/
+site/.astro/
+site/public/logo/
+site/public/favicon.svg
+.claude/
+# Scraped page copies stay local; the parsed data in content/ is what the site uses.
+research/raw/*.html
+.DS_Store
+Thumbs.db
+# Lighthouse: keep only the before/after pair for the concept; the rest stays local.
+research/lighthouse/**/*.json
+research/lighthouse/new/*.html
+!research/lighthouse/new/home-*.report.html

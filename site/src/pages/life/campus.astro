@@ -1,0 +1,166 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/campus.css';
+import { figures, university } from '../../data/site';
+
+// Buildings from the institutes list on urfu.ru (addresses), room prefixes seen in real data:
+// «Р-327» (ИРИТ-РтФ, Мира 32), «ГУК-100» (приёмная комиссия, Мира 19), «М-418» (ДПО, Мира 19),
+// «ВО-310» (ВУЦ, Комсомольская 62), «I105» (schedule API, ул. 100-летия Уральского университета, 5).
+type B = { id: string; zone: 'vtuz' | 'center' | 'new'; addr: string; title: string; units: string[]; rooms?: string[]; x: number; y: number };
+const B: B[] = [
+  { id: 'mira-19', zone: 'vtuz', addr: 'ул. Мира, 19', title: 'Главный учебный корпус', units: ['Приёмная комиссия, ГУК-100', 'ИТОО', 'ИнЭУ', 'Центры ДПО'], rooms: ['ГУК', 'М'], x: 170, y: 120 },
+  { id: 'mira-17', zone: 'vtuz', addr: 'ул. Мира, 17', title: 'Корпус ИСА', units: ['Институт строительства и архитектуры'], x: 120, y: 120 },
+  { id: 'mira-21', zone: 'vtuz', addr: 'ул. Мира, 21', title: 'Корпус ФТИ', units: ['Физико-технологический институт'], x: 220, y: 120 },
+  { id: 'mira-28', zone: 'vtuz', addr: 'ул. Мира, 28', title: 'Корпус ИНМТ и ХТИ', units: ['Институт новых материалов и технологий', 'Химико-технологический институт'], x: 250, y: 172 },
+  { id: 'mira-32', zone: 'vtuz', addr: 'ул. Мира, 32', title: 'Корпус ИРИТ-РтФ', units: ['Институт радиоэлектроники и информационных технологий — РтФ'], rooms: ['Р'], x: 310, y: 172 },
+  { id: 'komintern-14', zone: 'vtuz', addr: 'ул. Коминтерна, 14', title: 'Корпус ИФКСиМП', units: ['Институт физической культуры, спорта и молодёжной политики'], x: 140, y: 60 },
+  { id: 'kovalevskoy-5', zone: 'vtuz', addr: 'ул. С. Ковалевской, 5', title: 'Корпус ИнФО и УралЭНИН', units: ['Институт фундаментального образования', 'Уральский энергетический институт'], x: 230, y: 60 },
+  { id: 'kovalevskoy-6b', zone: 'vtuz', addr: 'ул. С. Ковалевской, 6Б', title: 'Корпус УралПИШ', units: ['Уральская передовая инженерная школа «Цифровое производство»'], x: 290, y: 60 },
+  { id: 'komsomolskaya-62', zone: 'vtuz', addr: 'ул. Комсомольская, 62', title: 'Военный учебный центр', units: ['ВУЦ, аудитории ВО'], rooms: ['ВО'], x: 70, y: 172 },
+  { id: 'lenina-51', zone: 'center', addr: 'пр. Ленина, 51', title: 'Корпус УГИ', units: ['Уральский гуманитарный институт'], x: 520, y: 150 },
+  { id: 'lenina-13b', zone: 'center', addr: 'пр. Ленина, 13Б', title: 'Корпус ИнЭУ', units: ['Институт экономики и управления'], x: 610, y: 150 },
+  { id: 'gogolya-25', zone: 'center', addr: 'ул. Гоголя, 25', title: 'Корпус ИнЭУ', units: ['Институт экономики и управления'], x: 590, y: 220 },
+  { id: 'kuybysheva-48', zone: 'center', addr: 'ул. Куйбышева, 48', title: 'Корпус ИЕНиМ', units: ['Институт естественных наук и математики'], x: 520, y: 280 },
+  { id: 'campus', zone: 'new', addr: 'ул. 100-летия Уральского университета, 5', title: 'Новый кампус', units: ['Учебные корпуса, общежития, спорт', 'Лицей УрФУ (СУНЦ)'], rooms: ['I'], x: 820, y: 330 },
+];
+const ZONES = [
+  { id: 'vtuz', title: 'Втузгородок', note: 'Исторический кампус УПИ вокруг улицы Мира' },
+  { id: 'center', title: 'Центр', note: 'Корпуса на проспекте Ленина и рядом' },
+  { id: 'new', title: 'Новый кампус', note: 'Новокольцовский район Екатеринбурга' },
+];
+const ymap = (a: string) => `https://yandex.ru/maps/?text=${encodeURIComponent('Екатеринбург, ' + a)}`;
+const roomsIndex = B.flatMap(b => (b.rooms ?? []).map(r => ({ p: r, id: b.id })));
+---
+<Base title="Кампус и карта" section="life" description={`Карта кампуса УрФУ: ${figures.academic_buildings} учебных корпусов во Втузгородке и в центре Екатеринбурга и новый кампус в Новокольцовском. Найдите корпус по номеру аудитории.`}>
+
+  <div class="container cp-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/life">Жизнь в УрФУ</a></li><li aria-current="page">Кампус и карта</li></ol>
+    <div class="cp-head__row">
+      <div>
+        <h1 class="t-h1">Кампус и карта</h1>
+        <p class="t-lead">Учебные корпуса во Втузгородке и в центре Екатеринбурга и новый кампус в Новокольцовском районе. Введите номер аудитории из расписания — покажем корпус.</p>
+      </div>
+      <form class="cp-room" role="search" onsubmit="return false" data-room-form>
+        <label class="field__label" for="room">Где аудитория?</label>
+        <div class="cp-room__row">
+          <input class="input" id="room" placeholder="Например, Р-327 или I105" autocomplete="off" />
+          <button class="btn btn--primary" type="submit">Найти</button>
+        </div>
+        <p class="field__hint" data-room-result aria-live="polite">Буква перед номером — это корпус: Р, ГУК, М, ВО, I.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ Map ============ -->
+  <section class="container cp-map-wrap" aria-label="Схема кампуса">
+    <div class="cp-map">
+      <svg viewBox="0 0 960 420" role="img" aria-labelledby="map-title map-desc">
+        <title id="map-title">Схема расположения корпусов УрФУ</title>
+        <desc id="map-desc">Три зоны: Втузгородок вокруг улицы Мира, центр города на проспекте Ленина и новый кампус в Новокольцовском районе. Схема не в масштабе.</desc>
+        <!-- zones -->
+        <polygon class="cp-zone" points="30,30 380,30 380,220 30,220" />
+        <polygon class="cp-zone" points="460,110 680,110 680,320 460,320" />
+        <polygon class="cp-zone cp-zone--new" points="740,250 930,250 930,400 740,400" />
+        <!-- streets -->
+        <line class="cp-street" x1="40" y1="146" x2="370" y2="146" /><text class="cp-street-label" x="262" y="141">ул. Мира</text>
+        <line class="cp-street" x1="470" y1="185" x2="670" y2="185" /><text class="cp-street-label" x="474" y="179">пр. Ленина</text>
+        <!-- links between zones: the 1:2 slope of the sign -->
+        <path class="cp-link" d="M380 160 L460 200" /><path class="cp-link" d="M680 260 L740 290" />
+        <text class="cp-zone-label" x="40" y="22">Втузгородок</text>
+        <text class="cp-zone-label" x="470" y="102">Центр</text>
+        <text class="cp-zone-label" x="750" y="242">Новый кампус</text>
+        <!-- buildings -->
+        {B.map(b => (
+          <a href={`#corp-${b.id}`} class="cp-pin" data-pin={b.id} aria-label={`${b.title}, ${b.addr}`}>
+            <rect x={b.x - (b.zone === 'new' ? 40 : 18)} y={b.y - (b.zone === 'new' ? 26 : 14)} width={b.zone === 'new' ? 80 : 36} height={b.zone === 'new' ? 52 : 28} transform={`skewX(-26.565) translate(${(b.y) * 0.5} 0)`} />
+            <text x={b.x} y={b.y + 4} text-anchor="middle">{b.id === 'campus' ? 'I' : b.addr.replace(/^(ул\.|пр\.)\s*/, '').replace(/^С\. /, '').split(',')[1]?.trim() ?? ''}</text>
+          </a>
+        ))}
+      </svg>
+      <p class="cp-map__note">Схема, не в масштабе. Точный адрес каждого корпуса открывается в Яндекс Картах.</p>
+    </div>
+  </section>
+
+  <!-- ============ Buildings ============ -->
+  <section class="container cp-list" aria-label="Корпуса">
+    {ZONES.map(z => (
+      <div class="cp-zone-block">
+        <div class="cp-zone-block__head"><h2 class="t-h2">{z.title}</h2><p class="t-small t-muted">{z.note}</p></div>
+        <ul class="cp-buildings">
+          {B.filter(b => b.zone === z.id).map(b => (
+            <li class="cp-building" id={`corp-${b.id}`} data-building={b.id}>
+              <div class="cp-building__head">
+                <span class="cp-building__addr">{b.addr}</span>
+                {b.rooms && <span class="cp-building__rooms">{b.rooms.map(r => <span class="tag">{r}</span>)}</span>}
+              </div>
+              <h3 class="cp-building__title">{b.title}</h3>
+              <ul class="cp-building__units">{b.units.map(u => <li>{u}</li>)}</ul>
+              <a class="btn btn--sm" href={ymap(b.addr)}>Открыть в Яндекс Картах <span aria-hidden="true">↗</span></a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+
+  <!-- ============ New campus ============ -->
+  <section class="cp-new" aria-labelledby="new-title">
+    <div class="container cp-new__grid">
+      <div>
+        <p class="t-label">Новокольцовский район</p>
+        <h2 class="cp-new__title" id="new-title">Новый кампус УрФУ</h2>
+        <p class="cp-new__text">Кампус построен в рамках национального проекта «Молодёжь и дети» и стал одной из площадок Международного фестиваля молодёжи — 2026. Сюда переехал лицей УрФУ: у учащихся три спортзала и стадион с теннисным кортом.</p>
+        <div class="cp-new__cta">
+          <a class="btn btn--light" href={ymap('ул. 100-летия Уральского университета, 5')}>Как добраться ↗</a>
+          <a class="btn btn--ghost cp-new__ghost" href="/news/60458">Новость о переезде лицея</a>
+        </div>
+      </div>
+      <dl class="cp-new__facts">
+        <div><dt>Учебных корпусов в УрФУ</dt><dd>{figures.academic_buildings}</dd></div>
+        <div><dt>Общежитий</dt><dd>{figures.dormitories}</dd></div>
+        <div><dt>Мест для иногородних</dt><dd>{figures.dorm_places}</dd></div>
+        <div><dt>Спортивных объектов</dt><dd>{figures.sports_facilities}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="container cp-more" aria-label="Полезное">
+    <a class="campus-tile" href="https://urfu.ru/ru/students/social/campus/"><b>{figures.dormitories}</b><span>общежитий — поселение студентов ↗</span></a>
+    <a class="campus-tile" href="/study/schedule"><b>1–7</b><span>пар в расписании — адрес аудитории ведёт сюда</span></a>
+    <a class="campus-tile" href="/contacts"><b>8-800</b><span>контакт-центр: {university.contacts.contact_center}</span></a>
+  </section>
+
+  <script type="application/json" id="rooms" set:html={JSON.stringify(roomsIndex)} />
+</Base>
+
+<script>
+  const rooms: { p: string; id: string }[] = JSON.parse(document.getElementById('rooms')!.textContent!);
+  const result = document.querySelector<HTMLElement>('[data-room-result]')!;
+  const input = document.querySelector<HTMLInputElement>('#room')!;
+
+  function select(id: string, scroll = true) {
+    document.querySelectorAll('.is-selected').forEach(el => el.classList.remove('is-selected'));
+    const card = document.getElementById('corp-' + id);
+    document.querySelector(`[data-pin="${id}"]`)?.classList.add('is-selected');
+    if (!card) return;
+    card.classList.add('is-selected');
+    if (scroll) card.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+  }
+
+  document.querySelector('[data-room-form]')!.addEventListener('submit', () => {
+    const v = input.value.trim().toUpperCase().replace(/\s+/g, '');
+    if (!v) return;
+    // Longest prefix first: «ГУК» before «Г», «ВО» before «В». Latin I and Cyrillic И are both accepted for the new campus.
+    const norm = v.replace(/^И(?=\d)/, 'I');
+    const hit = [...rooms].sort((a, b) => b.p.length - a.p.length).find(r => norm.startsWith(r.p.toUpperCase()));
+    if (!hit) { result.textContent = `Не знаем корпус «${input.value}». Проверьте букву или посмотрите адрес в расписании.`; return; }
+    const card = document.getElementById('corp-' + hit.id)!;
+    const addr = card.querySelector('.cp-building__addr')!.textContent;
+    const title = card.querySelector('.cp-building__title')!.textContent;
+    result.textContent = `${input.value.toUpperCase()} — ${title}, ${addr}.`;
+    select(hit.id);
+  });
+
+  document.querySelectorAll<SVGAElement>('[data-pin]').forEach(p => p.addEventListener('click', e => { e.preventDefault(); select(p.dataset.pin!); }));
+  if (location.hash.startsWith('#corp-')) select(location.hash.slice(6), false);
+</script>

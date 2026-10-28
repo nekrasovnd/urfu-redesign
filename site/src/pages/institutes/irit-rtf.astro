@@ -1,0 +1,156 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/program.css';
+import '../../styles/institute.css';
+import rtf from '@content/institute-rtf.json';
+import { institutes, programs, dateLong } from '../../data/site';
+
+// Institute page template: one design for all 13 institutes instead of 13 separate sites.
+const inst = institutes.find(i => i.abbr === rtf.abbr)!;
+const mine = programs.filter(p => p.institute === rtf.abbr);
+const byLevel = (l: string) => mine.filter(p => p.level === l);
+const bach = [...byLevel('Бакалавриат'), ...byLevel('Специалитет')].sort((a, b) => (a.code ?? '').localeCompare(b.code ?? '', 'ru', { numeric: true }));
+const levels = [
+  { l: 'Бакалавриат и специалитет', n: bach.length, h: `/programs?level=bach&inst=${encodeURIComponent(rtf.abbr)}` },
+  { l: 'Магистратура', n: byLevel('Магистратура').length, h: `/programs?level=master&inst=${encodeURIComponent(rtf.abbr)}` },
+  { l: 'Аспирантура', n: byLevel('Аспирантура').length, h: `/programs?level=phd&inst=${encodeURIComponent(rtf.abbr)}` },
+];
+const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
+const news = [...rtf.news].sort((a, b) => b.date.localeCompare(a.date));
+const others = institutes.filter(i => i.abbr !== rtf.abbr).slice(0, 12);
+---
+<Base title={rtf.abbr} section="study" description={`${rtf.name}: ${bach.length} программ бакалавриата и специалитета, лаборатории ИИ и робототехники, 7000+ студентов. Программы, наука, контакты.`}>
+
+  <!-- ============ Hero ============ -->
+  <section class="container in-hero">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/study">Обучение</a></li><li><a href="/institutes">Институты</a></li><li aria-current="page">{rtf.abbr}</li></ol>
+    <div class="in-hero__grid">
+      <div class="in-hero__main">
+        <div class="in-lockup" aria-hidden="true">
+          <img src="/logo/urfu-sign-color.svg" alt="" width="46" height="59" />
+          <span>Уральский федеральный университет<b>Институт радиоэлектроники и информационных технологий — РтФ</b></span>
+        </div>
+        <h1 class="in-title">{rtf.abbr}</h1>
+        <p class="t-lead">{rtf.about}</p>
+        <div class="in-cta">
+          <a class="btn btn--primary btn--lg" href={`/programs?inst=${encodeURIComponent(rtf.abbr)}`}>Программы института <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--lg" href="#contacts">Контакты</a>
+        </div>
+      </div>
+      <div class="stats in-stats">
+        {rtf.figures.map((f, i) => <div class={`stat${i === 0 ? ' stat--accent' : ''}`}><span class="stat__value">{f.v}</span><span class="stat__label">{f.l}</span></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Local nav ============ -->
+  <nav class="pg-nav in-nav" aria-label="Разделы института">
+    <div class="container"><div class="tabs pg-tabs">
+      <a href="#programs" aria-current="true">Программы</a>
+      <a href="#science">Наука и лаборатории</a>
+      <a href="#students">Студентам</a>
+      <a href="#news">Новости</a>
+      <a href="#contacts">Контакты</a>
+    </div></div>
+  </nav>
+
+  <!-- ============ Programs ============ -->
+  <section class="container in-section" id="programs">
+    <div class="section-head section-head--plain"><h2 class="section-head__title">Программы</h2><a class="btn btn--ghost section-head__more" href="/admission/match">Подобрать по баллам</a></div>
+    <div class="in-levels">
+      {levels.map(l => <a class="in-level" href={l.h}><b>{l.n}</b><span>{l.l}</span><span class="in-level__go" aria-hidden="true">→</span></a>)}
+    </div>
+    <p class="t-label t-muted in-sub">Бакалавриат и специалитет</p>
+    <ul class="in-programs">
+      {bach.map(p => (
+        <li>
+          <a href={p.name === 'Программная инженерия' && p.code === '09.03.04' ? '/programs/software-engineering' : `/programs?code=${p.code}`}>
+            <span class="in-programs__code">{p.code}</span>
+            <span class="in-programs__name">{p.name}</span>
+            <span class="in-programs__cost">{p.cost ? `до ${rub(p.cost)}` : '—'}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="notice in-top">
+      <span class="notice__mark" aria-hidden="true"></span>
+      <div><p class="notice__title">Программы топ-уровня</p><p class="notice__text">{rtf.top_level}.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ Science ============ -->
+  <section class="band in-science" data-mode="science" id="science" aria-labelledby="sci-title">
+    <div class="container in-science__grid">
+      <div>
+        <p class="t-label" style="opacity:.85">Наука</p>
+        <h2 class="in-science__title" id="sci-title">Центры и лаборатории</h2>
+        <p class="in-science__text">{rtf.about_more}</p>
+        <div class="in-centers">{rtf.centers.map(c => <span>{c}</span>)}</div>
+      </div>
+      <ol class="in-labs">
+        {rtf.labs.map(l => <li>{l}</li>)}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ Students ============ -->
+  <section class="container in-section" id="students">
+    <div class="in-two">
+      <div class="section-head section-head--plain"><h2 class="section-head__title">Студентам</h2></div>
+      <div class="action-list in-actions">
+        <a class="action action--primary" href="/study/schedule"><span>Расписание<small>По группе, преподавателю или аудитории</small></span><span aria-hidden="true">→</span></a>
+        {rtf.student.map(s => <a class="action" href="/study/hub"><span>{s}</span><span aria-hidden="true">→</span></a>)}
+      </div>
+    </div>
+    <div class="in-chats">
+      <p class="t-label t-muted">Telegram-чаты для поступающих</p>
+      <ul>{rtf.chats.map(c => <li>{c}</li>)}</ul>
+      <p class="t-small t-muted">Там отвечают на вопросы о поступлении. Ссылки — на <a class="link" href={rtf.site}>сайте института</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ News ============ -->
+  <section class="container in-section" id="news">
+    <div class="section-head section-head--plain"><h2 class="section-head__title">Новости института</h2><a class="btn btn--ghost section-head__more" href={rtf.site}>Все новости ↗</a></div>
+    <div class="in-news">
+      {news.map(n => (
+        <a class="in-news__item" href={rtf.site}>
+          <span class="t-caption">{dateLong(n.date)}</span>
+          <span class="in-news__title">{n.title}</span>
+          <span class="in-news__lead">{n.lead}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ Contacts ============ -->
+  <section class="container in-section" id="contacts">
+    <div class="contact-strip in-contacts">
+      <div>
+        <p class="t-label t-muted">Дирекция института</p>
+        <a class="contact-strip__phone" href={`tel:${inst.phone.replace(/[^\d+]/g, '')}`}>{inst.phone}</a>
+      </div>
+      <dl>
+        <div><dt>Адрес</dt><dd>Екатеринбург, {inst.address}<br /><a class="link" href="/life/campus#corp-mira-32">На карте кампуса</a></dd></div>
+        <div><dt>Почта</dt><dd>{inst.email}</dd></div>
+        <div><dt>Аудитории</dt><dd>Начинаются с «Р», например Р-327</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ Other institutes ============ -->
+  <section class="container in-section in-last" aria-labelledby="oth-title">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="oth-title">Другие институты</h2></div>
+    <div class="inst-grid">
+      {others.map(i => <a class="inst" href="/institutes"><b>{i.abbr}</b><span>{i.name}</span></a>)}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLAnchorElement>('.pg-tabs a')];
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) tabs.forEach(t => t.hash === '#' + e.target.id ? t.setAttribute('aria-current', 'true') : t.removeAttribute('aria-current'));
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  tabs.forEach(t => { const s = document.querySelector(t.hash); if (s) io.observe(s); });
+</script>

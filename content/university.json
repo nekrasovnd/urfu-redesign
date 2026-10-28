@@ -1,0 +1,101 @@
+{
+  "_source": "urfu.ru/ru/about/today/figures/, /ru/about/today/brand/, /ru/contacts/, /ru/about/history/ — собрано 2026-10-28",
+  "name": {
+    "full": "Федеральное государственное автономное образовательное учреждение высшего образования «Уральский федеральный университет имени первого Президента России Б.Н. Ельцина»",
+    "short": "УрФУ имени первого Президента России Б.Н. Ельцина",
+    "marketing": "Уральский федеральный университет",
+    "abbr": "УрФУ",
+    "en": "Ural Federal University named after the first President of Russia B.N. Yeltsin",
+    "en_short": "UrFU"
+  },
+  "rector": "Илья Обабков",
+  "program": "Участник программы «Приоритет-2030»; новый кампус в Новокольцовском районе Екатеринбурга (нацпроект «Молодёжь и дети»)",
+  "figures": {
+    "students": 50000,
+    "academic_staff": 4400,
+    "doctors_of_science": 561,
+    "candidates_of_science": 1864,
+    "professors": 285,
+    "ras_members": 23,
+    "institutes": 13,
+    "academic_buildings": 15,
+    "multimedia_classrooms": 438,
+    "dormitories": 18,
+    "dorm_places": "13 800+",
+    "sports_facilities": 20,
+    "bachelor_directions": 102,
+    "master_directions": 90,
+    "specialties": 28,
+    "educational_programs": 358,
+    "budget_places_2026": 9855,
+    "talent_support_rub_per_year": "более 200 млн",
+    "named_scholarships": "более 20",
+    "research_labs": 164,
+    "library_items": "более 3 млн",
+    "creative_groups": 20,
+    "sports_teams": 33,
+    "international_students": 5200,
+    "foreign_phd_students": 212,
+    "foreign_teachers": "45 из 20 стран",
+    "english_master_programs": 16,
+    "english_phd_programs": 29,
+    "joint_international_programs": 28,
+    "partner_universities": "более 400 из 72 стран",
+    "online_courses_openedu": 59,
+    "elearning_courses": 9885
+  },
+  "scholarships_first_year": [
+    { "rub": 30000, "for": "поступившим без вступительных испытаний по итогам Всероса" },
+    { "rub": 20000, "for": "поступившим по олимпиадам из перечня Минобрнауки" },
+    { "rub": 10000, "for": "поступившим с высоким баллом ЕГЭ, с первого семестра" }
+  ],
+  "contacts": {
+    "contact_center": "8-800-100-50-44",
+    "contact_center_note": "Звонок по России бесплатный",
+    "phone_ekb": "+7 (343) 375-44-44",
+    "hours": "пн–пт 8:30–19:00, сб 10:00–16:00",
+    "email": "contact@urfu.ru",
+    "address": "620062, Екатеринбург, ул. Мира, 19 (Главный учебный корпус)",
+    "admissions": { "phone": "+7 (343) 375-44-74", "address": "ул. Мира, 19, каб. ГУК-100" },
+    "support": { "phone": "+7 (343) 227-20-70", "email": "support@urfu.ru" },
+    "press": { "phone": "+7 (343) 375-97-33", "email": "news@urfu.ru" },
+    "rector_email": "rector@urfu.ru",
+    "partners": { "phone": "+7 (343) 375-93-53", "email": "partner@urfu.ru" }
+  },
+  "social": {
+    "vk": "https://vk.ru/ural.federal.university",
+    "telegram": "https://telegram.me/urfu_ru",
+    "ok": "https://ok.ru/uralfederal",
+    "dzen": "https://zen.yandex.ru/urfu",
+    "rutube": "https://rutube.ru/channel/24348692",
+    "max": "MAX"
+  },
+  "apps": {
+    "name": "УрФУ.Учеба",
+    "ios": "https://apps.apple.com/ru/app/урфу-учеба/id1471974222",
+    "android": "https://play.google.com/store/apps/details?id=com.ustasapp",
+    "rustore": "https://apps.rustore.ru/app/com.ustasapp"
+  },
+  "history": [
+    { "date": "19 октября 1920", "event": "Декрет об учреждении Уральского государственного университета: шесть институтов, включая горный и политехнический" },
+    { "date": "8 января 1921", "event": "Официальное открытие: 2501 студент на одиннадцати факультетах, 293 педагога" },
+    { "date": "1924", "event": "Первый выпуск инженеров — шесть специалистов" },
+    { "date": "6 мая 1925", "event": "Университет переименован в Уральский политехнический институт (УПИ)" },
+    { "date": "1929", "event": "Всесоюзный конкурс на проект комплекса зданий УПИ — будущий главный корпус на Мира, 19" },
+    { "date": "2003", "event": "Первое вручение именных стипендий Б.Н. Ельцина" },
+    { "date": "23 апреля 2008", "event": "УГТУ-УПИ присвоено имя первого Президента России Б.Н. Ельцина" },
+    { "date": "2 апреля 2010", "event": "Создан Уральский федеральный университет на базе УГТУ-УПИ" },
+    { "date": "1 июля 2012", "event": "Первая торжественная церемония вручения дипломов — самый большой вузовский выпускной в России" },
+    { "date": "Июнь 2014", "event": "Финал чемпионата мира по программированию ACM ICPC" },
+    { "date": "14 декабря 2015", "event": "Первая метеоритная Антарктическая экспедиция УрФУ" },
+    { "date": "19 октября 2020", "event": "100-летие университета" }
+  ],
+  "brand_current": {
+    "logo_note": "Знак — стилизованная «У» красного цвета + надпись «Уральский федеральный университет» в три строки; товарный знак зарегистрирован 06.11.2012",
+    "brandbook_pdf": "https://urfu.ru/fileadmin/user_upload/common_files/brand/Aidentika_UrFU_25.pdf",
+    "digital_identity_page": "https://urfu.ru/ru/about/today/brand/identity/",
+    "logos_zip": "https://urfu.ru/ru/about/today/brand/",
+    "photobank": "https://urfu.ru/ru/about/today/brand/fotobank/",
+    "site_fonts": "Open Sans (7 начертаний, включая Condensed)"
+  }
+}

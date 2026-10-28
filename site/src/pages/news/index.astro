@@ -1,0 +1,87 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/news.css';
+import newsJson from '@content/news.json';
+import { news, university, dateLong } from '../../data/site';
+
+const tags = [...new Set(news.flatMap(n => n.tags))].sort((a, b) => a.localeCompare(b, 'ru'));
+const feature = news.find(n => n.id === 60431)!;
+const ordered = [feature, ...news.filter(n => n.id !== feature.id)];
+const media = newsJson.media_mentions;
+---
+<Base title="Новости" section="about" description="Новости Уральского федерального университета: наука, образование, студенческая жизнь, международные проекты и новый кампус.">
+
+  <div class="container news-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/about">Об университете</a></li><li aria-current="page">Новости</li></ol>
+    <div class="news-head__row">
+      <h1 class="t-h1">Новости</h1>
+      <a class="btn" href={university.social.telegram}>Новости в Telegram <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="news-filter" role="group" aria-label="Рубрики">
+      <button class="chip" type="button" data-tag="" aria-pressed="true">Все</button>
+      {tags.map(t => <button class="chip" type="button" data-tag={t} aria-pressed="false">{t}</button>)}
+    </div>
+  </div>
+
+  <div class="container news-layout">
+    <div class="news-main">
+      <a class="news-feature" href={`/news/${feature.id}`} data-tags={feature.tags.join('|')}>
+        <span class="news-feature__media">
+          <img src={feature.image} alt="Виктор Валдайских рассказывает об исследованиях карбонового полигона" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" />
+          <span class="media-credit">Фото: пресс-служба УрФУ</span>
+        </span>
+        <span class="news-feature__body">
+          <span class="card-news__meta"><span>{dateLong(feature.date)}</span><span>{feature.tags.join(' · ')}</span></span>
+          <span class="news-feature__title">{feature.title}</span>
+          <span class="news-feature__lead">{feature.lead}. Учёные УрФУ и УрО РАН построили карту природных потоков CO₂ по всей стране.</span>
+          <span class="btn btn--primary" style="justify-self:start">Читать <span class="arrow" aria-hidden="true">→</span></span>
+        </span>
+      </a>
+
+      <section class="news-day" aria-label="Все новости">
+        <h2 class="news-day__title">Последние новости</h2>
+        <div class="news-grid-list">
+          {ordered.slice(1).map(n => (
+            <a class="card-news" href={`/news/${n.id}`} data-tags={n.tags.join('|')}>
+              <span class="card-news__media"><img src={n.image} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" /></span>
+              <span class="card-news__meta"><span>{dateLong(n.date)}</span><span>{n.tags.join(' · ')}</span></span>
+              <span class="card-news__title">{n.title}</span>
+              <span class="card-news__lead">{n.lead}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+      <div class="match-empty news-empty" data-news-empty hidden><p class="t-h3">В этой рубрике пока нет новостей за последние дни</p><button class="btn btn--sm" type="button" data-tag-reset>Показать все</button></div>
+    </div>
+
+    <aside class="news-aside" aria-label="СМИ о нас и контакты">
+      <div class="news-aside__block">
+        <h2 class="t-label t-muted">СМИ о нас</h2>
+        <ul class="news-media">
+          {media.map(m => <li><span class="t-caption">{dateLong(m.date)} · {m.source}</span><span>{m.title}</span></li>)}
+        </ul>
+      </div>
+      <div class="news-aside__block news-aside__press">
+        <h2 class="t-label">Пресс-служба</h2>
+        <p class="t-h4"><a class="link" href="tel:+73433759733">{university.contacts.press.phone}</a></p>
+        <p class="t-small">{university.contacts.press.email}</p>
+        <a class="btn btn--sm" href="/about/press">Предложить новость</a>
+      </div>
+    </aside>
+  </div>
+</Base>
+
+<script>
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-tag]')];
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-tags]')];
+  function apply(tag: string) {
+    chips.forEach(c => c.setAttribute('aria-pressed', String(c.dataset.tag === tag)));
+    let n = 0;
+    cards.forEach(c => { const ok = !tag || c.dataset.tags!.split('|').includes(tag); c.hidden = !ok; if (ok) n++; });
+        document.querySelector<HTMLElement>('[data-news-empty]')!.hidden = n > 0;
+  }
+  chips.forEach(c => c.addEventListener('click', () => apply(c.dataset.tag!)));
+  document.querySelector('[data-tag-reset]')!.addEventListener('click', () => apply(''));
+  const initial = new URLSearchParams(location.search).get('tag');
+  if (initial && chips.some(c => c.dataset.tag === initial)) apply(initial);
+</script>

@@ -1,0 +1,49 @@
+{
+  "_source": "Ссылки из меню «Студентам» на urfu.ru (выгрузка 2026-10-28). Группировка по задачам — наша.",
+  "groups": [
+    {
+      "id": "study", "title": "Учёба",
+      "items": [
+        { "t": "Личный кабинет", "d": "Индивидуальное расписание, траектория, оценки", "h": "https://istudent.urfu.ru/", "ext": true, "icon": "user" },
+        { "t": "Расписание", "d": "По группе, преподавателю или аудитории", "h": "/study/schedule", "icon": "calendar" },
+        { "t": "Рейтинг 10 % (БРС)", "d": "Балльно-рейтинговая система", "h": "https://urfu.ru/ru/students/study/brs-rating/", "ext": true, "icon": "chart" },
+        { "t": "Зональная научная библиотека", "d": "Более 3 млн изданий, электронные ресурсы", "h": "http://lib.urfu.ru/", "ext": true, "icon": "book" },
+        { "t": "Проектное обучение", "d": "Проектный практикум и командные проекты", "h": "https://teamproject.urfu.ru/", "ext": true, "icon": "users" },
+        { "t": "Перевод и восстановление", "d": "Вакантные места и заявления круглый год", "h": "https://urfu.ru/sveden/vacant/", "ext": true, "icon": "swap" },
+        { "t": "Академическая мобильность", "d": "Семестр в другом вузе России или за рубежом", "h": "https://urfu.ru/ru/international/mobility/", "ext": true, "icon": "globe" }
+      ]
+    },
+    {
+      "id": "money", "title": "Деньги и документы",
+      "items": [
+        { "t": "Стипендии", "d": "Академические, социальные и более 20 именных", "h": "https://urfu.ru/ru/students/study/scholarships/", "ext": true, "icon": "coin" },
+        { "t": "Документы для студентов", "d": "Справки, положения, бланки, заявления", "h": "https://urfu.ru/ru/students/documents/", "ext": true, "icon": "file" },
+        { "t": "Социальная поддержка", "d": "Материальная помощь и льготы", "h": "https://urfu.ru/ru/students/social/", "ext": true, "icon": "heart" },
+        { "t": "Меры поддержки", "d": "Особые права, в том числе для участников СВО и их детей", "h": "https://urfu.ru/ru/students/support-measures/", "ext": true, "icon": "shield" },
+        { "t": "Воинский учёт и отсрочка", "d": "Справки для военкомата, отсрочка от призыва", "h": "https://urfu.ru/ru/students/military/", "ext": true, "icon": "badge" }
+      ]
+    },
+    {
+      "id": "life", "title": "Жизнь и здоровье",
+      "items": [
+        { "t": "Поселение в общежитие", "d": "18 общежитий, 13 800+ мест", "h": "https://urfu.ru/ru/students/social/campus/", "ext": true, "icon": "home" },
+        { "t": "Здоровье", "d": "Медпункты и программы здоровья", "h": "https://urfu.ru/ru/about/units/ppov/hp/", "ext": true, "icon": "plus" },
+        { "t": "Питание", "d": "Столовые и буфеты в корпусах", "h": "https://urfu.ru/ru/about/units/ppov/canteen/", "ext": true, "icon": "cup" },
+        { "t": "Горячая линия для студентов", "d": "Если что-то пошло не так", "h": "https://urfu.ru/ru/students/social/gorjachaja-linija-dlja-studentov/", "ext": true, "icon": "phone" },
+        { "t": "Wi-Fi в УрФУ", "d": "Как подключиться к сети университета", "h": "https://dit.urfu.ru/ru/servisy/wi-fi/", "ext": true, "icon": "wifi" },
+        { "t": "Семейным студентам", "d": "Поддержка студенческих семей, детский сад", "h": "https://urfu.ru/ru/students/social/family/", "ext": true, "icon": "family" }
+      ]
+    },
+    {
+      "id": "growth", "title": "Карьера и развитие",
+      "items": [
+        { "t": "Центр карьеры", "d": "Вакансии, стажировки, консультации", "h": "http://career.urfu.ru/", "ext": true, "icon": "briefcase" },
+        { "t": "Практика", "d": "Организация и прохождение практики", "h": "https://urfu.ru/ru/students/documents/praktika/", "ext": true, "icon": "tool" },
+        { "t": "Олимпиады", "d": "«Я — профессионал», «Изумруд.Студент» и другие", "h": "https://urfu.ru/ru/students/olympic/", "ext": true, "icon": "trophy" },
+        { "t": "Союз студентов", "d": "Студенческое самоуправление", "h": "https://urfu.ru/ru/students/leisure/student-union/", "ext": true, "icon": "flag" },
+        { "t": "Волонтёрство", "d": "Проекты и события для волонтёров", "h": "https://urfu.ru/ru/students/leisure/oso/volural/", "ext": true, "icon": "hand" },
+        { "t": "Коворкинги", "d": "Где поработать над проектом", "h": "https://soc.urfu.ru/ru/upravlenie-razvitija-studencheskogo-potenciala/kovorkingi/", "ext": true, "icon": "desk" }
+      ]
+    }
+  ]
+}

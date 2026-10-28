@@ -1,0 +1,17 @@
+{
+  "sign": {
+    "w": 92,
+    "h": 118,
+    "main": "M0 0H22L64 84C68 92 62 118 38 118V110C50 110 52 102 46 92Z",
+    "arm": "M74 0H92L72 40H54Z"
+  },
+  "emUnits": 40.69,
+  "gapSignText": 20.34,
+  "lineBaselines": [
+    28.48,
+    73.24,
+    118
+  ],
+  "clearSpace": 43.13,
+  "note": "Units = sign units (sign height 118). Clear space = 2 x-heights of the upper block."
+}

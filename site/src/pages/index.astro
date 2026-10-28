@@ -1,0 +1,420 @@
+---
+import Base from '../layouts/Base.astro';
+import { sections, news, events, schedule, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
+
+// ---------- Roles: what each audience needs first ----------
+type Action = { t: string; h: string; s?: string; ext?: boolean };
+const c = university.contacts;
+const roles: { id: string; label: string; title: string; lead: string; actions: Action[]; audience?: string }[] = [
+  {
+    id: 'applicant', label: 'абитуриент', title: 'Поступление|2027',
+    lead: 'Введите баллы ЕГЭ — сразу покажем подходящие направления, минимальные баллы и стоимость обучения.',
+    actions: [
+      { t: 'Подобрать программу по баллам', h: '/admission/match', s: `${directions.length} направлений бакалавриата и специалитета` },
+      { t: 'Все программы', h: '/programs', s: 'Фильтры по институту, уровню и форме' },
+      { t: 'Стоимость, скидки и кредит', h: '/admission/cost', s: 'От 165 000 ₽ в год' },
+      { t: 'Общежития', h: '/life/housing', s: `${figures.dormitories} общежитий, ${figures.dorm_places} мест` },
+      { t: 'Приёмная комиссия', h: '/admission/contacts', s: `${c.admissions.phone} · ${c.admissions.address}` },
+    ],
+  },
+  {
+    id: 'student', label: 'студент', title: 'Учёба на одном экране',
+    lead: 'Расписание вашей группы, справки, стипендии и сервисы — без поиска по поддоменам.',
+    actions: [
+      { t: 'Личный кабинет', h: 'https://istudent.urfu.ru/', s: 'Индивидуальное расписание и траектория', ext: true },
+      { t: 'Расписание', h: '/study/schedule', s: 'По группе, преподавателю или аудитории' },
+      { t: 'Стипендии и поддержка', h: '/study/scholarships', s: `Более ${figures.named_scholarships.replace('более ', '')} именных стипендий` },
+      { t: 'Справки и документы', h: '/study/documents' },
+      { t: 'Практика и карьера', h: '/study/career' },
+    ],
+    audience: 'Студенты',
+  },
+  {
+    id: 'staff', label: 'сотрудник', title: 'Сервисы сотрудника',
+    lead: 'Расписание преподавателя, документы, гранты и IT собраны в одном хабе.',
+    actions: [
+      { t: 'Расписание преподавателя', h: '/study/schedule' },
+      { t: 'Документы и бланки', h: '/staff/documents' },
+      { t: 'Гранты и конкурсы', h: '/research/grants', s: 'Премия губернатора — заявки до 1 ноября' },
+      { t: 'IT, почта и Wi-Fi', h: '/staff/it' },
+      { t: 'Кадры и вакансии', h: '/about/careers' },
+    ],
+    audience: 'Учёные',
+  },
+  {
+    id: 'school', label: 'школьник', title: 'Поступать — это рано?',
+    lead: 'Нет. Олимпиады дают льготы при поступлении, а курсы и смены помогают выбрать направление.',
+    actions: [
+      { t: 'Олимпиады и конкурсы', h: '/admission/prep', s: '«Изумруд», «Я — профессионал», «Эврика»' },
+      { t: 'Курсы подготовки к ЕГЭ', h: '/admission/prep' },
+      { t: 'Тест-драйв в УрФУ', h: '/admission/prep', s: 'Неделя студенческой жизни' },
+      { t: 'Подобрать программу по баллам', h: '/admission/match' },
+    ],
+    audience: 'Школьники',
+  },
+  {
+    id: 'partner', label: 'партнёр', title: 'Работаем с индустрией',
+    lead: `${figures.research_labs} лабораторий, центры коллективного пользования и выпускники для ваших команд.`,
+    actions: [
+      { t: 'Заказать исследование', h: '/research/industry' },
+      { t: 'Центр карьеры: вакансии и практика', h: '/study/career' },
+      { t: 'Целевое обучение', h: '/admission/quotas' },
+      { t: 'Реклама и партнёрство', h: '/about/partners', s: `${c.partners.phone} · ${c.partners.email}` },
+    ],
+  },
+  {
+    id: 'alumni', label: 'выпускник', title: 'Выпускники УПИ, УрГУ и УрФУ',
+    lead: 'Магистратура, дополнительное образование и ассоциация выпускников.',
+    actions: [
+      { t: 'Ассоциация выпускников', h: '/about/alumni' },
+      { t: 'Магистратура', h: '/admission/master' },
+      { t: 'Дополнительное образование', h: '/study/continuing' },
+      { t: 'Поддержать университет', h: '/about/alumni', s: 'Эндаумент-фонд УрФУ' },
+    ],
+  },
+  {
+    id: 'press', label: 'СМИ', title: 'Пресс-центр',
+    lead: 'Контакты пресс-службы, эксперты по темам и фотобанк.',
+    actions: [
+      { t: 'Пресс-служба', h: '/about/press', s: `${c.press.phone} · ${c.press.email}` },
+      { t: 'Эксперты по темам', h: '/about/press' },
+      { t: 'Фотобанк', h: '/about/press' },
+      { t: 'Логотипы и бренд', h: '/about/brand' },
+    ],
+  },
+];
+
+// Third subject options for the quick match: every subject that appears in the EGE data except the two fixed ones.
+const thirdSubjects = ['Информатика', 'Физика', 'Обществознание', 'Химия', 'Биология', 'История', 'Иностранный язык', 'Литература', 'География'];
+const egeCompact = directions.map(d => ({ c: d.code, n: d.name, p: d.max_cost_rub, r: d.required.map(x => [x.subject, x.min]), o: d.choose_one.map(x => [x.subject, x.min]) }));
+
+const featured = news[9]; // карбоновый полигон
+const restNews = [news[0], news[4], news[6], news[1]];
+const upcoming = events.filter(e => e.date >= '2026-10-28').slice(0, 7);
+const audiences = ['Все', 'Абитуриенты', 'Студенты', 'Школьники', 'Учёные'];
+const roleEvents = (aud?: string) => upcoming.filter(e => !aud || e.audience.includes(aud) || e.audience.includes('Все')).slice(0, 3);
+
+const lessonsSorted = [...schedule.events].sort((a, b) => (a.date + a.pair).localeCompare(b.date + b.pair));
+const pairTime = (n: number) => schedule.pairs.find(p => p.n === n);
+const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+---
+<Base title="УрФУ" description="Уральский федеральный университет: поступление, программы, расписание, наука и жизнь в кампусе. 50 000 студентов, 13 институтов, Екатеринбург.">
+
+  <!-- ============ HERO ============ -->
+  <section class="container hero" aria-labelledby="hero-title">
+    <h1 id="hero-title" class="visually-hidden">Уральский федеральный университет имени первого Президента России Б.Н. Ельцина</h1>
+    <div class="hero__grid">
+      <div class="hero__main">
+        <div class="role-bar">
+          <span class="t-label">Я —</span>
+          <div class="segmented" role="group" aria-label="Выберите, кто вы, чтобы увидеть нужные разделы">
+            {roles.map((r, i) => <button type="button" data-role={r.id} aria-pressed={i === 0 ? 'true' : 'false'}>{r.label}</button>)}
+          </div>
+        </div>
+
+        {roles.map((r, i) => (
+          <div class="hero__role" data-role-panel={r.id} hidden={i !== 0}>
+            <h2 class="hero__title">{r.title.includes('|') ? <>{r.title.split('|')[0]}<br /><span class="accent">{r.title.split('|')[1]}</span></> : r.title}</h2>
+            <p class="hero__lead" style="margin-top: var(--s-4)">{r.lead}</p>
+
+            {r.id === 'applicant' && (
+              <form class="quick-match" style="margin-top: var(--s-6)" data-quick-match action="/admission/match" method="get" novalidate>
+                <div class="quick-match__fields">
+                  <div class="field">
+                    <label class="field__label" for="qm-ru">Русский язык</label>
+                    <input class="input input--score" id="qm-ru" name="ru" type="number" inputmode="numeric" min="0" max="100" value="82" />
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="qm-ma">Математика (профиль)</label>
+                    <input class="input input--score" id="qm-ma" name="ma" type="number" inputmode="numeric" min="0" max="100" value="76" />
+                  </div>
+                  <div class="field">
+                    <label class="field__label" for="qm-s">Третий предмет</label>
+                    <div class="score-pair">
+                      <select class="select" id="qm-s" name="s">{thirdSubjects.map(s => <option>{s}</option>)}</select>
+                      <input class="input input--score" id="qm-sv" name="sv" type="number" inputmode="numeric" min="0" max="100" value="80" aria-label="Балл по третьему предмету" />
+                    </div>
+                  </div>
+                </div>
+                <div class="quick-match__result" aria-live="polite">
+                  <span class="quick-match__count" data-qm-count>—</span>
+                  <span class="quick-match__count-label" data-qm-label>направлений подходит по минимальным баллам</span>
+                  <ul class="quick-match__list" data-qm-list></ul>
+                  <div class="quick-match__foot">
+                    <span class="quick-match__note">Пример баллов — введите свои. Пороги и цены: калькулятор ЕГЭ УрФУ, приём-2026.</span>
+                    <button class="btn btn--primary" type="submit">Показать все <span class="arrow" aria-hidden="true">→</span></button>
+                  </div>
+                </div>
+              </form>
+            )}
+
+            {r.id === 'student' && (
+              <div class="my-schedule" style="margin-top: var(--s-6)" data-my-schedule>
+                <div class="my-schedule__head">
+                  <div class="field">
+                    <label class="field__label" for="ms-group">Моя группа</label>
+                    <div class="my-schedule__group">
+                      <input class="input" id="ms-group" value={schedule.group.title} autocomplete="off" />
+                      <a class="btn btn--sm" href="/study/schedule">Полное расписание</a>
+                    </div>
+                  </div>
+                  <span class="t-caption">{schedule.group.institute} · {schedule.group.course} курс</span>
+                </div>
+                <div>
+                  {lessonsSorted.slice(0, 4).map(l => {
+                    const p = pairTime(l.pair);
+                    const d = new Date(l.date);
+                    return (
+                      <div class="lesson" data-lesson-date={l.date}>
+                        <span class="lesson__time">{l.pair && p ? `${p.start}–${p.end}` : 'Онлайн'}<small>{WEEKDAYS[d.getDay()]}, {dateLong(l.date)}</small></span>
+                        <span><span class="lesson__title">{l.title}</span><br /><span class="lesson__meta">{[l.type, l.room && `ауд. ${l.room}`, l.teacher].filter(Boolean).join(' · ')}</span></span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p class="quick-match__note">Данные открытого расписания urfu.ru для группы {schedule.group.title}. Группа запоминается в браузере.</p>
+              </div>
+            )}
+
+            {r.id !== 'applicant' && r.id !== 'student' && (
+              <div class="role-events" style="margin-top: var(--s-6)">
+                <p class="t-label t-muted" style="margin-bottom: var(--s-2)">Ближайшее</p>
+                {roleEvents(r.audience).map(e => (
+                  <a class="card-event" href="/events">
+                    <span class="card-event__date"><span class="card-event__day">{day(e.date)}</span><span class="card-event__month">{monthShort(e.date)}</span></span>
+                    <span><span class="card-event__title">{e.title}</span><span class="card-event__meta"><span>{e.status}</span><span>{e.type}</span></span></span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <aside class="hero__aside" aria-label="Быстрые действия">
+        {roles.map((r, i) => (
+          <div data-role-panel={r.id} hidden={i !== 0}>
+            <div class="hero__aside-title"><span class="t-label">Быстро · {r.label}</span><button class="btn btn--ghost btn--sm" type="button" data-search-open>Найти другое</button></div>
+            <div class="action-list" style="border-top: 0">
+              {r.actions.map((a, j) => (
+                <a class={`action${j === 0 ? ' action--primary' : ''}`} href={a.h}>
+                  <span>{a.t}{a.ext && <span class="visually-hidden"> (внешний сервис)</span>}{a.s && <small>{a.s}</small>}</span>
+                  <span aria-hidden="true">{a.ext ? '↗' : '→'}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ STATS ============ -->
+  <section class="container stats-band" aria-label="УрФУ в цифрах">
+    <div class="stats">
+      <div class="stat stat--accent"><span class="stat__value">{fmtNum(figures.students)}</span><span class="stat__label">студентов, из них {fmtNum(figures.international_students)} иностранных</span></div>
+      <div class="stat"><span class="stat__value">{fmtNum(figures.budget_places_2026)}</span><span class="stat__label">бюджетных мест в 2026 году</span></div>
+      <div class="stat"><span class="stat__value">{figures.research_labs}</span><span class="stat__label">научно-исследовательских лабораторий</span></div>
+      <div class="stat"><span class="stat__value">1920</span><span class="stat__label">год основания — декрет об Уральском университете</span></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTIONS ============ -->
+  <section class="container home-section" aria-labelledby="sections-title">
+    <h2 id="sections-title" class="visually-hidden">Разделы сайта</h2>
+    <div class="sections-index">
+      {sections.map(s => (
+        <div class="sec-row">
+          <a class="sec-row__title" href={s.href}>{s.label}</a>
+          <p class="sec-row__lead">{s.lead}</p>
+          <ul class="sec-row__links">
+            {s.children.slice(0, 4).map(l => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ NEWS ============ -->
+  <section class="container home-section" aria-labelledby="news-title">
+    <div class="section-head section-head--plain">
+      <h2 class="section-head__title" id="news-title">Новости</h2>
+      <a class="btn btn--ghost section-head__more" href="/news">Все новости</a>
+    </div>
+    <div class="news-grid">
+      {[featured, ...restNews].map((n, i) => (
+        <a class={`card-news${i === 0 ? ' card-news--feature' : ''}`} href={`/news/${n.id}`}>
+          <span class="card-news__media">
+            <img src={n.image} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" />
+            {i === 0 && <span class="media-credit">Фото: пресс-служба УрФУ</span>}
+          </span>
+          <span class="card-news__meta"><span>{dateLong(n.date)}</span><span>{n.tags[0]}</span></span>
+          <span class="card-news__title">{n.title}</span>
+          <span class="card-news__lead">{n.lead}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ EVENTS ============ -->
+  <section class="container home-section" aria-labelledby="events-title">
+    <div class="events-layout">
+      <div class="events-aside">
+        <h2 class="t-h2" id="events-title">Афиша</h2>
+        <p class="t-body t-muted">Олимпиады, конференции, фестивали и дни открытых дверей. Выберите, для кого.</p>
+        <div class="events-filter" role="group" aria-label="Фильтр событий">
+          {audiences.map((a, i) => <button class="chip" type="button" data-ev-filter={a} aria-pressed={i === 0 ? 'true' : 'false'}>{a}</button>)}
+        </div>
+        <a class="btn" href="/events">Вся афиша <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <div class="events-list">
+        {upcoming.map(e => (
+          <a class="card-event" href="/events" data-aud={e.audience.join('|')}>
+            <span class="card-event__date"><span class="card-event__day">{day(e.date)}</span><span class="card-event__month">{monthShort(e.date)}</span></span>
+            <span>
+              <span class="card-event__title">{e.title}</span>
+              <span class="card-event__meta">
+                <span>{dateRange(e.date, e.date_end)}</span><span>{e.type}</span>
+                <span class={/заявк|регистрац|приём/i.test(e.status) ? 'status status--open' : ''}>{e.status}</span>
+              </span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCIENCE ============ -->
+  <section class="band band--science home-band" data-mode="science" aria-labelledby="science-title" style="margin-top: var(--section-gap)">
+    <div class="container">
+      <p class="t-label" style="opacity:.85">Наука · Карбоновый полигон</p>
+      <div class="science-grid" style="margin-top: var(--s-5)">
+        <div style="display:grid;gap:var(--s-5)">
+          <h2 id="science-title">Карта потоков CO₂ для всей России</h2>
+          <p>Пять лет учёные УрФУ и УрО РАН измеряют парниковые газы на полигоне в Коуровке. Модель машинного обучения, проверенная наземными наблюдениями, построила карту природных потоков углекислого газа по всей стране.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--s-3)">
+            <a class="btn btn--light" href={`/news/${featured.id}`}>Читать историю <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn--ghost" style="--btn-fg:#fff;text-decoration-color:#fff" href="/research/labs">Все лаборатории</a>
+          </div>
+        </div>
+        <div class="science-stat">
+          <b>+0,5°</b>
+          <span>за десятилетие растёт среднегодовая температура в Свердловской области — данные полигона</span>
+        </div>
+      </div>
+      <div class="science-facts">
+        <div><b>{figures.research_labs}</b><span>научно-исследовательские лаборатории</span></div>
+        <div><b>{figures.ras_members}</b><span>действительных члена и члена-корреспондента РАН</span></div>
+        <div><b>{fmtNum(figures.doctors_of_science)}</b><span>докторов наук среди преподавателей</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAMPUS ============ -->
+  <section class="container home-section" aria-labelledby="campus-title">
+    <div class="section-head section-head--plain">
+      <h2 class="section-head__title" id="campus-title">Жизнь в УрФУ</h2>
+      <a class="btn btn--ghost section-head__more" href="/life">Весь раздел</a>
+    </div>
+    <div class="campus-grid">
+      <a class="campus-tile campus-tile--lead" href="/life/campus">
+        <h3>Новый кампус в Новокольцовском</h3>
+        <p>Учебные корпуса, общежития, стадион и спортзалы в одном месте. Карта кампуса и всех 15 учебных корпусов в центре города.</p>
+        <span class="btn btn--primary" style="justify-self:start">Открыть карту <span class="arrow" aria-hidden="true">→</span></span>
+      </a>
+      <a class="campus-tile" href="/life/housing"><b>{figures.dormitories}</b><span>общежитий на {figures.dorm_places} мест</span></a>
+      <a class="campus-tile" href="/life/sport"><b>{figures.sports_facilities}</b><span>спортивных объектов и {figures.sports_teams} команды</span></a>
+      <a class="campus-tile" href="/life/clubs"><b>{figures.creative_groups}</b><span>творческих коллективов</span></a>
+      <a class="campus-tile" href="/study/mobility"><b>{figures.partner_universities.split(' ')[1]}</b><span>зарубежных вузов-партнёров из 72 стран</span></a>
+    </div>
+  </section>
+
+  <!-- ============ INSTITUTES ============ -->
+  <section class="container home-section" aria-labelledby="inst-title">
+    <div class="section-head section-head--plain">
+      <h2 class="section-head__title" id="inst-title">13 институтов</h2>
+      <a class="btn btn--ghost section-head__more" href="/institutes">Все институты</a>
+    </div>
+    <div class="inst-grid">
+      {institutes.map(i => (
+        <a class="inst" href={i.abbr === 'ИРИТ-РтФ' ? '/institutes/irit-rtf' : '/institutes'}><b>{i.abbr}</b><span>{i.name}</span></a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ ADMISSION CONTACT ============ -->
+  <section class="container home-section" aria-labelledby="contact-title">
+    <div class="contact-strip">
+      <div>
+        <h2 class="t-label t-muted" id="contact-title">Приёмная комиссия</h2>
+        <a class="contact-strip__phone" href="tel:+73433754474">{c.admissions.phone}</a>
+      </div>
+      <dl>
+        <div><dt>Адрес</dt><dd>Екатеринбург, ул. Мира, 19, кабинет ГУК-100</dd></div>
+        <div><dt>Контакт-центр</dt><dd>{c.contact_center} — звонок по России бесплатный</dd></div>
+        <div><dt>Часы работы</dt><dd>{c.hours}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <script type="application/json" id="ege-data" set:html={JSON.stringify(egeCompact)} />
+</Base>
+
+<script>
+  // ---------- Role switch ----------
+  const ROLE_KEY = 'urfu-role';
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-role]')];
+  function setRole(id: string, save = true) {
+    if (!buttons.some(b => b.dataset.role === id)) id = 'applicant';
+    buttons.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.role === id)));
+    document.querySelectorAll<HTMLElement>('[data-role-panel]').forEach(p => (p.hidden = p.dataset.rolePanel !== id));
+    if (save) try { localStorage.setItem(ROLE_KEY, id); } catch {}
+  }
+  buttons.forEach(b => b.addEventListener('click', () => setRole(b.dataset.role!)));
+  try { const saved = localStorage.getItem(ROLE_KEY); if (saved) setRole(saved, false); } catch {}
+
+  // ---------- Quick match by EGE scores ----------
+  type Dir = { c: string; n: string; p: number | null; r: [string, number][]; o: [string, number][] };
+  const dirs: Dir[] = JSON.parse(document.getElementById('ege-data')!.textContent!);
+  const form = document.querySelector<HTMLFormElement>('[data-quick-match]');
+  if (form) {
+    const $ = (id: string) => form.querySelector<HTMLInputElement | HTMLSelectElement>('#' + id)!;
+    const countEl = form.querySelector('[data-qm-count]')!;
+    const labelEl = form.querySelector('[data-qm-label]')!;
+    const listEl = form.querySelector('[data-qm-list]')!;
+    const plural = (n: number, a: string, b: string, c: string) => (n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c);
+    const rub = (n: number) => n.toLocaleString('ru-RU') + ' ₽';
+    function update() {
+      const third = $('qm-s').value;
+      const scores: Record<string, number> = { 'Русский язык': +$('qm-ru').value || 0, 'Математика': +$('qm-ma').value || 0, [third]: +$('qm-sv').value || 0 };
+      const ok = (s: string, min: number) => (scores[s] ?? -1) >= min;
+      const matched = dirs.filter(d => d.r.every(([s, m]) => ok(s, m)) && (!d.o.length || d.o.some(([s, m]) => ok(s, m))));
+      matched.sort((a, b) => Number(b.o.some(([s]) => s === third)) - Number(a.o.some(([s]) => s === third)) || (b.p ?? 0) - (a.p ?? 0));
+      countEl.textContent = String(matched.length);
+      labelEl.textContent = `${plural(matched.length, 'направление подходит', 'направления подходят', 'направлений подходят')} по минимальным баллам из ${dirs.length}`;
+      listEl.innerHTML = matched.slice(0, 3).map(d => `<li><b>${d.n}</b><span>${d.c}${d.p ? ' · до ' + rub(d.p) : ''}</span></li>`).join('')
+        || '<li>Пока ни одно направление не подходит. Проверьте баллы: минимум по большинству предметов — 40.</li>';
+    }
+    form.addEventListener('input', update);
+    form.addEventListener('change', update);
+    update();
+  }
+
+  // ---------- Student: remember group ----------
+  const group = document.querySelector<HTMLInputElement>('#ms-group');
+  if (group) {
+    try { const g = localStorage.getItem('urfu-group'); if (g) group.value = g; } catch {}
+    group.addEventListener('change', () => { try { localStorage.setItem('urfu-group', group.value.trim()); } catch {} });
+  }
+
+  // ---------- Events filter ----------
+  const evButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-ev-filter]')];
+  evButtons.forEach(b => b.addEventListener('click', () => {
+    const a = b.dataset.evFilter!;
+    evButtons.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll<HTMLElement>('.events-list .card-event').forEach(el => {
+      const aud = el.dataset.aud!.split('|');
+      el.hidden = !(a === 'Все' || aud.includes(a) || aud.includes('Все'));
+    });
+  }));
+</script>

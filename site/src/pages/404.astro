@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+
+// In the competition prototype many links lead to sections that are planned in the new
+// structure but not designed yet; this page says so honestly and offers the finished ones.
+const ready = [
+  ['Подбор программы по баллам ЕГЭ', '/admission/match'],
+  ['Все программы', '/programs'],
+  ['Программная инженерия', '/programs/software-engineering'],
+  ['Расписание', '/study/schedule'],
+  ['Студенческие сервисы', '/study/hub'],
+  ['Институт ИРИТ-РтФ', '/institutes/irit-rtf'],
+  ['Новости', '/news'],
+  ['Афиша', '/events'],
+  ['Кампус и карта', '/life/campus'],
+];
+---
+<Base title="Страница не найдена" description="Такой страницы нет или она ещё не свёрстана в прототипе редизайна УрФУ.">
+  <section class="container nf">
+    <p class="nf__code" aria-hidden="true">404</p>
+    <div class="nf__body">
+      <h1 class="t-h1">Этой страницы пока нет</h1>
+      <p class="t-lead">Возможно, адрес набран с ошибкой. Или это раздел новой структуры сайта, который ещё не свёрстан в прототипе: в конкурсной работе готовы главная и десять страниц разных типов.</p>
+      <div class="nf__actions">
+        <a class="btn btn--primary" href="/">На главную</a>
+        <button class="btn" type="button" data-search-open>Найти на сайте</button>
+      </div>
+      <p class="t-label t-muted" style="margin-top: var(--s-6)">Готовые страницы прототипа</p>
+      <div class="action-list nf__list">
+        {ready.map(([t, h]) => <a class="action" href={h}><span>{t}</span><span aria-hidden="true">→</span></a>)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--s-7); padding-block: var(--s-8) var(--section-gap); align-items: start; }
+  .nf__code { font: 800 clamp(120px, 20vw, 320px)/0.8 var(--font-display); letter-spacing: -0.06em; color: var(--accent); }
+  .nf__body { display: grid; gap: var(--s-4); }
+  .nf__actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-3); }
+  .nf__list { max-width: 640px; }
+  @media (max-width: 899px) { .nf { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); } }
+</style>
