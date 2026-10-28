@@ -13,3 +13,6 @@ research/lighthouse/**/*.json
 research/lighthouse/new/*.html
 !research/lighthouse/new/home-*.report.html
 design/concept/preview/
+# Personal contacts for the concept PDF (filled locally)
+design/concept/author.local.json
+design/concept/*.pdf

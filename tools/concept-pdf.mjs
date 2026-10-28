@@ -31,6 +31,18 @@ const page = await browser.newPage();
 await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
 await page.goto(pathToFileURL(CONCEPT).href, { waitUntil: 'networkidle0', timeout: 60000 });
 await page.evaluate(() => document.fonts.ready);
+
+// Author details live in an untracked file so the public repository keeps placeholders.
+const authorFile = path.join(ROOT, 'design/concept/author.local.json');
+if (fs.existsSync(authorFile)) {
+  const author = JSON.parse(fs.readFileSync(authorFile, 'utf8'));
+  await page.evaluate(a => {
+    document.querySelectorAll('[data-author]').forEach(el => {
+      const v = a[el.dataset.author];
+      if (v) { el.textContent = v; el.classList.remove('fill'); el.style.removeProperty('color'); }
+    });
+  }, author);
+} else console.warn('author.local.json not found — PDF keeps placeholders');
 await page.pdf({ path: OUT, printBackground: true, preferCSSPageSize: true });
 
 // 3. PNG previews of every page for a quick visual check.
