@@ -69,3 +69,21 @@ export const dateRange = (a: string, b?: string) => {
   const da = new Date(a), db = new Date(b);
   return da.getMonth() === db.getMonth() ? `${da.getDate()}–${db.getDate()} ${MONTHS_FULL[db.getMonth()]}` : `${dateLong(a)} — ${dateLong(b)}`;
 };
+
+// Pages that exist in the competition prototype. Everything else in the new structure is planned but not built:
+// the prototype guide (bottom-left) lists these, and in «только готовые» mode links elsewhere are hidden or dimmed.
+export const protoPages: { href: string; label: string; type: string }[] = [
+  { href: '/', label: 'Главная', type: 'Главная' },
+  { href: '/admission/match', label: 'Подбор программы по баллам ЕГЭ', type: 'Инструмент' },
+  { href: '/programs', label: 'Все программы', type: 'Каталог' },
+  { href: '/programs/software-engineering', label: 'Программная инженерия', type: 'Карточка программы' },
+  { href: '/study/schedule', label: 'Расписание', type: 'Данные' },
+  { href: '/study/hub', label: 'Студенческие сервисы', type: 'Хаб' },
+  { href: '/news', label: 'Новости', type: 'Лента' },
+  { href: '/news/60431', label: 'Учёные создали карту потоков CO₂', type: 'Статья' },
+  { href: '/events', label: 'Афиша', type: 'Календарь' },
+  { href: '/institutes/irit-rtf', label: 'Институт ИРИТ-РтФ', type: 'Институт' },
+  { href: '/life/campus', label: 'Кампус и карта', type: 'Карта' },
+  { href: '/sveden', label: 'Сведения об образовательной организации', type: 'Обязательный раздел' },
+];
+export const builtRoutes = [...protoPages.map(p => p.href), ...news.map(n => `/news/${n.id}`)];

@@ -5,7 +5,7 @@
   "scripts": {
     "sync": "node scripts/sync-assets.mjs",
     "dev": "npm run sync && astro dev",
-    "build": "npm run sync && astro build && node scripts/postbuild-base.mjs",
+    "build": "npm run sync && astro build && node scripts/postbuild-proto.mjs && node scripts/postbuild-base.mjs",
     "preview": "astro preview"
   },
   "dependencies": {

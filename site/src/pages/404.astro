@@ -1,19 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
+import { protoPages } from '../data/site';
 
 // In the competition prototype many links lead to sections that are planned in the new
 // structure but not designed yet; this page says so honestly and offers the finished ones.
-const ready = [
-  ['Подбор программы по баллам ЕГЭ', '/admission/match'],
-  ['Все программы', '/programs'],
-  ['Программная инженерия', '/programs/software-engineering'],
-  ['Расписание', '/study/schedule'],
-  ['Студенческие сервисы', '/study/hub'],
-  ['Институт ИРИТ-РтФ', '/institutes/irit-rtf'],
-  ['Новости', '/news'],
-  ['Афиша', '/events'],
-  ['Кампус и карта', '/life/campus'],
-];
+const ready = protoPages.filter(p => p.href !== '/').map(p => [p.label, p.href]);
 ---
 <Base title="Страница не найдена" description="Такой страницы нет или она ещё не свёрстана в прототипе редизайна УрФУ.">
   <section class="container nf">

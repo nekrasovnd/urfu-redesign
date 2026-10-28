@@ -30,7 +30,7 @@ const promo: Record<string, { label: string; title: string; text: string; href: 
       <button class="search-trigger" type="button" data-search-open>
         <svg class="search-trigger__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
         <span class="search-trigger__text">Поиск по сайту</span>
-        <span class="kbd" aria-hidden="true">⌘K</span>
+        <span class="kbd" aria-hidden="true" data-kbd-search>Ctrl K</span>
       </button>
       <button class="icon-btn" type="button" aria-expanded="false" aria-controls="mm-a11y" data-mm-trigger="a11y" aria-label="Настройки отображения: размер текста, контраст, анимация" title="Версия для слабовидящих — настройки отображения">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
@@ -159,6 +159,7 @@ const promo: Record<string, { label: string; title: string; text: string; href: 
 
 <script>
   const header = document.querySelector<HTMLElement>('[data-header]')!;
+  if (/Mac|iPhone|iPad/.test(navigator.platform)) header.querySelectorAll('[data-kbd-search]').forEach(k => (k.textContent = '⌘K'));
   const triggers = [...header.querySelectorAll<HTMLButtonElement>('[data-mm-trigger]')];
   const panels = [...header.querySelectorAll<HTMLElement>('[data-mm]')];
   const menuBtn = header.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;

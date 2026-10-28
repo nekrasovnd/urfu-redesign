@@ -1,0 +1,82 @@
+---
+// Guide to the competition prototype: which pages are built, and a switch between
+// «только готовые» (links to unbuilt pages hidden in lists, dimmed elsewhere) and «вся структура».
+import { protoPages, builtRoutes } from '../data/site';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const current = Astro.url.pathname.replace(base, '').replace(/\/$/, '') || '/';
+---
+<div class="proto" data-proto-guide>
+  <button class="proto__toggle" type="button" aria-expanded="false" aria-controls="proto-panel" data-proto-open>
+    <span class="proto__dot" aria-hidden="true"></span>Прототип · {protoPages.length} страниц
+  </button>
+  <div class="proto__panel" id="proto-panel" role="dialog" aria-label="Гид по прототипу" hidden>
+    <p class="proto__title">Гид по прототипу</p>
+    <p class="t-small t-muted">Конкурсный прототип: главная и страницы разных типов на реальных данных УрФУ. Остальные разделы есть в новой структуре, но не свёрстаны.</p>
+    <div class="segmented proto__mode" role="group" aria-label="Что показывать">
+      <button type="button" data-proto-mode="ready" aria-pressed="true">Только готовые</button>
+      <button type="button" data-proto-mode="full" aria-pressed="false">Вся структура</button>
+    </div>
+    <ol class="proto__list">
+      {protoPages.map(p => (
+        <li><a href={p.href} aria-current={p.href === current ? 'page' : undefined}><span>{p.label}</span><small>{p.type}</small></a></li>
+      ))}
+    </ol>
+    <p class="t-caption t-muted">Ссылки со стрелкой ↗ ведут на действующие сайты УрФУ.</p>
+  </div>
+  <p class="proto__toast" role="status" aria-live="polite" data-proto-toast hidden></p>
+</div>
+<script type="application/json" id="proto-routes" set:html={JSON.stringify(builtRoutes)} />
+
+<script>
+  const KEY = 'urfu-proto';
+  const root = document.documentElement;
+  const guide = document.querySelector<HTMLElement>('[data-proto-guide]')!;
+  const openBtn = guide.querySelector<HTMLButtonElement>('[data-proto-open]')!;
+  const panel = guide.querySelector<HTMLElement>('#proto-panel')!;
+  const toast = guide.querySelector<HTMLElement>('[data-proto-toast]')!;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const built = new Set<string>(JSON.parse(document.getElementById('proto-routes')!.textContent!));
+
+  // Mark internal links to pages that are not part of the prototype.
+  const norm = (p: string) => (p.startsWith(base) ? p.slice(base.length) : p).replace(/\/$/, '') || '/';
+  document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach(a => {
+    if (a.closest('[data-proto-guide]')) return;
+    const u = new URL(a.href, location.href);
+    if (u.origin !== location.origin || a.getAttribute('href')!.startsWith('#')) return;
+    if (!built.has(norm(u.pathname))) a.dataset.unbuilt = '';
+  });
+
+  function setMode(mode: string) {
+    root.dataset.proto = mode;
+    // Inactive in «только готовые»: say so to assistive tech too.
+    document.querySelectorAll('a[data-unbuilt]').forEach(l => mode === 'ready' ? l.setAttribute('aria-disabled', 'true') : l.removeAttribute('aria-disabled'));
+    guide.querySelectorAll<HTMLButtonElement>('[data-proto-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.protoMode === mode)));
+    try { localStorage.setItem(KEY, mode); } catch {}
+  }
+  guide.querySelectorAll<HTMLButtonElement>('[data-proto-mode]').forEach(b => b.addEventListener('click', () => setMode(b.dataset.protoMode!)));
+  setMode(root.dataset.proto === 'full' ? 'full' : 'ready');
+
+  const toggle = (open: boolean) => { panel.hidden = !open; openBtn.setAttribute('aria-expanded', String(open)); };
+  openBtn.addEventListener('click', () => toggle(panel.hidden));
+  document.addEventListener('click', e => { if (!guide.contains(e.target as Node)) toggle(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) { toggle(false); openBtn.focus(); } });
+
+  // In «только готовые» a dimmed link explains itself instead of leading to the 404 page.
+  let timer = 0;
+  document.addEventListener('click', e => {
+    // Checked on click too, so links rendered later (search results) are covered.
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
+    if (!a || root.dataset.proto !== 'ready' || a.closest('[data-proto-guide]')) return;
+    const u = new URL(a.href, location.href);
+    if (u.origin !== location.origin || built.has(norm(u.pathname))) return;
+    e.preventDefault();
+    // Link title only: drop the subtitle, arrows and screen-reader hints.
+    const c = a.cloneNode(true) as HTMLElement;
+    c.querySelectorAll('small, .visually-hidden, [aria-hidden="true"]').forEach(n => n.remove());
+    const name = (c.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 60);
+    toast.textContent = `«${name}» — раздел новой структуры, в прототип не вошёл. Готовые страницы — в гиде справа внизу.`;
+    toast.hidden = false;
+    clearTimeout(timer);
+    timer = window.setTimeout(() => (toast.hidden = true), 4200);
+  });
+</script>

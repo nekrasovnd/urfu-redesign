@@ -49,7 +49,8 @@ for (const [name, url, vp, opt = {}] of SHOTS) {
   const page = await browser.newPage();
   await page.setViewport(vp);
   await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }, { name: 'prefers-reduced-motion', value: 'reduce' }]);
-  await page.evaluateOnNewDocument(() => { try { localStorage.clear(); } catch {} });
+  // Screenshots show the design itself: full structure, no prototype guide.
+  await page.evaluateOnNewDocument(() => { try { localStorage.clear(); localStorage.setItem('urfu-proto', 'full'); } catch {} });
   await page.goto(BASE + url, { waitUntil: 'networkidle0', timeout: 60000 });
   await page.evaluate(() => document.fonts.ready);
   if (opt.scrollTo) await page.evaluate(sel => { const el = document.querySelector(sel); if (el) window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 8); }, opt.scrollTo);
@@ -57,6 +58,7 @@ for (const [name, url, vp, opt = {}] of SHOTS) {
     await page.evaluate(() => document.querySelectorAll('img[loading="lazy"]').forEach(i => (i.loading = 'eager')));
     await page.waitForNetworkIdle({ idleTime: 500, timeout: 20000 }).catch(() => {});
   }
+  await page.addStyleTag({ content: '.proto { display: none !important; }' });
   if (opt.act) await opt.act(page);
   // Header hides on scroll down; keep it visible for the shots.
   await page.evaluate(() => document.querySelector('[data-header]')?.classList.remove('is-hidden'));

@@ -1,10 +1,12 @@
 ---
-// Logo with automatic white version in dark theme.
+// Logo: colour version on light, white version on dark. Switched by CSS so it follows the site theme
+// (the display settings can force light or dark regardless of the system), not only the OS preference.
 interface Props { variant?: 'short-ru' | 'abbr' | 'full-ru'; height?: number; class?: string }
 const { variant = 'short-ru', height = 44, class: cls } = Astro.props;
 const alt = variant === 'abbr' ? 'УрФУ' : 'Уральский федеральный университет';
+const size = `height:${height}px;width:auto`;
 ---
-<picture class={cls}>
-  <source srcset={`/logo/urfu-${variant}-white.svg`} media="(prefers-color-scheme: dark)" />
-  <img src={`/logo/urfu-${variant}-color.svg`} alt={alt} height={height} style={`height:${height}px;width:auto`} />
-</picture>
+<span class:list={['logo', cls]}>
+  <img class="logo__color" src={`/logo/urfu-${variant}-color.svg`} alt={alt} height={height} style={size} />
+  <img class="logo__white" src={`/logo/urfu-${variant}-white.svg`} alt="" aria-hidden="true" height={height} style={size} loading="lazy" />
+</span>
