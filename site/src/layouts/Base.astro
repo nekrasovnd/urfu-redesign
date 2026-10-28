@@ -29,6 +29,8 @@ const fullTitle =title === 'УрФУ' ? 'Уральский федеральны
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ru_RU" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Display settings (eye button in the header) apply before first paint, so the page does not flash. -->
+    <script is:inline>try{var a=JSON.parse(localStorage.getItem('urfu-a11y')||'{}'),r=document.documentElement;if(a.theme){r.setAttribute('data-theme',a.theme==='contrast'?'light':a.theme);if(a.theme==='contrast')r.setAttribute('data-contrast','high')}['text','spacing','motion'].forEach(function(k){if(a[k])r.setAttribute('data-'+k,a[k])})}catch(e){}</script>
   </head>
   <body data-mode={mode}>
     <a class="skip-link" href="#main">Перейти к содержанию</a>

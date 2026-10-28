@@ -101,7 +101,8 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 <Base title="УрФУ" description="Уральский федеральный университет: поступление, программы, расписание, наука и жизнь в кампусе. 50 000 студентов, 13 институтов, Екатеринбург.">
 
   <!-- ============ HERO ============ -->
-  <section class="container hero" aria-labelledby="hero-title">
+  <section class="container hero hero--photo" aria-labelledby="hero-title">
+    <div class="hero__band photo-slope photo-slope--tint" aria-hidden="true"><img src="/photos/lab.webp" alt="" width="1200" height="680" decoding="async" fetchpriority="low" /></div>
     <h1 id="hero-title" class="visually-hidden">Уральский федеральный университет имени первого Президента России Б.Н. Ельцина</h1>
     <div class="hero__grid">
       <div class="hero__main">
@@ -317,7 +318,8 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
       <a class="btn btn--ghost section-head__more" href="/life">Весь раздел</a>
     </div>
     <div class="campus-grid">
-      <a class="campus-tile campus-tile--lead" href="/life/campus">
+      <a class="campus-tile campus-tile--lead campus-tile--photo" href="/life/campus">
+        <img class="photo-bg" src="/photos/campus.webp" alt="" width="1200" height="680" loading="lazy" decoding="async" />
         <h3>Новый кампус в Новокольцовском</h3>
         <p>Кампус построен по нацпроекту «Молодёжь и дети», сюда переехал лицей УрФУ. На карте — он и все {figures.academic_buildings} учебных корпусов.</p>
         <span class="btn btn--primary" style="justify-self:start">Открыть карту <span class="arrow" aria-hidden="true">→</span></span>

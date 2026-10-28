@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Mandatory section (Rosobrnadzor order No. 1493 of 04.08.2023): its structure and names are fixed by law,
+// so the redesign does not rename it — it only makes it reachable from the main menu and every footer.
+// Subsections and addresses are the real ones on urfu.ru/sveden/ (checked 28.10.2026).
+const parts: [string, string][] = [
+  ['Основные сведения', 'common'],
+  ['Структура и органы управления образовательной организацией', 'struct'],
+  ['Документы', 'document'],
+  ['Образование', 'education'],
+  ['Образовательные стандарты и требования', 'edustandarts'],
+  ['Руководство', 'managers'],
+  ['Педагогический состав', 'employees'],
+  ['Материально-техническое обеспечение и оснащённость образовательного процесса. Доступная среда', 'objects'],
+  ['Платные образовательные услуги', 'paidedu'],
+  ['Финансово-хозяйственная деятельность', 'budget'],
+  ['Вакантные места для приёма (перевода) обучающихся', 'vacant'],
+  ['Стипендии и меры поддержки обучающихся', 'grants'],
+  ['Международное сотрудничество', 'inter'],
+  ['Организация питания в образовательной организации', 'catering'],
+];
+---
+<Base title="Сведения об образовательной организации" section="about" description="Обязательный раздел официального сайта УрФУ: основные сведения, документы, образование, руководство, стипендии, вакантные места и другие подразделы по требованиям Рособрнадзора.">
+  <div class="container sv-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/about">Об университете</a></li><li aria-current="page">Сведения об образовательной организации</li></ol>
+    <h1 class="t-h1">Сведения об образовательной организации</h1>
+    <p class="t-lead">Специальный раздел, который обязателен для сайта каждого вуза. Его структура и названия подразделов заданы приказом Рособрнадзора №&nbsp;1493, поэтому в редизайне они не меняются — раздел доступен из меню «Об университете» и из подвала каждой страницы.</p>
+  </div>
+
+  <section class="container sv-body" aria-label="Подразделы">
+    <ol class="sv-list">
+      {parts.map(([t, slug], i) => (
+        <li><a href={`https://urfu.ru/sveden/${slug}/`}><span class="sv-list__n">{String(i + 1).padStart(2, '0')}</span><span>{t}</span><span aria-hidden="true">↗</span></a></li>
+      ))}
+    </ol>
+    <aside class="sv-aside">
+      <div class="notice notice--info"><span class="notice__mark" aria-hidden="true"></span><div>
+        <p class="notice__title">В прототипе подразделы ведут на действующий сайт urfu.ru</p>
+        <p class="notice__text">Содержимое раздела — документы, таблицы и машиночитаемая разметка — остаётся в текущей системе управления сайтом. Новый дизайн даёт ему общую шапку, поиск и настройки отображения.</p>
+      </div></div>
+      <div class="sv-a11y">
+        <p class="t-label t-muted">Для слабовидящих</p>
+        <p class="t-small">Размер текста, контрастная схема и интервалы включаются значком-глазом в шапке на любой странице — отдельная версия сайта не нужна.</p>
+      </div>
+    </aside>
+  </section>
+</Base>
+
+<style>
+  .sv-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); padding-block: var(--s-6) var(--s-6); }
+  .sv-head .t-lead { max-width: 60ch; }
+  .sv-head h1 { hyphens: auto; overflow-wrap: break-word; }
+  .sv-body { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: var(--s-7); padding-bottom: var(--section-gap); align-items: start; }
+  .sv-list { list-style: none; margin: 0; padding: 0; border-top: var(--rule-thick) solid var(--rule); }
+  .sv-list a { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: var(--s-4); align-items: baseline; padding: 16px 0; border-bottom: var(--rule-thin) solid var(--rule-soft); color: inherit; text-decoration: none; font: 600 var(--fs-body)/1.35 var(--font-text); }
+  .sv-list a:hover span:nth-child(2) { color: var(--accent-text); }
+  .sv-list__n { font: 800 15px/1 var(--font-display); color: var(--fg-muted); font-variant-numeric: tabular-nums; }
+  .sv-aside { display: grid; gap: var(--s-5); position: sticky; top: calc(var(--header-h) + var(--s-5)); }
+  .sv-a11y { display: grid; gap: var(--s-2); padding: var(--s-5); border: var(--rule-thick) solid var(--rule); background: var(--surface); }
+  @media (max-width: 899px) { .sv-body { grid-template-columns: minmax(0, 1fr); } .sv-aside { position: static; } }
+</style>

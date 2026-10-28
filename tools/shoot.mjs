@@ -27,6 +27,9 @@ const SHOTS = [
   ['program', '/programs/software-engineering/', DESKTOP],
   ['program-exams', '/programs/software-engineering/', DESKTOP, { scrollTo: '#exams', act: async p => { for (const [id, v] of [['pc-0', '82'], ['pc-1', '76'], ['po-0', '80']]) await p.type('#' + id, v); } }],
   ['schedule', '/study/schedule/', DESKTOP],
+  ['header-services', '/', DESKTOP, { act: async p => { await p.click('[data-mm-trigger="services"]'); } }],
+  ['header-a11y', '/', DESKTOP, { act: async p => { await p.click('[data-mm-trigger="a11y"]'); } }],
+  ['sveden', '/sveden/', DESKTOP],
   ['schedule-mobile', '/study/schedule/', MOBILE, { scrollTo: '.sch-bar' }],
   ['hub', '/study/hub/', DESKTOP],
   ['news', '/news/', DESKTOP],
@@ -50,6 +53,10 @@ for (const [name, url, vp, opt = {}] of SHOTS) {
   await page.goto(BASE + url, { waitUntil: 'networkidle0', timeout: 60000 });
   await page.evaluate(() => document.fonts.ready);
   if (opt.scrollTo) await page.evaluate(sel => { const el = document.querySelector(sel); if (el) window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 8); }, opt.scrollTo);
+  if (opt.full) { // lazy images below the fold would stay grey in a full-page shot
+    await page.evaluate(() => document.querySelectorAll('img[loading="lazy"]').forEach(i => (i.loading = 'eager')));
+    await page.waitForNetworkIdle({ idleTime: 500, timeout: 20000 }).catch(() => {});
+  }
   if (opt.act) await opt.act(page);
   // Header hides on scroll down; keep it visible for the shots.
   await page.evaluate(() => document.querySelector('[data-header]')?.classList.remove('is-hidden'));

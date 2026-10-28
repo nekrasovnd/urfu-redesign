@@ -1,0 +1,49 @@
+{
+  "_source": "Ссылки на поддомены *.urfu.ru с главной urfu.ru (выгрузка 2026-10-28, подписи — как на urfu.ru). Панель «Все сервисы УрФУ» в шапке: один вход вместо 38 поддоменов, сами сайты не ломаем.",
+  "groups": [
+    {
+      "title": "Учёба",
+      "items": [
+        { "t": "Личный кабинет студента", "h": "https://istudent.urfu.ru/" },
+        { "t": "Образовательные программы", "h": "https://programms.edu.urfu.ru/" },
+        { "t": "Зональная научная библиотека", "h": "https://lib.urfu.ru/" },
+        { "t": "Проектное обучение", "h": "https://teamproject.urfu.ru/" },
+        { "t": "Онлайн-курсы", "h": "https://inf-online.urfu.ru/" },
+        { "t": "Wi-Fi и IT-сервисы", "h": "https://dit.urfu.ru/" }
+      ]
+    },
+    {
+      "title": "Поступление",
+      "items": [
+        { "t": "Калькулятор ЕГЭ", "h": "https://calcege.my1.urfu.ru/" },
+        { "t": "Магистратура", "h": "https://magister.urfu.ru/" },
+        { "t": "Аспирантура", "h": "https://aspirant.urfu.ru/" },
+        { "t": "Олимпиады и довузовская подготовка", "h": "https://dovuz.urfu.ru/" },
+        { "t": "Тест-драйв в Уральском федеральном", "h": "https://testdrive.urfu.ru/" },
+        { "t": "Военный учебный центр", "h": "https://vuc.urfu.ru/" }
+      ]
+    },
+    {
+      "title": "Жизнь и карьера",
+      "items": [
+        { "t": "Центр карьеры и трудоустройства", "h": "https://career.urfu.ru/" },
+        { "t": "Новый кампус", "h": "https://campus.urfu.ru/" },
+        { "t": "Спорт", "h": "https://sport.urfu.ru/" },
+        { "t": "Социальная поддержка", "h": "https://soc.urfu.ru/" },
+        { "t": "Молодёжная наука", "h": "https://youthscience.urfu.ru/" },
+        { "t": "Портал выпускного", "h": "https://diplom.urfu.ru/" }
+      ]
+    },
+    {
+      "title": "Сотрудникам и партнёрам",
+      "items": [
+        { "t": "Управление персонала", "h": "https://hr.urfu.ru/" },
+        { "t": "Личный кабинет партнёра", "h": "https://partner.urfu.ru/" },
+        { "t": "Ассоциация выпускников", "h": "https://alumni.urfu.ru/" },
+        { "t": "Эндаумент", "h": "https://endowment.urfu.ru/" },
+        { "t": "Издательско-полиграфический центр", "h": "https://print.urfu.ru/" },
+        { "t": "Противодействие коррупции", "h": "https://security.urfu.ru/" }
+      ]
+    }
+  ]
+}

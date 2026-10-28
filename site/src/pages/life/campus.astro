@@ -104,7 +104,8 @@ const roomsIndex = B.flatMap(b => (b.rooms ?? []).map(r => ({ p: r, id: b.id }))
   </section>
 
   <!-- ============ New campus ============ -->
-  <section class="cp-new" aria-labelledby="new-title">
+  <section class="cp-new cp-new--photo" aria-labelledby="new-title">
+    <img class="photo-bg" src="/photos/campus.webp" alt="" width="1200" height="680" loading="lazy" decoding="async" />
     <div class="container cp-new__grid">
       <div>
         <p class="t-label">Новокольцовский район</p>

@@ -3,7 +3,8 @@
   "utility": [
     { "id": "search", "label": "Поиск", "hint": "⌘K или /", "href": "/search" },
     { "id": "lk", "label": "Личный кабинет", "href": "https://istudent.urfu.ru/", "external": true },
-    { "id": "lang", "label": "EN", "href": "/en/" },
+    { "id": "lang", "label": "EN · 中文", "href": "https://urfu.ru/en/", "alt": "https://urfu.ru/cn/" },
+    { "id": "services", "label": "Все сервисы УрФУ", "hint": "один вход вместо 38 поддоменов" },
     { "id": "a11y", "label": "Настройки отображения", "hint": "размер текста, контраст, анимация — вместо отдельной версии для слабовидящих" }
   ],
   "main": [
@@ -84,7 +85,8 @@
         { "label": "Устойчивое развитие", "href": "/about/sustainability" },
         { "label": "Филиалы", "href": "/about/branches" },
         { "label": "Работа в УрФУ", "href": "/about/careers" },
-        { "label": "Контакты", "href": "/contacts" }
+        { "label": "Контакты", "href": "/contacts" },
+        { "label": "Сведения об образовательной организации", "href": "/sveden", "proto": true }
       ]
     }
   ],

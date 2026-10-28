@@ -301,6 +301,27 @@
       </div>
     </div>
   </section>
+
+  <section class="spec-block" id="photo">
+    <div class="section-head"><span class="section-head__index">12</span><h2 class="section-head__title">Фото и доступность</h2></div>
+    <div class="grid-2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--s-6);align-items:start">
+      <div style="display:grid;gap:var(--s-3)">
+        <div class="photo-slope photo-slope--tint" style="height:280px;width:62%;margin-left:30%"><img src="../../site/public/photos/lab.webp" alt="" /></div>
+        <p class="t-small"><b>Фото в диагонали.</b> Снимок виден сквозь срез 1:2: обёртка наклонена, картинка — с обратным наклоном, поэтому фото не искажается. Вариант <code>--tint</code> переводит снимок в фирменный красный. Только реальные фото УрФУ с подписью «Фото — пресс-служба УрФУ».</p>
+      </div>
+      <div style="display:grid;gap:var(--s-4)">
+        <div class="row" style="display:flex;gap:var(--s-3);align-items:center">
+          <button class="icon-btn" type="button" aria-label="Настройки отображения"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3.2"/></svg></button>
+          <button class="icon-btn" type="button" aria-expanded="true" aria-label="Все сервисы УрФУ"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="5" height="5"/><rect x="9.5" y="2" width="5" height="5"/><rect x="17" y="2" width="5" height="5"/><rect x="2" y="9.5" width="5" height="5"/><rect x="9.5" y="9.5" width="5" height="5"/><rect x="17" y="9.5" width="5" height="5"/><rect x="2" y="17" width="5" height="5"/><rect x="9.5" y="17" width="5" height="5"/><rect x="17" y="17" width="5" height="5"/></svg></button>
+          <span class="header-lang"><a href="#photo">EN</a><a href="#photo">中文</a></span>
+        </div>
+        <p class="t-small"><b>Кнопки шапки.</b> Глаз открывает настройки отображения вместо отдельной версии для слабовидящих, сетка — все сервисы УрФУ вместо 38 поддоменов. Открытая кнопка — инверсная.</p>
+        <div class="a11y-row"><span class="t-label">Размер текста</span><div class="segmented" role="group" aria-label="Размер текста"><button type="button" aria-pressed="true">А</button><button type="button" aria-pressed="false" style="font-size:19px">А</button><button type="button" aria-pressed="false" style="font-size:23px">А</button></div></div>
+        <div class="a11y-row"><span class="t-label">Цвета</span><div class="segmented" role="group" aria-label="Цвета"><button type="button" aria-pressed="false">Как в системе</button><button type="button" aria-pressed="true">Контрастная</button></div></div>
+        <p class="t-small"><b>Настройки отображения</b> ставят атрибуты на <code>&lt;html&gt;</code>: <code>data-text="l|xl"</code> увеличивает токены кегля, <code>data-contrast="high"</code> — чёрное на белом, <code>data-spacing="wide"</code> — шире интервалы, <code>data-motion="off"</code> — без анимации.</p>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">

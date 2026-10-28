@@ -1,5 +1,6 @@
 // Static search index for the ⌘K palette, built from the real content at build time.
 import { sections, programs, institutes, schedule, sitemap } from '../data/site';
+import urfuServices from '@content/urfu-services.json';
 
 export function GET() {
   const items: { t: string; s: string; g: string; h: string; k?: string }[] = [];
@@ -22,10 +23,9 @@ export function GET() {
 
   items.push({ t: schedule.group.title, s: `${schedule.group.institute} · ${schedule.group.course} курс`, g: 'Группы расписания', h: '/study/schedule' });
 
-  const services = [
-    ['Личный кабинет студента', 'https://istudent.urfu.ru/'], ['Библиотека', 'https://lib.urfu.ru/'],
-    ['Wi-Fi в УрФУ', '/study/hub'], ['Документы для студентов', '/study/documents'], ['Стипендии', '/study/scholarships'],
-  ];
+  // Every university service site from the header's «Все сервисы УрФУ» panel, plus student pages.
+  for (const g of urfuServices.groups) for (const i of g.items) items.push({ t: i.t, s: new URL(i.h).host, g: 'Сервисы', h: i.h, k: g.title });
+  const services = [['Документы для студентов', '/study/documents'], ['Стипендии', '/study/scholarships']];
   for (const [t, h] of services) items.push({ t, s: 'Сервис', g: 'Сервисы', h });
 
   // Internal links get the deploy base (/ locally, /<repo>/ on GitHub Pages).

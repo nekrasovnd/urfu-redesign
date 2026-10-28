@@ -1,6 +1,8 @@
 ---
 import Logo from './Logo.astro';
 import { sections, sitemap } from '../data/site';
+import services from '@content/urfu-services.json';
+const host = (u: string) => new URL(u).host;
 interface Props { current?: string }
 const { current } = Astro.props;
 const promo: Record<string, { label: string; title: string; text: string; href: string }> = {
@@ -30,7 +32,13 @@ const promo: Record<string, { label: string; title: string; text: string; href: 
         <span class="search-trigger__text">Поиск по сайту</span>
         <span class="kbd" aria-hidden="true">⌘K</span>
       </button>
-      <a class="header-lang" href="/en/" lang="en" aria-label="EN — English version">EN</a>
+      <button class="icon-btn" type="button" aria-expanded="false" aria-controls="mm-a11y" data-mm-trigger="a11y" aria-label="Настройки отображения: размер текста, контраст, анимация" title="Версия для слабовидящих — настройки отображения">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3.2"/></svg>
+      </button>
+      <button class="icon-btn icon-btn--services" type="button" aria-expanded="false" aria-controls="mm-services" data-mm-trigger="services" aria-label="Все сервисы УрФУ" title="Все сервисы УрФУ">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="2" y="2" width="5" height="5"/><rect x="9.5" y="2" width="5" height="5"/><rect x="17" y="2" width="5" height="5"/><rect x="2" y="9.5" width="5" height="5"/><rect x="9.5" y="9.5" width="5" height="5"/><rect x="17" y="9.5" width="5" height="5"/><rect x="2" y="17" width="5" height="5"/><rect x="9.5" y="17" width="5" height="5"/><rect x="17" y="17" width="5" height="5"/></svg>
+      </button>
+      <span class="header-lang"><a href="https://urfu.ru/en/" lang="en" hreflang="en" aria-label="English version">EN</a><a href="https://urfu.ru/cn/" lang="zh" hreflang="zh" aria-label="中文版">中文</a></span>
       <a class="btn btn--ink btn--sm header-lk" href="https://istudent.urfu.ru/">Личный кабинет</a>
       <button class="btn btn--sm menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>Меню</button>
     </div>
@@ -65,6 +73,58 @@ const promo: Record<string, { label: string; title: string; text: string; href: 
     );
   })}
 
+  <!-- Настройки отображения: вместо отдельной «версии для слабовидящих» — на каждой странице -->
+  <div class="megamenu a11y-panel" id="mm-a11y" data-mm="a11y" role="region" aria-label="Настройки отображения" hidden>
+    <div class="container a11y-panel__inner">
+      <div>
+        <p class="megamenu__lead">Настройки отображения</p>
+        <p class="t-small t-muted" style="margin-top: var(--s-2)">Вместо отдельной версии для слабовидящих: та же страница, крупнее и контрастнее. Настройки запоминаются в браузере.</p>
+      </div>
+      <div class="a11y-panel__controls">
+        <div class="a11y-row"><span class="t-label">Размер текста</span>
+          <div class="segmented" role="group" aria-label="Размер текста" data-a11y="text">
+            <button type="button" data-v="" aria-pressed="true" aria-label="Обычный">А</button><button type="button" data-v="l" aria-pressed="false" aria-label="Крупный" style="font-size:19px">А</button><button type="button" data-v="xl" aria-pressed="false" aria-label="Очень крупный" style="font-size:23px">А</button>
+          </div>
+        </div>
+        <div class="a11y-row"><span class="t-label">Цвета</span>
+          <div class="segmented" role="group" aria-label="Цветовая схема" data-a11y="theme">
+            <button type="button" data-v="" aria-pressed="true">Как в системе</button><button type="button" data-v="light" aria-pressed="false">Светлая</button><button type="button" data-v="dark" aria-pressed="false">Тёмная</button><button type="button" data-v="contrast" aria-pressed="false">Контрастная</button>
+          </div>
+        </div>
+        <div class="a11y-row"><span class="t-label">Интервалы</span>
+          <div class="segmented" role="group" aria-label="Межстрочный и межбуквенный интервал" data-a11y="spacing">
+            <button type="button" data-v="" aria-pressed="true">Обычные</button><button type="button" data-v="wide" aria-pressed="false">Шире</button>
+          </div>
+        </div>
+        <div class="a11y-row"><span class="t-label">Анимация</span>
+          <div class="segmented" role="group" aria-label="Анимация" data-a11y="motion">
+            <button type="button" data-v="" aria-pressed="true">Включена</button><button type="button" data-v="off" aria-pressed="false">Выключена</button>
+          </div>
+        </div>
+        <button class="btn btn--sm btn--ghost a11y-reset" type="button" data-a11y-reset>Сбросить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Все сервисы УрФУ: один вход в поддомены (как «Сайты ТГУ») -->
+  <div class="megamenu services-panel" id="mm-services" data-mm="services" role="region" aria-label="Все сервисы УрФУ" hidden>
+    <div class="container services-panel__inner">
+      <div>
+        <p class="megamenu__lead">Все сервисы УрФУ</p>
+        <p class="t-small t-muted" style="margin-top: var(--s-2)">Сайты и сервисы университета в одном месте вместо 38 разрозненных поддоменов. Откроются в новой вкладке.</p>
+        <p class="services-panel__langs"><a class="link" href="https://urfu.ru/en/" lang="en" hreflang="en">English</a><a class="link" href="https://urfu.ru/cn/" lang="zh" hreflang="zh">中文</a></p>
+      </div>
+      {services.groups.map(g => (
+        <div>
+          <p class="t-label t-muted">{g.title}</p>
+          <ul class="services-panel__list">
+            {g.items.map(i => <li><a href={i.h} target="_blank" rel="noopener"><span>{i.t}</span><small>{host(i.h)}</small></a></li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+
   <div class="mobile-menu" id="mobile-menu" data-mobile-menu hidden>
     <div class="container mobile-menu__inner">
       <div class="mobile-menu__quick">
@@ -80,10 +140,17 @@ const promo: Record<string, { label: string; title: string; text: string; href: 
             </ul>
           </details>
         ))}
+        <details>
+          <summary>Все сервисы УрФУ</summary>
+          <ul class="mobile-menu__list">
+            {services.groups.flatMap(g => g.items).map(i => <li><a href={i.h} target="_blank" rel="noopener">{i.t}</a></li>)}
+          </ul>
+        </details>
       </div>
       <div class="mobile-menu__foot">
         <a class="btn btn--ink" href="https://istudent.urfu.ru/">Личный кабинет</a>
-        <a class="btn" href="/en/" lang="en">English</a>
+        <a class="btn" href="https://urfu.ru/en/" lang="en" hreflang="en">English</a>
+        <a class="btn" href="https://urfu.ru/cn/" lang="zh" hreflang="zh">中文</a>
       </div>
       <p class="t-small t-muted">Контакт-центр <a class="link" href="tel:88001005044">8-800-100-50-44</a></p>
     </div>
@@ -126,6 +193,32 @@ const promo: Record<string, { label: string; title: string; text: string; href: 
     document.documentElement.classList.toggle('menu-open', open);
   }
   menuBtn.addEventListener('click', () => toggleMobile());
+
+  // Display settings: stored per browser, applied to <html>; Base.astro re-applies them before first paint.
+  const A11Y_KEY = 'urfu-a11y';
+  const a11yGroups = [...header.querySelectorAll<HTMLElement>('[data-a11y]')];
+  let a11y: Record<string, string> = {};
+  try { a11y = JSON.parse(localStorage.getItem(A11Y_KEY) || '{}'); } catch {}
+  function applyA11y() {
+    const root = document.documentElement;
+    for (const g of a11yGroups) {
+      const k = g.dataset.a11y!, v = a11y[k] ?? '';
+      g.querySelectorAll<HTMLButtonElement>('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+      if (k === 'theme') {
+        if (v) root.dataset.theme = v === 'contrast' ? 'light' : v; else root.removeAttribute('data-theme');
+        if (v === 'contrast') root.dataset.contrast = 'high'; else root.removeAttribute('data-contrast');
+      } else if (v) root.setAttribute('data-' + k, v); else root.removeAttribute('data-' + k);
+    }
+    try { localStorage.setItem(A11Y_KEY, JSON.stringify(a11y)); } catch {}
+  }
+  a11yGroups.forEach(g => g.addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button');
+    if (!b) return;
+    a11y[g.dataset.a11y!] = b.dataset.v!;
+    applyA11y();
+  }));
+  header.querySelector('[data-a11y-reset]')!.addEventListener('click', () => { a11y = {}; applyA11y(); });
+  applyA11y();
 
   // Hide the header while scrolling down, bring it back on the way up.
   let lastY = scrollY;

@@ -10,15 +10,14 @@ main { display: block; }
 
 /* ---------- Header extras ---------- */
 .site-header .search-trigger { min-width: 0; }
+.header-lk { white-space: nowrap; }
 .site-header .nav { gap: 0; }
 .search-trigger__icon { flex: none; color: var(--fg); }
-@media (max-width: 1360px) { .search-trigger__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
+@media (max-width: 1519px) { .search-trigger__text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
 .site-header { transition: transform var(--dur-3) var(--ease); }
 .site-header.is-hidden { transform: translateY(-100%); }
 .site-header__logo picture { display: block; }
 .logo-mobile { display: none !important; }
-.header-lang { font: 600 15px/1 var(--font-text); color: var(--fg); text-decoration: none; padding: 12px 6px; }
-.header-lang:hover { color: var(--accent-text); }
 a.megamenu__promo { color: var(--fg-inverse); text-decoration: none; transition: transform var(--dur-2) var(--ease); }
 a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--accent); }
 .megamenu { box-shadow: 0 24px 0 -12px transparent; }
@@ -72,6 +71,8 @@ a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 
   right: calc(-1 * var(--page-margin)); width: 34%;
   background: var(--accent); transform: skewX(var(--slope)); transform-origin: top;
 }
+.hero--photo::after { display: none; }
+.hero__band { position: absolute; z-index: -1; top: 0; bottom: 0; right: calc(-1 * var(--page-margin)); width: 34%; }
 .hero__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-8); align-items: start; }
 .hero__main { display: grid; gap: var(--s-5); align-content: start; }
 .role-bar { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
@@ -174,6 +175,7 @@ a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 
 .campus-tile span { font-weight: 600; font-size: 17px; max-width: 24ch; }
 .campus-tile--lead { grid-column: span 6; grid-row: span 2; background: var(--fg); color: var(--bg); border-color: var(--fg); position: relative; overflow: hidden; isolation: isolate; }
 .campus-tile--lead::after { content: ""; position: absolute; z-index: -1; right: -10%; top: 0; bottom: 0; width: 34%; background: var(--accent); transform: skewX(var(--slope)); }
+.campus-tile--photo::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(29 29 27 / .94) 0%, rgb(29 29 27 / .8) 45%, rgb(29 29 27 / .2) 100%); }
 .campus-tile--lead h3 { font: 700 var(--fs-h2)/1.04 var(--font-display); letter-spacing: -0.025em; max-width: 11ch; }
 .campus-tile--lead p { max-width: 36ch; opacity: .85; }
 .campus-tile:not(.campus-tile--lead) { grid-column: span 3; }
@@ -198,7 +200,7 @@ a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 
 @media (max-width: 1099px) {
   .hero__grid { grid-template-columns: 1fr; gap: var(--s-6); }
   .hero__aside { margin-top: 0; }
-  .hero::after { width: 22%; right: -12%; }
+  .hero::after, .hero__band { width: 22%; right: -12%; }
   .hero::before { display: none; }
   .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .news-grid .card-news--feature { grid-column: 1 / -1; grid-row: auto; }
@@ -212,7 +214,7 @@ a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 
 }
 @media (max-width: 599px) {
   .hero { padding-block: var(--s-5) var(--s-7); }
-  .hero::after { display: none; }
+  .hero::after, .hero__band { display: none; }
   .hero__title { max-width: 9ch; }
   .quick-match, .my-schedule { padding: var(--s-4); }
   .quick-match__fields { grid-template-columns: 1fr 1fr; }
@@ -226,3 +228,11 @@ a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 
   .inst b { font-size: 20px; }
 }
 @media (max-width: 599px) { .cmdk__item { flex-direction: column; align-items: flex-start; gap: 2px; } }
+/* 1100–1399 px: full nav + tools do not fit; languages move to the services panel */
+@media (min-width: 1100px) and (max-width: 1399px) { .header-lang { display: none; } }
+@media (min-width: 1100px) and (max-width: 1279px) {
+  .site-header .nav__item { padding-inline: 6px; }
+  .search-trigger .kbd { display: none; }
+  .site-header__inner { gap: var(--s-5); }
+}
+.services-panel__langs { display: flex; gap: var(--s-4); margin-top: var(--s-4); font-weight: 600; }

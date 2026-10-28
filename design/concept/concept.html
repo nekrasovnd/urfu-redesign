@@ -51,6 +51,13 @@
   .cover__bottom b { display: block; font: 700 11pt/1.3 var(--font-text); margin-top: 1mm; }
   .fill { background: #fff4a8; outline: .4mm dashed #9a5b00; padding: 0 1mm; }
 
+  /* 3 · Benchmark */
+  .bench { display: grid; grid-template-columns: 96mm 62mm 1fr; gap: 7mm; align-items: start; }
+  .bench .facts .big { font-size: 20pt; }
+  .bench .facts li { grid-template-columns: 26mm 1fr; }
+  .bench .bullets { font-size: 8.6pt; gap: 1.2mm; }
+  .bench__take .label { margin-bottom: 1.6mm; }
+
   /* 2 · Problem */
   .problem { display: grid; grid-template-columns: 82mm 1fr; gap: 9mm; }
   .facts { display: grid; gap: 0; border-top: .8mm solid var(--rule); }
@@ -200,9 +207,43 @@
   <footer class="s-foot"><span>Конструктив · редизайн urfu.ru</span><span>2</span></footer>
 </section>
 
+<!-- ======================= 3 · BENCHMARK ======================= -->
+<section class="slide">
+  <header class="s-head"><span class="s-num">02</span><h2 class="s-title">Бенчмарк: 19 сайтов российских вузов</h2><span class="s-kicker">ВШЭ · МГУ · СПбГУ · ИТМО · МФТИ и ещё 14 · 28.10.2026</span></header>
+  <div class="body bench">
+    <div>
+      <img class="shot" src="shots/bench-sheet.jpg" alt="Первые экраны 19 сайтов вузов">
+      <p class="cap"><b>Первые экраны 19 вузов.</b> 13 из 19 начинаются с карусели промо-баннеров: человек видит то, что вуз продвигает на этой неделе, а не то, зачем пришёл.</p>
+    </div>
+    <ul class="clean facts">
+      <li><span class="big">298</span><span>запросов при загрузке главной — медиана 19 вузов; у прототипа 68 (тем же скриптом)</span></li>
+      <li><span class="big">318</span><span>ссылок на главной — медиана; у МИФИ 1&nbsp;545</span></li>
+      <li><span class="big">16/19</span><span>показывают в шапке версию для слабовидящих или значок-глаз</span></li>
+      <li><span class="big big--red">0/19</span><span>предлагают подобрать программу по баллам ЕГЭ на первом экране</span></li>
+    </ul>
+    <div class="bench__take">
+      <p class="label">Что взяли</p>
+      <ul class="bullets">
+        <li><b>ТГУ</b>, «Сайты ТГУ» → панель «Все сервисы УрФУ»: один вход вместо 38 поддоменов.</li>
+        <li><b>Почти все</b>, значок-глаз → настройки отображения на каждой странице, без отдельной версии.</li>
+        <li><b>МГУ, СПбГУ, ИТМО</b>, 中文 → EN · 中文 в шапке: у УрФУ 5&nbsp;200 иностранных студентов и слушателей.</li>
+        <li><b>ИТМО</b>, «Старая версия сайта» → мягкий запуск, см. «Как внедрять».</li>
+        <li><b>СПбГУ, МГУ, Иннополис</b>, живые фото → снимки пресс-службы в фирменной диагонали.</li>
+      </ul>
+      <p class="label" style="margin-top:4mm">Чего избегаем</p>
+      <ul class="bullets">
+        <li>Окно «Выберите нужную страницу» поверх главной (МГТУ им. Баумана).</li>
+        <li>Три уровня меню одновременно (СПбПУ), тысячи ссылок на главной.</li>
+        <li>Баннер cookies на пол-экрана телефона: у прототипа нет трекеров, баннер не нужен.</li>
+      </ul>
+    </div>
+  </div>
+  <footer class="s-foot"><span>Метод и данные — research/BENCHMARK.md и tools/bench.mjs в репозитории</span><span>3</span></footer>
+</section>
+
 <!-- ======================= 3 · JOURNEY ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">02</span><h2 class="s-title">Главный сценарий: «куда я пройду с моими баллами?»</h2><span class="s-kicker">Путь абитуриента</span></header>
+  <header class="s-head"><span class="s-num">03</span><h2 class="s-title">Главный сценарий: «куда я пройду с моими баллами?»</h2><span class="s-kicker">Путь абитуриента</span></header>
   <div class="body journey">
     <div class="journey__col">
       <p class="label">Сейчас</p>
@@ -233,12 +274,12 @@
       <p class="verdict verdict--good">1 сайт, 3 шага, без PDF</p>
     </div>
   </div>
-  <footer class="s-foot"><span>Пороги и цены — открытое API калькулятора ЕГЭ УрФУ, приём-2026; программы — каталог programms.edu.urfu.ru</span><span>3</span></footer>
+  <footer class="s-foot"><span>Пороги и цены — открытое API калькулятора ЕГЭ УрФУ, приём-2026; программы — каталог programms.edu.urfu.ru</span><span>4</span></footer>
 </section>
 
 <!-- ======================= 4 · AUDIENCES ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">03</span><h2 class="s-title">Для кого сайт и что им нужно в первую очередь</h2><span class="s-kicker">Топ-задачи по итогам аудита</span></header>
+  <header class="s-head"><span class="s-num">04</span><h2 class="s-title">Для кого сайт и что им нужно в первую очередь</h2><span class="s-kicker">Топ-задачи по итогам аудита</span></header>
   <div class="body grid2" style="grid-template-columns: 1.35fr 1fr; align-items: start">
     <table class="aud">
       <thead><tr><th>Кто</th><th>Что ищет</th><th>Где это в новом сайте</th></tr></thead>
@@ -256,12 +297,12 @@
       <p class="cap"><b>Переключатель «Я — …».</b> Роль перестраивает первый экран главной — заголовок, виджет и быстрые действия, — но не навигацию: структура сайта одна для всех. Студент видит ближайшие пары своей группы, абитуриент — подбор по баллам. Выбор запоминается в браузере, вход не нужен.</p>
     </div>
   </div>
-  <footer class="s-foot"><span>Следующий шаг — подтвердить порядок задач опросом в студенческих чатах и тестом первого клика</span><span>4</span></footer>
+  <footer class="s-foot"><span>Следующий шаг — подтвердить порядок задач опросом в студенческих чатах и тестом первого клика</span><span>5</span></footer>
 </section>
 
 <!-- ======================= 5 · STRUCTURE ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">04</span><h2 class="s-title">Новая структура: 5 разделов вместо 22 пунктов</h2><span class="s-kicker">Информационная архитектура</span></header>
+  <header class="s-head"><span class="s-num">05</span><h2 class="s-title">Новая структура: 5 разделов вместо 22 пунктов</h2><span class="s-kicker">Информационная архитектура</span></header>
   <div class="body">
     <div class="ia">
       <div class="ia__col"><h3>Поступление</h3><ul class="clean"><li class="hl">Подбор программы по баллам</li><li class="hl">Все программы</li><li>Бакалавриат · магистратура · аспирантура · СПО</li><li>Стоимость обучения</li><li>Льготы и квоты</li><li>Олимпиады и подготовка</li><li>Приёмная комиссия</li></ul></div>
@@ -281,23 +322,23 @@
       <div class="was__new"><span>Поступление</span><span>Обучение</span><span>Наука</span><span>Жизнь в УрФУ</span><span>Об университете</span></div>
     </div>
   </div>
-  <footer class="s-foot"><span>● — страницы, свёрстанные в прототипе. Полная карта — research/IA.md в репозитории</span><span>5</span></footer>
+  <footer class="s-foot"><span>● — страницы, свёрстанные в прототипе. Полная карта — research/IA.md в репозитории</span><span>6</span></footer>
 </section>
 
 <!-- ======================= 6 · NAVIGATION ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">05</span><h2 class="s-title">Навигация</h2><span class="s-kicker">Шапка · мега-меню · поиск · телефон</span></header>
+  <header class="s-head"><span class="s-num">06</span><h2 class="s-title">Навигация</h2><span class="s-kicker">Шапка · мега-меню · поиск · телефон · все сервисы</span></header>
   <div class="body nav3">
     <div><img class="shot" src="shots/home-megamenu.png" alt="Мега-меню раздела «Поступление»"><p class="cap"><b>Мега-меню по клику, а не по наведению.</b> Два главных действия, полный список раздела — не больше 13 пунктов, — и плашка с ближайшим событием. Работает с клавиатуры.</p></div>
     <div><img class="shot" src="shots/home-search.png" alt="Поиск по сайту"><p class="cap"><b>Поиск ⌘K.</b> Результаты по группам, поиск по коду направления («09.03.04»), стрелки и Enter. Пустой запрос показывает частые задачи.</p></div>
     <div><img class="shot" src="shots/mobile-menu.png" alt="Мобильное меню"><p class="cap"><b>Телефон.</b> Аббревиатура вместо длинного логотипа, быстрые действия сверху, разделы аккордеоном, зоны нажатия от 44 px.</p></div>
   </div>
-  <footer class="s-foot"><span>Шапка липкая и прячется при прокрутке вниз; активный раздел подчёркнут красным</span><span>6</span></footer>
+  <footer class="s-foot"><span>В шапке: глаз — настройки отображения, сетка — все сервисы УрФУ, EN · 中文 — действующие версии сайта</span><span>7</span></footer>
 </section>
 
 <!-- ======================= 7 · LOGO ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">06</span><h2 class="s-title">Логотип «Точная У»</h2><span class="s-kicker">Эволюция, а не замена</span></header>
+  <header class="s-head"><span class="s-num">07</span><h2 class="s-title">Логотип «Точная У»</h2><span class="s-kicker">Эволюция, а не замена</span></header>
   <div class="body logo-grid">
     <div>
       <div class="ba" style="grid-template-columns:1fr">
@@ -324,12 +365,12 @@
       </div>
     </div>
   </div>
-  <footer class="s-foot"><span>20 SVG-файлов: полная, короткая, английская версии, аббревиатура, знак, фавикон — design/logo в репозитории</span><span>7</span></footer>
+  <footer class="s-foot"><span>20 SVG-файлов: полная, короткая, английская версии, аббревиатура, знак, фавикон — design/logo в репозитории</span><span>8</span></footer>
 </section>
 
 <!-- ======================= 8 · DESIGN SYSTEM ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">07</span><h2 class="s-title">Дизайн-система «Конструктив»</h2><span class="s-kicker">Токены · типографика · компоненты</span></header>
+  <header class="s-head"><span class="s-num">08</span><h2 class="s-title">Дизайн-система «Конструктив»</h2><span class="s-kicker">Токены · типографика · компоненты</span></header>
   <div class="body ds">
     <div style="display:grid; gap:5mm; align-content:start">
       <p class="lead">Екатеринбург — один из главных городов конструктивизма. Отсюда строгая сетка, толстые графитовые линейки вместо теней и одна красная диагональ на экран под наклоном знака.</p>
@@ -357,47 +398,47 @@
       <div class="comp"><span>Кнопки</span><span>Быстрые действия</span><span>Метки и статусы</span><span>Поля и балл ЕГЭ</span><span>«Я — …»</span><span>Заголовок раздела</span><span>Цифры</span><span>Карточка программы</span><span>Новость</span><span>Событие</span><span>Шапка и мега-меню</span><span>Крошки, вкладки</span><span>Аккордеон</span><span>Таблица</span><span>Уведомление</span><span>Поиск ⌘K</span><span>Футер</span><span>Диагональ</span></div>
     </div>
   </div>
-  <footer class="s-foot"><span>tokens.css и components.css — один источник для сайта, спецификации и Figma; тёмная тема из коробки</span><span>8</span></footer>
+  <footer class="s-foot"><span>tokens.css и components.css — один источник для сайта, спецификации и Figma; тёмная тема из коробки</span><span>9</span></footer>
 </section>
 
 <!-- ======================= 9 · SCREENS 1 ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">08</span><h2 class="s-title">Ключевые экраны: поступление</h2><span class="s-kicker">Прототип · nekrasovnd.github.io/urfu-redesign</span></header>
+  <header class="s-head"><span class="s-num">09</span><h2 class="s-title">Ключевые экраны: поступление</h2><span class="s-kicker">Прототип · nekrasovnd.github.io/urfu-redesign</span></header>
   <div class="body screens screens--4">
     <div><img class="shot" src="shots/home.png" alt=""><p class="cap"><b>Главная.</b> Первый экран по роли, подбор по баллам прямо на главной, цифры, разделы, новости, афиша, наука, кампус, 13 институтов.</p></div>
     <div><img class="shot" src="shots/match.png" alt=""><p class="cap"><b>Подбор программы.</b> 11 предметов, фильтры, сортировка по запасу баллов, «почти подходят» — где не хватает до 10 баллов. 207 реальных программ внутри направлений.</p></div>
     <div><img class="shot" src="shots/programs.png" alt=""><p class="cap"><b>Каталог.</b> 662 программы, сгруппированные по направлениям: код, пороги, цена, все программы и институты направления в одном блоке.</p></div>
     <div><img class="shot" src="shots/program.png" alt=""><p class="cap"><b>Карточка программы.</b> Факты, проверка баллов, как устроено обучение, виды деятельности, партнёры, шаги поступления, вопросы, контакты, похожие программы.</p></div>
   </div>
-  <footer class="s-foot"><span>Все цифры на экранах — реальные данные urfu.ru на 28.10.2026</span><span>9</span></footer>
+  <footer class="s-foot"><span>Все цифры на экранах — реальные данные urfu.ru на 28.10.2026</span><span>10</span></footer>
 </section>
 
 <!-- ======================= 10 · SCREENS 2 ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">09</span><h2 class="s-title">Ключевые экраны: учёба, новости, кампус</h2><span class="s-kicker">10 типов страниц + главная</span></header>
+  <header class="s-head"><span class="s-num">10</span><h2 class="s-title">Ключевые экраны: учёба, новости, кампус</h2><span class="s-kicker">10 типов страниц + главная</span></header>
   <div class="body screens screens--mix">
     <div class="g9"><div><img class="shot" src="shots/schedule.png" alt=""><p class="cap"><b>Расписание.</b> реальные данные группы, обе сетки звонков, экспорт в календарь</p></div><div><img class="shot" src="shots/hub.png" alt=""><p class="cap"><b>Хаб студента.</b> 24 сервиса по задачам, ближайшие пары</p></div><div><img class="shot" src="shots/news.png" alt=""><p class="cap"><b>Новости.</b> главный материал, рубрики, «СМИ о нас»</p></div><div><img class="shot" src="shots/article.png" alt=""><p class="cap"><b>Статья.</b> лонгрид раздела «Наука» в синей схеме</p></div><div><img class="shot" src="shots/events.png" alt=""><p class="cap"><b>Афиша.</b> список и календарь, фильтры</p></div><div><img class="shot" src="shots/events-cal.png" alt=""><p class="cap"><b>Календарь афиши.</b> события на сетке месяца</p></div><div><img class="shot" src="shots/institute.png" alt=""><p class="cap"><b>Институт.</b> один шаблон для 13 институтов</p></div><div><img class="shot" src="shots/campus.png" alt=""><p class="cap"><b>Кампус.</b> корпус по номеру аудитории</p></div><div><img class="shot" src="shots/notfound.png" alt=""><p class="cap"><b>404.</b> честно о прототипе, ведёт к готовым страницам</p></div></div>
     <div class="phones"><img class="shot" src="shots/home-mobile.png" alt="Главная на телефоне"><img class="shot" src="shots/schedule-mobile.png" alt="Расписание на телефоне"></div>
   </div>
-  <footer class="s-foot"><span>Справа — телефон: главная и расписание по дням</span><span>10</span></footer>
+  <footer class="s-foot"><span>Справа — телефон: главная и расписание по дням</span><span>11</span></footer>
 </section>
 
 <!-- ======================= 11 · NUMBERS ======================= -->
 <section class="slide">
-  <header class="s-head"><span class="s-num">10</span><h2 class="s-title">Скорость и доступность</h2><span class="s-kicker">Lighthouse 12.2.1 · мобильный профиль</span></header>
+  <header class="s-head"><span class="s-num">11</span><h2 class="s-title">Скорость и доступность</h2><span class="s-kicker">Lighthouse 12.2.1 · мобильный профиль</span></header>
   <div class="body" style="display:grid; gap:6mm; align-content:start">
     <div class="ba-nums">
-      <div><span class="label">Производительность</span><s>23</s><span class="big">96–97</span></div>
+      <div><span class="label">Производительность</span><s>23</s><span class="big">99</span></div>
       <div><span class="label">Доступность</span><s>73</s><span class="big">100</span></div>
-      <div><span class="label">Вес главной</span><s>11,1 МБ</s><span class="big">219 КБ</span></div>
-      <div><span class="label">Запросов при загрузке</span><s>294</s><span class="big">12</span></div>
+      <div><span class="label">Вес главной</span><s>11,1 МБ</s><span class="big">304 КБ</span></div>
+      <div><span class="label">Запросов при загрузке</span><s>294</s><span class="big">19</span></div>
     </div>
     <div class="grid2" style="grid-template-columns: 1.1fr 1fr; align-items:start">
       <table class="lh">
         <thead><tr><th>Страница</th><th style="text-align:right">Скорость, моб.</th><th style="text-align:right">Скорость, деск.</th><th style="text-align:right">Доступность</th></tr></thead>
         <tbody>
           <tr class="old"><td>urfu.ru — главная сейчас</td><td class="n">23</td><td class="n">22</td><td class="n">73</td></tr>
-          <tr><td>Главная</td><td class="n">96–97</td><td class="n">100</td><td class="n">100</td></tr>
+          <tr><td>Главная (с фото на первом экране)</td><td class="n">99</td><td class="n">100</td><td class="n">100</td></tr>
           <tr><td>Подбор программы</td><td class="n">95</td><td class="n">100</td><td class="n">100</td></tr>
           <tr><td>Каталог программ</td><td class="n">97</td><td class="n">100</td><td class="n">100</td></tr>
           <tr><td>Карточка программы</td><td class="n">94</td><td class="n">100</td><td class="n">100</td></tr>
@@ -414,24 +455,24 @@
           <li>Один H1 на странице, хлебные крошки, семантичная разметка и роли вкладок.</li>
           <li>Кольцо фокуса на всём интерактивном, мега-меню и поиск работают с клавиатуры.</li>
           <li>Контраст не ниже 4,5:1 в обеих темах; статус никогда не передаётся только цветом.</li>
-          <li>Зоны нажатия от 44 px, вместо отдельной «версии для слабовидящих» — доступный основной сайт.</li>
+          <li>Зоны нажатия от 44 px. Вместо отдельной «версии для слабовидящих» — значок-глаз на каждой странице: крупный текст, контрастная схема, широкие интервалы, без анимации.</li>
           <li>Учёт prefers-reduced-motion и тёмной темы системы.</li>
           <li>Статичная сборка без тяжёлого JavaScript, шрифты раздаются с сайта.</li>
         </ul>
       </div>
     </div>
   </div>
-  <footer class="s-foot"><span>Отчёты Lighthouse «было» и «стало» — research/lighthouse в репозитории</span><span>11</span></footer>
+  <footer class="s-foot"><span>Отчёты Lighthouse «было» и «стало» — research/lighthouse в репозитории</span><span>12</span></footer>
 </section>
 
 <!-- ======================= 12 · ROLLOUT ======================= -->
 <section class="slide corner">
-  <header class="s-head"><span class="s-num">11</span><h2 class="s-title">Как внедрять</h2><span class="s-kicker">Предлагаемый порядок</span></header>
+  <header class="s-head"><span class="s-num">12</span><h2 class="s-title">Как внедрять</h2><span class="s-kicker">Предлагаемый порядок</span></header>
   <div class="body">
     <div class="phases">
-      <div class="phase"><b>1</b><h3>Дизайн-система и шаблоны</h3>Токены и компоненты уже в коде и не зависят от CMS: их можно подключить к текущему порталу и к новым разделам.</div>
+      <div class="phase"><b>1</b><h3>Оболочка и мягкий запуск</h3>Шапка, поиск, настройки отображения и компоненты не зависят от CMS и подключаются к текущему порталу. Новая версия — по умолчанию, ссылка «Старая версия сайта» живёт 3–6 месяцев, как сейчас у ИТМО.</div>
       <div class="phase"><b>2</b><h3>Поступление к приёму-2027</h3>Подбор программы, каталог и карточки программ на данных калькулятора ЕГЭ и каталога — главный сценарий сезона.</div>
-      <div class="phase"><b>3</b><h3>Институты и поддомены</h3>13 институтов переходят на один шаблон; магистратура, аспирантура, кампус и спорт вливаются в основной сайт.</div>
+      <div class="phase"><b>3</b><h3>Институты и поддомены</h3>Сразу: панель «Все сервисы УрФУ» собирает поддомены в один вход. Потом 13 институтов переходят на один шаблон; магистратура, аспирантура, кампус и спорт вливаются в основной сайт. «Сведения об образовательной организации» остаются в TYPO3 — меняется только оболочка.</div>
       <div class="phase"><b>4</b><h3>Сервисы студента</h3>Расписание с курсами траектории из личного кабинета и хаб сервисов связываются с ЛК; служебное — в хаб сотрудника.</div>
     </div>
     <div class="links">
@@ -441,7 +482,7 @@
     </div>
     <p class="closing">Сайт по задачам людей,<br>а не по оргструктуре. <span>Один для всех.</span></p>
   </div>
-  <footer class="s-foot"><span>Конструктив · редизайн сайта УрФУ · октябрь 2026</span><span>12</span></footer>
+  <footer class="s-foot"><span>Конструктив · редизайн сайта УрФУ · октябрь 2026</span><span>13</span></footer>
 </section>
 
 </body>
