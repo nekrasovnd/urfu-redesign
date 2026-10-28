@@ -184,7 +184,7 @@ p { margin: 0; }
 .stat + .stat { border-left: var(--rule-thick) solid var(--rule); padding-left: var(--s-5); }
 .stat__value { font: 800 var(--fs-stat)/0.95 var(--font-display); letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
 .stat__label { font: 500 var(--fs-small)/1.35 var(--font-text); color: var(--fg-muted); max-width: 22ch; }
-.stat--accent .stat__value { color: var(--accent); }
+.stat--accent .stat__value { color: var(--accent-text); }
 @media (max-width: 599px) { .stat + .stat { border-left: 0; border-top: var(--rule-thin) solid var(--rule); padding-left: 0; } }
 
 /* =========================================================
@@ -334,7 +334,7 @@ a.card:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); 
    ========================================================= */
 .site-footer { background: var(--surface-inverse); color: var(--fg-inverse); padding-block: var(--s-8) var(--s-6); }
 .site-footer a { color: inherit; text-decoration: none; }
-.site-footer a:hover { text-decoration: underline; text-decoration-color: var(--c-red); text-decoration-thickness: 2px; }
+.site-footer a:hover { text-decoration: underline; text-decoration-color: var(--c-blue-light); text-decoration-thickness: 2px; }
 .site-footer__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--s-6); }
 .site-footer__cols h3 { font: 600 var(--fs-label)/1.2 var(--font-text); letter-spacing: var(--tracking-label); text-transform: uppercase; opacity: .65; margin-bottom: var(--s-3); }
 .site-footer__cols ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
@@ -359,6 +359,7 @@ a.card:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); 
 .header-lang { display: inline-flex; }
 .header-lang a { white-space: nowrap; font: 600 15px/1 var(--font-text); color: var(--fg); text-decoration: none; padding: 14px 6px; }
 .header-lang a:hover { color: var(--accent-text); }
+.header-lang small { font-size: 11px; margin-left: 1px; vertical-align: super; color: var(--fg-muted); }
 
 /* =========================================================
    Панели шапки: настройки отображения и все сервисы УрФУ

@@ -54,11 +54,11 @@
 .article-aside { display: grid; gap: var(--s-4); align-content: start; position: sticky; top: calc(var(--header-h) + var(--s-4)); }
 .article-aside .btn { justify-self: start; }
 .article-text { font-size: 19px; line-height: 1.62; }
-.article-text .article-first::first-letter { float: left; font: 800 3.4em/0.82 var(--font-display); margin: 0.06em 0.08em 0 0; color: var(--accent); }
+.article-text .article-first::first-letter { float: left; font: 800 3.4em/0.82 var(--font-display); margin: 0.06em 0.08em 0 0; color: var(--accent-text); }
 .article-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-block: var(--s-4); border-block: var(--rule-thick) solid var(--rule); }
 .article-facts div { display: grid; gap: var(--s-2); padding: var(--s-4) var(--s-4) var(--s-4) 0; }
 .article-facts div + div { border-left: var(--rule-thin) solid var(--rule); padding-left: var(--s-4); }
-.article-facts b { font: 800 clamp(26px, 2.6vw, 40px)/1 var(--font-display); letter-spacing: -0.03em; color: var(--accent); }
+.article-facts b { font: 800 clamp(26px, 2.6vw, 40px)/1 var(--font-display); letter-spacing: -0.03em; color: var(--accent-text); }
 .article-facts span { font-size: 15px; line-height: 1.4; color: var(--fg-muted); }
 .article-related { padding-bottom: var(--section-gap); display: grid; gap: var(--s-5); }
 

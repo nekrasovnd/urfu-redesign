@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { sections, news, events, schedule, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
+import { news, events, schedule, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
 
 // ---------- Roles: what each audience needs first ----------
 type Action = { t: string; h: string; s?: string; ext?: boolean };
@@ -100,10 +100,28 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 ---
 <Base title="УрФУ" description="Уральский федеральный университет: поступление, программы, расписание, наука и жизнь в кампусе. 50 000 студентов, 13 институтов, Екатеринбург.">
 
-  <!-- ============ HERO ============ -->
-  <section class="container hero hero--photo" aria-labelledby="hero-title">
-    <div class="hero__band photo-slope photo-slope--tint" aria-hidden="true"><img src="/photos/lab.webp" alt="" width="1200" height="680" decoding="async" fetchpriority="low" /></div>
-    <h1 id="hero-title" class="visually-hidden">Уральский федеральный университет имени первого Президента России Б.Н. Ельцина</h1>
+  <!-- ============ INTRO: who we are ============ -->
+  <section class="intro" aria-labelledby="intro-title">
+    <picture>
+      <source media="(max-width: 700px)" srcset="/photos/guk-900.webp" width="900" height="506" />
+      <img class="intro__photo" src="/photos/guk.webp" alt="Главный учебный корпус УрФУ на улице Мира, 19" width="1600" height="900" fetchpriority="high" decoding="async" />
+    </picture>
+    <div class="container intro__inner">
+      <img class="intro__sign" src="/logo/urfu-sign-white.svg" alt="" width="92" height="118" />
+      <h1 class="intro__title" id="intro-title">Уральский федеральный университет</h1>
+      <p class="intro__sub">имени первого Президента России Б.Н. Ельцина · Екатеринбург, с&nbsp;1920&nbsp;года · участник программы «Приоритет-2030»</p>
+      <ul class="intro__stats" aria-label="УрФУ в цифрах">
+        <li><b>{fmtNum(figures.students)}</b><span>студентов</span></li>
+        <li><b>{fmtNum(figures.budget_places_2026)}</b><span>бюджетных мест в 2026 году</span></li>
+        <li><b>{figures.institutes}</b><span>институтов</span></li>
+        <li><b>{figures.research_labs}</b><span>научных лабораторий</span></li>
+      </ul>
+      <p class="intro__credit">Главный учебный корпус, ул. Мира, 19 · фото: Vyacheslav Bukharov, CC BY-SA 4.0</p>
+    </div>
+  </section>
+
+  <!-- ============ HERO: what do you need ============ -->
+  <section class="container hero" aria-label="Чем помочь: выберите, кто вы">
     <div class="hero__grid">
       <div class="hero__main">
         <div class="role-bar">
@@ -207,32 +225,6 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
           </div>
         ))}
       </aside>
-    </div>
-  </section>
-
-  <!-- ============ STATS ============ -->
-  <section class="container stats-band" aria-label="УрФУ в цифрах">
-    <div class="stats">
-      <div class="stat stat--accent"><span class="stat__value">{fmtNum(figures.students)}</span><span class="stat__label">студентов; {fmtNum(figures.international_students)} иностранных студентов и слушателей</span></div>
-      <div class="stat"><span class="stat__value">{fmtNum(figures.budget_places_2026)}</span><span class="stat__label">бюджетных мест в 2026 году</span></div>
-      <div class="stat"><span class="stat__value">{figures.research_labs}</span><span class="stat__label">научно-исследовательских лабораторий</span></div>
-      <div class="stat"><span class="stat__value">1920</span><span class="stat__label">год основания — декрет об Уральском университете</span></div>
-    </div>
-  </section>
-
-  <!-- ============ SECTIONS ============ -->
-  <section class="container home-section" aria-labelledby="sections-title">
-    <h2 id="sections-title" class="visually-hidden">Разделы сайта</h2>
-    <div class="sections-index">
-      {sections.map(s => (
-        <div class="sec-row">
-          <a class="sec-row__title" href={s.href}>{s.label}</a>
-          <p class="sec-row__lead">{s.lead}</p>
-          <ul class="sec-row__links">
-            {s.children.slice(0, 4).map(l => <li><a href={l.href}>{l.label}</a></li>)}
-          </ul>
-        </div>
-      ))}
     </div>
   </section>
 

@@ -49,7 +49,7 @@
 .pg-years { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); }
 .pg-years li { display: grid; gap: var(--s-2); align-content: start; padding: var(--s-5); border: var(--rule-thick) solid var(--rule); background: var(--surface); }
 .pg-years b { font: 800 32px/1 var(--font-display); letter-spacing: -0.03em; }
-.pg-years li:first-child b { color: var(--accent); }
+.pg-years li:first-child b { color: var(--accent-text); }
 .pg-years span { font-size: 15px; color: var(--fg-muted); }
 
 /* Career */
@@ -63,7 +63,7 @@
 /* Steps */
 .pg-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gutter); }
 .pg-steps li { display: grid; gap: var(--s-2); align-content: start; padding-top: var(--s-4); border-top: var(--rule-thick) solid var(--rule); }
-.pg-steps__n { font: 800 44px/1 var(--font-display); color: var(--accent); letter-spacing: -0.04em; }
+.pg-steps__n { font: 800 44px/1 var(--font-display); color: var(--accent-text); letter-spacing: -0.04em; }
 .pg-steps b { font-size: 19px; }
 .pg-steps span:last-child { font-size: 15px; color: var(--fg-muted); }
 

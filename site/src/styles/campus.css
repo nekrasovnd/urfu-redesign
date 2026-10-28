@@ -44,7 +44,7 @@
 
 /* ---------- New campus ---------- */
 .cp-new { position: relative; isolation: isolate; overflow: hidden; margin-top: var(--section-gap); padding-block: var(--s-9); background: var(--c-ink); color: #ECEAE4; }
-.cp-new::after { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; right: -6%; width: 30%; background: var(--c-red); transform: skewX(var(--slope)); }
+.cp-new::after { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; right: -6%; width: 30%; background: var(--accent); transform: skewX(var(--slope)); }
 .cp-new--photo::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(29 29 27 / .95) 0%, rgb(29 29 27 / .82) 50%, rgb(29 29 27 / .35) 100%); }
 .cp-new__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-8); align-items: end; }
 .cp-new__title { font: 800 var(--fs-h1)/1 var(--font-display); letter-spacing: -0.035em; margin-top: var(--s-4); }

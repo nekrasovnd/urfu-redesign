@@ -1730,5 +1730,55 @@
    "login": true,
    "max_vk": true
   }
+ },
+ "csu": {
+  "id": "csu",
+  "name": "ЧелГУ",
+  "url": "https://www.csu.ru/",
+  "loadMs": 5084,
+  "requests": 137,
+  "kb": 21246,
+  "mobileOverflow": false,
+  "title": "Челябинский государственный университет",
+  "nav": [
+   "Университет Университет",
+   "Структура Структура",
+   "Учёба Учёба",
+   "Студенческая жизнь Студенческая жизнь",
+   "Наука Наука"
+  ],
+  "headings": [
+   "Челябинский государственный университет",
+   "День открытых дверей",
+   "Ваш вклад в будущее ЧелГУ",
+   "Евразийские ворота",
+   "Кампус мирового уровня",
+   "Новости и События",
+   "Коворкинг и места для учёбы",
+   "Гостиничные корпуса для проживания студентов",
+   "Ботанический сад как часть кампуса"
+  ],
+  "footerLinks": 29,
+  "totalLinks": 215,
+  "words": 497,
+  "height": 18567,
+  "fonts": [
+   "formular"
+  ],
+  "features": {
+   "low_vision": true,
+   "sveden": true,
+   "en": false,
+   "apply_cta": false,
+   "ege_calc": false,
+   "audiences": true,
+   "tour": true,
+   "chat": false,
+   "events": true,
+   "numbers": true,
+   "news": true,
+   "login": true,
+   "max_vk": true
+  }
  }
 }

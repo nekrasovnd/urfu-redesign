@@ -17,7 +17,7 @@
 .prog-body { display: grid; gap: var(--s-6); padding-block: var(--s-6) var(--section-gap); }
 .prog-summary { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; justify-content: space-between; }
 .prog-count { font: 600 var(--fs-lead)/1.2 var(--font-text); }
-.prog-count b { font: 800 clamp(36px, 4vw, 56px)/1 var(--font-display); letter-spacing: -0.04em; color: var(--accent); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.prog-count b { font: 800 clamp(36px, 4vw, 56px)/1 var(--font-display); letter-spacing: -0.04em; color: var(--accent-text); margin-right: 6px; font-variant-numeric: tabular-nums; }
 .prog-active { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-right: auto; }
 .prog-match-cta { border: 0; min-height: 56px; max-width: 520px; flex: 1 1 360px; }
 

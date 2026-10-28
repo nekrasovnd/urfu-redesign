@@ -39,10 +39,10 @@
 </head>
 <body>
 
-<header class="container spec-hero diagonal" style="--accent: var(--c-red)">
+<header class="container spec-hero diagonal">
   <p class="t-label t-muted">Редизайн urfu.ru · дизайн-система · версия 1.0 · 28.10.2026</p>
   <h1 class="t-display" style="margin-top: var(--s-5)">Конструктив</h1>
-  <p class="t-lead" style="margin-top: var(--s-5)">Строгая сетка, толстые линейки и диагональ под наклоном знака «У». Цвета взяты из логотипа и брендбука, шрифты — Unbounded для заголовков и цифр, Golos Text для всего остального.</p>
+  <p class="t-lead" style="margin-top: var(--s-5)">Строгая сетка, толстые линейки и диагональ под наклоном знака «У». Цвета — по брендбуку УрФУ 2025: фирменный синий и графит, красный остаётся только в знаке; шрифты — Unbounded для заголовков и цифр, Golos Text для всего остального.</p>
 </header>
 
 <main class="container spec">
@@ -56,7 +56,7 @@
       <div class="logo-tile"><img src="../logo/urfu-abbr-color.svg" alt="УрФУ, аббревиатура" style="max-height:80px"></div>
       <div class="logo-tile dark"><img src="../logo/urfu-short-ru-white.svg" alt="Логотип на графите"></div>
       <div class="logo-tile blue"><img src="../logo/urfu-short-en-white.svg" alt="Английская версия на синем"></div>
-      <div class="logo-tile red"><img src="../logo/urfu-sign-white.svg" alt="Знак на красном" style="max-height:96px"></div>
+      <div class="logo-tile blue"><img src="../logo/urfu-sign-white.svg" alt="Знак на фирменном синем" style="max-height:96px"></div>
     </div>
     <div class="cols-2">
       <img src="../logo/construction.svg" alt="Построение знака на сетке с наклоном 1:2">
@@ -71,18 +71,18 @@
   <section class="spec-block" id="color">
     <div class="section-head"><span class="section-head__index">02</span><h2 class="section-head__title">Цвет</h2></div>
     <div class="swatches">
-      <div class="swatch"><i style="background:#E50046"></i><b>Красный знака</b><code>--c-red · #E50046</code><code>заливки, текст ≥ 24 px</code></div>
-      <div class="swatch"><i style="background:#C4003C"></i><b>Красный текст</b><code>--c-red-text · #C4003C</code><code>4.97:1 на бетоне</code></div>
+      <div class="swatch"><i style="background:#174496"></i><b>Фирменный синий</b><code>--c-blue · #174496</code><code>Pantone 293 C · 7.3:1 на бетоне</code></div>
+      <div class="swatch"><i style="background:#E50046"></i><b>Красный знака</b><code>--c-red · #E50046</code><code>только знак «У» в логотипе</code></div>
       <div class="swatch"><i style="background:#1D1D1B"></i><b>Графит</b><code>--c-ink · #1D1D1B</code><code>13.6:1 на бетоне</code></div>
       <div class="swatch"><i style="background:#E8E7E2"></i><b>Бетон</b><code>--c-concrete · #E8E7E2</code><code>фон страницы</code></div>
       <div class="swatch"><i style="background:#F4F3EF"></i><b>Бумага</b><code>--c-paper · #F4F3EF</code><code>карточки, поля</code></div>
       <div class="swatch"><i style="background:#DCDAD4"></i><b>Бетон 2</b><code>--c-concrete-2 · #DCDAD4</code><code>подложки</code></div>
       <div class="swatch"><i style="background:#5E5B55"></i><b>Камень</b><code>--c-stone · #5E5B55</code><code>5.46:1, вторичный текст</code></div>
-      <div class="swatch"><i style="background:#174496"></i><b>Синий</b><code>--c-blue · #174496</code><code>наука, фокус, 7.4:1</code></div>
+      <div class="swatch"><i style="background:#7FA2EB"></i><b>Синий светлый</b><code>--c-blue-light · #7FA2EB</code><code>акцент на тёмном фоне</code></div>
       <div class="swatch"><i style="background:#1E7A46"></i><b>Зелёный</b><code>--c-green · #1E7A46</code><code>приём открыт</code></div>
       <div class="swatch"><i style="background:#9A5B00"></i><b>Янтарь</b><code>--c-amber · #9A5B00</code><code>скоро дедлайн</code></div>
     </div>
-    <p class="t-small t-muted" style="max-width:var(--measure)">Один акцент на экран. Красный — главное действие и одна графическая диагональ, всё остальное графит на бетоне. В разделе «Наука» (<code>data-mode="science"</code>) акцентом становится синий, как закреплено в брендбуке.</p>
+    <p class="t-small t-muted" style="max-width:var(--measure)">Один акцент на экран. Фирменный синий — главное действие и одна графическая диагональ, всё остальное графит на бетоне. Красный в палитре брендбука отсутствует, поэтому живёт только в знаке «У»: так сайт не требует перекрашивать приложение «УрФУ.Учеба», сайты институтов и печать.<code>data-mode="science"</code>) акцентом становится синий, как закреплено в брендбуке.</p>
   </section>
 
   <!-- Type -->
@@ -306,8 +306,8 @@
     <div class="section-head"><span class="section-head__index">12</span><h2 class="section-head__title">Фото и доступность</h2></div>
     <div class="grid-2" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--s-6);align-items:start">
       <div style="display:grid;gap:var(--s-3)">
-        <div class="photo-slope photo-slope--tint" style="height:280px;width:62%;margin-left:30%"><img src="../../site/public/photos/lab.webp" alt="" /></div>
-        <p class="t-small"><b>Фото в диагонали.</b> Снимок виден сквозь срез 1:2: обёртка наклонена, картинка — с обратным наклоном, поэтому фото не искажается. Вариант <code>--tint</code> переводит снимок в фирменный красный. Только реальные фото УрФУ с подписью «Фото — пресс-служба УрФУ».</p>
+        <div class="photo-slope photo-slope--tint" style="height:280px;width:62%;margin-left:30%"><img src="../../site/public/photos/campus.webp" alt="" /></div>
+        <p class="t-small"><b>Фото в диагонали.</b> Снимок виден сквозь срез 1:2: обёртка наклонена, картинка — с обратным наклоном, поэтому фото не искажается. Вариант <code>--tint</code> переводит снимок в фирменный синий. Только реальные фото УрФУ с подписью «Фото — пресс-служба УрФУ».</p>
       </div>
       <div style="display:grid;gap:var(--s-4)">
         <div class="row" style="display:flex;gap:var(--s-3);align-items:center">

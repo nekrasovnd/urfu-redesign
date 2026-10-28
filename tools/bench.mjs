@@ -33,6 +33,7 @@ export const SITES = [
   ['susu', 'ЮУрГУ', 'https://www.susu.ru/'],
   ['ranepa', 'РАНХиГС', 'https://www.ranepa.ru/'],
   ['innopolis', 'Иннополис', 'https://innopolis.university/'],
+  ['csu', 'ЧелГУ', 'https://www.csu.ru/'],
   ['sechenov', 'Сеченовский', 'https://www.sechenov.ru/'],
 ];
 

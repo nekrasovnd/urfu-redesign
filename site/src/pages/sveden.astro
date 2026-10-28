@@ -28,7 +28,8 @@ const parts: [string, string][] = [
     <p class="t-lead">Специальный раздел, который обязателен для сайта каждого вуза. Его структура и названия подразделов заданы приказом Рособрнадзора №&nbsp;1493, поэтому в редизайне они не меняются — раздел доступен из меню «Об университете» и из подвала каждой страницы.</p>
   </div>
 
-  <section class="container sv-body" aria-label="Подразделы">
+  <section class="container sv-body" aria-labelledby="sv-parts">
+    <h2 class="visually-hidden" id="sv-parts">Подразделы</h2>
     <ol class="sv-list">
       {parts.map(([t, slug], i) => (
         <li><a href={`https://urfu.ru/sveden/${slug}/`}><span class="sv-list__n">{String(i + 1).padStart(2, '0')}</span><span>{t}</span><span aria-hidden="true">↗</span></a></li>

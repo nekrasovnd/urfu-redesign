@@ -19,7 +19,7 @@ const SHOTS = [
   ['home-mobile', '/', MOBILE],
   ['home-megamenu', '/', DESKTOP, { act: async p => { await p.click('[data-mm-trigger="admission"]'); } }],
   ['home-search', '/', DESKTOP, { act: async p => { await p.click('[data-search-open]'); await p.type('#cmdk-q', 'програм'); } }],
-  ['home-student', '/', DESKTOP, { act: async p => { await p.click('[data-role="student"]'); } }],
+  ['home-student', '/', DESKTOP, { scrollTo: '.hero', act: async p => { await p.click('[data-role="student"]'); } }],
   ['mobile-menu', '/', MOBILE, { act: async p => { await p.click('[data-menu-toggle]'); } }],
   ['match', '/admission/match/', DESKTOP],
   ['match-mobile', '/admission/match/', MOBILE, { scrollTo: '.results-bar' }],

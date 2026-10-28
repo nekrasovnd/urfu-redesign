@@ -27,7 +27,7 @@
 .sch-grid__corner, .sch-grid__day { padding: 10px 8px; font: 500 13px/1.25 var(--font-text); color: var(--fg-muted); }
 .sch-grid__day b { display: block; font: 800 20px/1 var(--font-display); color: var(--fg); letter-spacing: -0.02em; margin-bottom: 2px; }
 .sch-grid__day.is-today { background: var(--fg); color: var(--bg); }
-.sch-grid__day.is-today b { color: var(--accent); }
+.sch-grid__day.is-today b { color: var(--accent-text); }
 .sch-grid__time { padding: 8px; display: grid; align-content: start; gap: 2px; }
 .sch-grid__time b { font: 800 22px/1 var(--font-display); }
 .sch-grid__time b:only-of-type { overflow-wrap: anywhere; }

@@ -5,9 +5,7 @@
 
 :root {
   /* ---------- Palette (raw) ---------- */
-  --c-red: #E50046;          /* знак «У»; заливки, крупный текст ≥ 24px, графика */
-  --c-red-text: #C4003C;     /* красный мелкий текст на бетоне (4.97:1) */
-  --c-red-press: #B8003A;    /* нажатие на красную кнопку */
+  --c-red: #E50046;          /* только знак «У» в логотипе: в палитре брендбука красного нет */
   --c-ink: #1D1D1B;          /* графит: текст, линейки, тёмные плашки */
   --c-ink-2: #3A3936;        /* графит при наведении */
   --c-concrete: #E8E7E2;     /* бетон: фон страницы */
@@ -16,7 +14,9 @@
   --c-white: #FFFFFF;
   --c-stone: #5E5B55;        /* второстепенный текст на бетоне (5.46:1) */
   --c-stone-line: #B9B6AE;   /* тонкие разделители */
-  --c-blue: #174496;         /* фирменный синий: наука, ссылки-сервисы, фокус */
+  --c-blue: #174496;         /* фирменный синий Pantone 293 C — главный цвет брендбука 2025; на бетоне 7.3:1 */
+  --c-blue-press: #0F3373;   /* нажатие на синюю кнопку */
+  --c-blue-light: #7FA2EB;   /* синий на тёмном фоне */
   --c-green: #1E7A46;        /* статус «открыт приём», успех */
   --c-amber: #9A5B00;        /* «скоро дедлайн», предупреждение */
 
@@ -30,12 +30,12 @@
   --fg-inverse: var(--c-concrete);
   --rule: var(--c-ink);
   --rule-soft: var(--c-stone-line);
-  --accent: var(--c-red);            /* заливка акцента */
-  --accent-hover: var(--c-red-press);
-  --on-accent: var(--c-white);       /* текст на акценте (4.75:1) */
-  --accent-text: var(--c-red-text);  /* акцентный текст ≤ 20px */
+  --accent: var(--c-blue);           /* заливка акцента: фирменный синий */
+  --accent-hover: var(--c-blue-press);
+  --on-accent: var(--c-white);       /* текст на акценте (9.1:1) */
+  --accent-text: var(--c-blue);      /* акцентный текст */
   --link: var(--c-ink);
-  --link-underline: var(--c-red);
+  --link-underline: var(--c-blue);
   --info: var(--c-blue);
   --success: var(--c-green);
   --warning: var(--c-amber);
@@ -112,9 +112,9 @@
     --fg-inverse: #151514;
     --rule: #ECEAE4;
     --rule-soft: #3D3C38;
-    --accent-text: #FF5C87;
+    --accent: #2F5FC4; --accent-hover: #3D6DD3; --accent-text: var(--c-blue-light);
     --link: #ECEAE4;
-    --link-underline: #FF3B73;
+    --link-underline: var(--c-blue-light);
     --info: #7FA2EB;
     --success: #5CC28A;
     --warning: #E8A23C;
@@ -133,9 +133,9 @@
   --fg-inverse: #151514;
   --rule: #ECEAE4;
   --rule-soft: #3D3C38;
-  --accent-text: #FF5C87;
+  --accent: #2F5FC4; --accent-hover: #3D6DD3; --accent-text: var(--c-blue-light);
   --link: #ECEAE4;
-  --link-underline: #FF3B73;
+  --link-underline: var(--c-blue-light);
   --info: #7FA2EB;
   --success: #5CC28A;
   --warning: #E8A23C;
@@ -145,7 +145,8 @@
 }
 
 /* ---------- Section modes ----------
-   Брендбук закрепляет за наукой свою схему: в разделе «Наука» акцент — синий. */
+   Весь сайт теперь в фирменном синем; режим «Наука» сохранён как точка расширения
+   под научную градиентную схему брендбука (стр. 29–31). */
 [data-mode="science"] {
   --accent: var(--c-blue);
   --accent-hover: #0F3478;
