@@ -104,10 +104,12 @@ variants('urfu-short-en', c => {
   return { w: u.maxX, h: SIGN.h + 0.22 * s, body: signPaths(c.sign) + u.body, title: 'Ural Federal University' };
 });
 
-// 4. Abbreviation: cap height = main stroke (0…84), the tail hangs like the descender of «р».
+// 4. Abbreviation: the sign IS the first letter «У», followed by «рФУ» — together it reads «УрФУ».
+//    Cap height = main stroke (0…84); the tail hangs like a descender; the gap is ordinary letter
+//    spacing, measured from the top of the arm (the sign's widest point).
 variants('urfu-abbr', c => {
   const size = 84 / CAP;
-  const t = text('УрФУ', F[700], size, SIGN.w + 0.16 * size, 84);
+  const t = text('рФУ', F[700], size, SIGN.w + 0.05 * size, 84);
   const h = Math.max(SIGN.h, 84 + 0.24 * size);
   return { w: t.x2, h, body: signPaths(c.sign) + `<path fill="${c.text}" d="${t.d}"/>`, title: 'УрФУ' };
 });
