@@ -16,3 +16,4 @@ design/concept/preview/
 # Personal contacts for the concept PDF (filled locally)
 design/concept/author.local.json
 design/concept/*.pdf
+research/benchmark/shots/*-full.jpg
