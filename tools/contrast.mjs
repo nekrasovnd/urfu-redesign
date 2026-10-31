@@ -6,7 +6,7 @@ import puppeteer from 'puppeteer-core';
 
 const BASE = (process.argv[2] || 'http://localhost:4322').replace(/\/$/, '');
 const AXE = fs.readFileSync(new URL('./node_modules/axe-core/axe.min.js', import.meta.url), 'utf8');
-const PAGES = ['/', '/admission/match/', '/programs/', '/programs/software-engineering/', '/study/schedule/', '/study/hub/', '/news/', '/news/60431/', '/events/', '/institutes/', '/institutes/irit-rtf/', '/life/campus/', '/life/new-campus/', '/life/housing/', '/sveden/'];
+const PAGES = ['/', '/admission/match/', '/programs/', '/programs/software-engineering/', '/study/schedule/', '/study/hub/', '/study/support/', '/news/', '/news/60431/', '/events/', '/institutes/', '/institutes/irit-rtf/', '/life/campus/', '/life/new-campus/', '/life/housing/', '/sveden/'];
 const THEMES = { light: { theme: 'light' }, dark: { theme: 'dark' }, contrast: { theme: 'contrast' } };
 const VIEWS = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844, isMobile: true, hasTouch: true } };
 

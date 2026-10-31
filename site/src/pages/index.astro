@@ -14,7 +14,7 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
     actions: [
       { t: 'Подобрать программу по баллам', h: '/admission/match', s: `${directions.length} направлений бакалавриата и специалитета` },
       { t: 'Все программы', h: '/programs', s: 'Фильтры по институту и уровню' },
-      { t: 'Стоимость обучения', h: '/programs', s: 'Указана для каждого направления в каталоге' },
+      { t: 'Поддержка студентов', h: '/study/support', s: 'Матпомощь с первого курса, бесплатный юрист, скидка на контракт' },
       { t: 'Общежития', h: '/life/housing', s: `${figures.dormitories} общежитий, ${figures.dorm_places} мест` },
       { t: 'Приёмная комиссия', h: 'https://urfu.ru/ru/applicant/contacts/', s: `${c.admissions.phone} · ${c.admissions.address}`, ext: true },
     ],
@@ -25,7 +25,7 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
     actions: [
       { t: 'Личный кабинет', h: 'https://istudent.urfu.ru/', s: 'Индивидуальное расписание и траектория', ext: true },
       { t: 'Расписание', h: '/study/schedule', s: 'По группе, преподавателю или аудитории' },
-      { t: 'Стипендии и поддержка', h: '/study/scholarships', s: `Более ${figures.named_scholarships.replace('более ', '')} именных стипендий` },
+      { t: 'Деньги и поддержка', h: '/study/support', s: 'Что вернут на бюджете и контракте, куда нести заявление' },
       { t: 'Справки и документы', h: '/study/documents' },
       { t: 'Практика и карьера', h: '/study/career' },
     ],

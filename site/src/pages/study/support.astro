@@ -1,0 +1,219 @@
+---
+import Base from '../../layouts/Base.astro';
+import support from '@content/support.json';
+// Source: the Union of Students' memo on financial support (PDF) and posurfu.ru, checked 01.11.2026.
+// Only what those say: amounts, documents and offices are transcribed, nothing is added.
+const u = support.union;
+const R = support.rules as Record<string, { where: string; sum?: string; min?: string; often: string; docs?: string }>;
+const TOPICS: [string, string][] = [['', 'Все'], ['buy', 'Покупки'], ['road', 'Дорога'], ['health', 'Здоровье'], ['home', 'Жильё'], ['family', 'Семья'], ['life', 'Трудная ситуация'], ['special', 'Льготы']];
+const WHERE: Record<string, string> = { 'budget-profburo': 'Профбюро института', 'budget-guk': 'ГУК-309', contract: 'ГУК-309' };
+// Grouped by topic in the chip order; the laptop goes first — the largest purchase on the list.
+const rank = (i: { t: string; topic: string }) => (i.t === 'Ноутбук' ? -1 : TOPICS.findIndex(([k]) => k === i.topic));
+// Amounts never break across lines: «80 000 ₽» stays on one line.
+const nb = (s: string) => s.replace(/(\d) (?=\d{3}\b)/g, '$1 ').replace(/ ₽/g, ' ₽');
+const items = support.items.map(i => ({ ...i, d: nb(i.d), basis: i.b === 'contract' ? 'contract' : 'budget' })).sort((a, b) => rank(a) - rank(b));
+const count = (basis: string) => items.filter(i => i.basis === basis).length;
+// Rooms with a building letter open the campus map on the right building.
+const profburo = support.profburo.map(([inst, room, addr]) => ({ inst, room, addr, q: (room.match(/^[А-ЯЁ]+-\d+[А-ЯЁ]?/) || [])[0] }));
+const tel = u.phone.replace(/[^\d+]/g, '');
+const more: { t: string; d: string; h?: string; l?: string }[] = [
+  { t: 'Юрист — бесплатно', d: 'Консультации юриста по любым вопросам законодательства РФ для членов профсоюза.', h: u.lawyer, l: 'Записаться' },
+  { t: '«Красная кнопка»', d: 'Сообщить о проблеме с учёбой, учебной частью, общежитием или другом правовом вопросе внутри университета.', h: u.redButton, l: 'Сообщить' },
+  { t: 'Скидка 20% на контракт', d: 'Для контрактников из топ-10 рейтинга внеучебной деятельности, у которых за всё обучение не было долгов и троек.' },
+  { t: 'До 20 000 ₽ на ремонт в общежитии', d: 'Союз студентов вместе с университетом возмещает затраты на ремонт комнаты в общежитии.' },
+  { t: 'Жильё, если не досталось общежития', d: 'Проектный офис «Платное жильё»: квартиры, комнаты, частные общежития и хостелы-партнёры. С 2011 года заселили больше 5 000 студентов.', h: 'https://vk.ru/rent_flats', l: '«Платное жильё»' },
+  { t: 'Наставник на первом курсе', d: 'Ассоциация студентов-наставников помогает первокурсникам освоиться в учёбе и университете — 444 наставника.', h: 'https://vk.ru/asn_urfu', l: 'Наставники' },
+];
+---
+<Base title="Деньги и поддержка" section="study" description="Материальная помощь студентам УрФУ: что возмещают на бюджете и контракте, какие нужны документы, куда нести заявление. Бесплатный юрист и скидка на контракт от Союза студентов.">
+  <div class="container sp-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/study/hub">Обучение</a></li><li aria-current="page">Деньги и поддержка</li></ol>
+    <h1 class="t-h1">Деньги и поддержка</h1>
+    <p class="t-lead">Университет и Союз студентов помогают с первого курса и до диплома: возвращают часть расходов на одежду, дорогу, лечение и ноутбук, доплачивают за жильё, бесплатно консультируют у юриста и защищают права студентов.</p>
+    <ul class="stats sp-stats" aria-label="Поддержка в цифрах">
+      <li class="stat"><span class="stat__value">до 15 000 ₽</span><span class="stat__label">за одно обращение в профбюро — бюджет</span></li>
+      <li class="stat"><span class="stat__value">до 70%</span><span class="stat__label">стоимости зимней одежды и обуви — бюджет</span></li>
+      <li class="stat"><span class="stat__value">20%</span><span class="stat__label">скидка на контракт за учёбу без троек и активность</span></li>
+      <li class="stat stat--accent"><span class="stat__value">0 ₽</span><span class="stat__label">консультация юриста для членов профсоюза</span></li>
+    </ul>
+  </div>
+
+  <!-- ============ What can be refunded ============ -->
+  <section class="container sp-section" aria-labelledby="sp-what">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="sp-what">Что можно вернуть</h2></div>
+    <div class="sp-filters" data-sp-filters>
+      <div class="segmented" role="group" aria-label="Основа обучения">
+        <button type="button" data-basis="budget" aria-pressed="true">Я на бюджете <span class="sp-n">{count('budget')}</span></button>
+        <button type="button" data-basis="contract" aria-pressed="false">Я на контракте <span class="sp-n">{count('contract')}</span></button>
+      </div>
+      <div class="sp-chips" role="group" aria-label="Тема">
+        {TOPICS.map(([k, l], i) => <button class="chip" type="button" data-topic={k} aria-pressed={String(i === 0)}>{l}</button>)}
+      </div>
+    </div>
+
+    <p class="sp-rule" data-rule="budget">
+      <b>Бюджет.</b> В профбюро института — {R['budget-profburo'].sum}, {R['budget-profburo'].often}. В ГУК-309 — {R['budget-guk'].often}. Минимум — {R['budget-guk'].min}.
+    </p>
+    <p class="sp-rule" data-rule="contract" hidden>
+      <b>Контракт.</b> Сумма {R.contract.sum}; {R.contract.often}. К любому заявлению — {R.contract.docs}.
+    </p>
+
+    <ul class="sp-list" data-sp-list>
+      {items.map(i => (
+        <li class="sp-item" data-basis={i.basis} data-topic={i.topic} hidden={i.basis !== 'budget'}>
+          <span class="sp-item__where">{WHERE[i.b]}</span>
+          <h3 class="sp-item__title">{i.t}</h3>
+          <p class="sp-item__text">{i.d}</p>
+          <details class="sp-item__docs"><summary>Какие документы</summary><p>{i.docs}</p></details>
+        </li>
+      ))}
+    </ul>
+    <p class="t-caption t-muted sp-note">{support.rules.income23}</p>
+  </section>
+
+  <!-- ============ How to apply + where ============ -->
+  <section class="container sp-section sp-two" aria-labelledby="sp-how">
+    <div>
+      <h2 class="t-h2" id="sp-how">Как подать заявление</h2>
+      <ol class="sp-steps">
+        <li><span class="sp-steps__n">1</span><b>Сохраните чеки</b><span>Оригиналы кассовых и товарных чеков, билеты, договоры — по списку для вашего случая. Добавьте реквизиты банковского счёта.</span></li>
+        <li><span class="sp-steps__n">2</span><b>Возьмите бланк</b><span>Бланк и подробности — <a class="link" href={u.matpom}>в обсуждении группы Союза студентов</a>.</span></li>
+        <li><span class="sp-steps__n">3</span><b>Отнесите заявление</b><span>В профбюро своего института или в ГУК-309 (Мира, 19) {u.hours} — куда именно, написано в карточке. В ГУК-309 заявления принимают до 10 числа месяца, сроки профбюро объявляет институт.</span></li>
+      </ol>
+    </div>
+    <div class="sp-where">
+      <h2 class="t-h3">Профбюро вашего института</h2>
+      <label class="field__label" for="sp-inst">Институт</label>
+      <select class="select" id="sp-inst" data-sp-inst>
+        {profburo.map((p, i) => <option value={String(i)}>{p.inst}</option>)}
+      </select>
+      {profburo.map((p, i) => (
+        <div class="sp-where__card" data-sp-card={String(i)} hidden={i !== 0}>
+          <span class="sp-where__room">{p.room}</span>
+          <span>{p.addr}</span>
+          {p.q && <a class="link" href={`/life/campus?room=${encodeURIComponent(p.q)}`}>Как найти аудиторию →</a>}
+        </div>
+      ))}
+      <p class="t-small t-muted">Здесь же вступают в профсоюз: заявление и членский взнос. Профсоюзный билет нужен для юриста, скидок и матпомощи на контракте.</p>
+    </div>
+  </section>
+
+  <!-- ============ Not only money ============ -->
+  <section class="container sp-section" aria-labelledby="sp-more">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="sp-more">Не только деньги</h2></div>
+    <ul class="sp-more">
+      {more.map(m => (
+        <li>
+          <h3 class="sp-more__title">{m.t}</h3>
+          <p>{m.d}</p>
+          {m.h && <a class="link" href={m.h}>{m.l} <span aria-hidden="true">↗</span></a>}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container sp-section sp-last">
+    <div class="sp-union">
+      <div>
+        <p class="t-label">Союз студентов УрФУ</p>
+        <p class="sp-union__title">ГУК-309, ул. Мира, 19 · {u.hours}</p>
+        <a class="sp-union__phone" href={`tel:${tel}`}>{u.phone}</a>
+      </div>
+      <div class="sp-union__actions">
+        <a class="btn btn--light" href={u.vk}>Группа ВКонтакте <span aria-hidden="true">↗</span></a>
+        <a class="btn btn--light" href={u.site}>posurfu.ru <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <p class="t-caption t-muted" style="margin-top: var(--s-3)">По памятке Союза студентов УрФУ о материальной поддержке и сайту posurfu.ru, проверено 1 ноября 2026 года. Суммы и сроки уточняйте в профбюро.</p>
+  </section>
+</Base>
+
+<script>
+  const items = [...document.querySelectorAll<HTMLElement>('[data-sp-list] > .sp-item')];
+  let basis = 'budget', topic = '';
+  const apply = () => {
+    items.forEach(i => (i.hidden = i.dataset.basis !== basis || (!!topic && i.dataset.topic !== topic)));
+    document.querySelectorAll<HTMLElement>('[data-rule]').forEach(r => (r.hidden = r.dataset.rule !== basis));
+    // Topics with nothing for this basis are disabled rather than left to show an empty list.
+    document.querySelectorAll<HTMLButtonElement>('[data-topic]').forEach(c => {
+      const k = c.dataset.topic!;
+      c.disabled = !!k && !items.some(i => i.dataset.basis === basis && i.dataset.topic === k);
+    });
+  };
+  document.querySelectorAll<HTMLButtonElement>('[data-basis]').forEach(b => b.addEventListener('click', () => {
+    basis = b.dataset.basis!;
+    document.querySelectorAll('[data-basis]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    const cur = document.querySelector<HTMLButtonElement>(`[data-topic="${topic}"]`);
+    if (cur?.disabled || (topic && !items.some(i => i.dataset.basis === basis && i.dataset.topic === topic))) {
+      topic = '';
+      document.querySelectorAll('[data-topic]').forEach(x => x.setAttribute('aria-pressed', String((x as HTMLElement).dataset.topic === '')));
+    }
+    apply();
+  }));
+  document.querySelectorAll<HTMLButtonElement>('[data-topic]').forEach(c => c.addEventListener('click', () => {
+    topic = c.dataset.topic!;
+    document.querySelectorAll('[data-topic]').forEach(x => x.setAttribute('aria-pressed', String(x === c)));
+    apply();
+  }));
+  const inst = document.querySelector<HTMLSelectElement>('[data-sp-inst]')!;
+  inst.addEventListener('change', () => document.querySelectorAll<HTMLElement>('[data-sp-card]').forEach(c => (c.hidden = c.dataset.spCard !== inst.value)));
+  apply();
+</script>
+
+<style>
+  .sp-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); padding-block: var(--s-6) 0; }
+  .sp-head .t-lead { max-width: 62ch; }
+  .sp-stats { list-style: none; margin: var(--s-4) 0 0; padding: 0; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .sp-stats .stat__value { font-size: clamp(28px, 3vw, 46px); white-space: nowrap; }
+  @media (max-width: 1023px) and (min-width: 600px) {
+    .sp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sp-stats .stat:nth-child(3) { border-left: 0; padding-left: 0; }
+    .sp-stats .stat:nth-child(n + 3) { border-top: var(--rule-thin) solid var(--rule); }
+  }
+  .sp-section { padding-top: var(--section-gap); }
+  .sp-last { padding-bottom: var(--section-gap); }
+  .sp-filters { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-5); align-items: center; margin: var(--s-5) 0 var(--s-4); }
+  .sp-n { font-size: 12px; opacity: .7; margin-left: 4px; font-variant-numeric: tabular-nums; }
+  .sp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sp-chips .chip:disabled { opacity: .4; cursor: default; }
+  .sp-rule { max-width: 80ch; margin: 0 0 var(--s-4); padding: var(--s-3) var(--s-4); border-left: 4px solid var(--accent); background: var(--surface); font-size: var(--fs-small); }
+  .sp-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: var(--gutter); }
+  .sp-item { display: grid; gap: var(--s-2); align-content: start; padding: var(--s-4); background: var(--surface); border: var(--rule-thick) solid var(--rule); }
+  .sp-item__where { justify-self: start; font: 600 12px/1 var(--font-text); padding: 5px 7px; border: 1.5px solid currentColor; color: var(--accent-text); }
+  .sp-item__title { font: 700 19px/1.2 var(--font-display); letter-spacing: -0.01em; }
+  .sp-item__text { font-size: var(--fs-small); line-height: 1.45; }
+  .sp-item__docs { border-top: var(--rule-thin) solid var(--rule-soft); padding-top: var(--s-2); font-size: var(--fs-small); }
+  .sp-item__docs summary { cursor: pointer; font-weight: 600; min-height: 32px; display: flex; align-items: center; }
+  .sp-item__docs p { margin-top: var(--s-2); color: var(--fg-muted); line-height: 1.45; }
+  .sp-note { margin-top: var(--s-4); max-width: 80ch; }
+  .sp-two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7); align-items: start; }
+  .sp-steps { list-style: none; margin: var(--s-5) 0 0; padding: 0; border-top: var(--rule-thick) solid var(--rule); }
+  .sp-steps li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 2px var(--s-3); padding: var(--s-4) 0; border-bottom: var(--rule-thin) solid var(--rule-soft); font-size: var(--fs-small); line-height: 1.45; }
+  .sp-steps__n { grid-row: span 2; font: 800 40px/1 var(--font-display); color: var(--accent-text); }
+  .sp-steps b { font-size: var(--fs-body); }
+  .sp-where { display: grid; gap: var(--s-3); padding: var(--s-5); background: var(--surface); border: var(--rule-thick) solid var(--rule); }
+  .sp-where__card { display: grid; gap: 4px; padding: var(--s-4); background: var(--surface-2); }
+  .sp-where__room { font: 800 26px/1.1 var(--font-display); letter-spacing: -0.02em; }
+  .sp-more { list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: var(--rule-thick) solid var(--rule); }
+  .sp-more li { display: grid; gap: var(--s-2); align-content: start; padding: var(--s-5) var(--s-5) var(--s-5) 0; border-bottom: var(--rule-thin) solid var(--rule-soft); font-size: var(--fs-small); line-height: 1.45; }
+  .sp-more li:not(:nth-child(3n + 1)) { padding-left: var(--s-5); border-left: var(--rule-thin) solid var(--rule-soft); }
+  .sp-more__title { font: 700 var(--fs-h4)/1.2 var(--font-display); letter-spacing: -0.01em; }
+  .sp-more .link { justify-self: start; font-weight: 600; }
+  .sp-union { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-wrap: wrap; gap: var(--s-5); justify-content: space-between; align-items: center; padding: var(--s-6); background: var(--c-blue); color: #FFFFFF; }
+  .sp-union::after { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; right: -10%; width: 35%; background: rgb(255 255 255 / .1); transform: skewX(var(--slope)); }
+  .sp-union__title { font: 700 var(--fs-h4)/1.25 var(--font-display); margin-top: var(--s-2); }
+  .sp-union__phone { display: inline-block; margin-top: var(--s-2); font: 800 clamp(24px, 3vw, 36px)/1 var(--font-display); color: #FFFFFF; text-decoration: none; }
+  .sp-union__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .sp-union .btn--light { --btn-bg: #FFFFFF; --btn-fg: #0F3373; --btn-bd: #FFFFFF; }
+  @media (max-width: 1099px) {
+    .sp-more { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sp-more li:not(:nth-child(3n + 1)) { padding-left: 0; border-left: 0; }
+    .sp-more li:nth-child(2n) { padding-left: var(--s-5); border-left: var(--rule-thin) solid var(--rule-soft); }
+  }
+  @media (max-width: 899px) { .sp-two { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 599px) {
+    .sp-more { grid-template-columns: minmax(0, 1fr); }
+    .sp-more li:nth-child(2n) { padding-left: 0; border-left: 0; }
+    .sp-union { padding: var(--s-5); }
+  }
+</style>

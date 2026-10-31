@@ -81,6 +81,7 @@ export const protoPages: { href: string; label: string; type: string }[] = [
   { href: '/programs/software-engineering', label: 'Программная инженерия', type: 'Карточка программы' },
   { href: '/study/schedule', label: 'Расписание', type: 'Данные' },
   { href: '/study/hub', label: 'Студенческие сервисы', type: 'Хаб' },
+  { href: '/study/support', label: 'Деньги и поддержка', type: 'Справочник с фильтром' },
   { href: '/news', label: 'Новости', type: 'Лента' },
   { href: '/news/60431', label: 'Учёные создали карту потоков CO₂', type: 'Статья' },
   { href: '/events', label: 'Афиша', type: 'Календарь' },

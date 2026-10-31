@@ -37,6 +37,7 @@ const SHOTS = [
   ['events', '/events/', DESKTOP],
   ['events-cal', '/events/', DESKTOP, { act: async p => { await p.click('[data-ev-view="cal"]'); } }],
   ['institute', '/institutes/irit-rtf/', DESKTOP],
+  ['support', '/study/support/', DESKTOP, { scrollTo: '.sp-stats' }],
   ['campus', '/life/campus/', DESKTOP],
   ['campus-mobile', '/life/campus/', MOBILE],
   ['notfound', '/admission/cost/', DESKTOP],
