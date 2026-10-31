@@ -31,7 +31,6 @@ const campusHref = (room?: string) => /^I/.test(room ?? '') ? '/life/campus#corp
 const isOnline = (e: Ev) => !e.pair || /^https?:/.test(e.location ?? '');
 const ROWS = [0, ...pairs.map(p => p.n)];
 const evAt = (list: Ev[], date: string, pair: number) => list.filter(e => e.date === date && (pair === 0 ? !e.pair : e.pair === pair));
-const icsData = events.filter(e => e.pair).map(e => ({ date: e.date, start: pairOf(e.pair)!.start, end: pairOf(e.pair)!.end, title: e.title, room: e.room, location: e.location }));
 const altBells = schedule.pairs_alt;
 ---
 <Base title="Расписание" section="study" description={`Расписание занятий УрФУ: по группе, преподавателю или аудитории. Неделя целиком, адреса корпусов и экспорт в календарь. Пример — группа ${schedule.group.title}, ИРИТ-РтФ.`}>
@@ -47,10 +46,13 @@ const altBells = schedule.pairs_alt;
           <button type="button" aria-pressed="false" data-find-mode="room">Аудитория</button>
         </div>
         <div class="sch-find__field">
-          <label class="visually-hidden" for="find-q">Номер группы, фамилия или аудитория</label>
-          <input class="input" id="find-q" value={schedule.group.title} autocomplete="off" list="find-list" />
-          <datalist id="find-list"><option value={schedule.group.title} /></datalist>
-          <p class="field__hint" data-find-hint>Группа {schedule.group.title} · {schedule.group.institute}, {schedule.group.course} курс</p>
+          <label class="visually-hidden" for="find-q">Номер группы, фамилия преподавателя или аудитория</label>
+          <div class="sch-find__box">
+            <input class="input" id="find-q" value={schedule.group.title} autocomplete="off" spellcheck="false" placeholder="Например, РИ-250902"
+              role="combobox" aria-expanded="false" aria-controls="find-list" aria-autocomplete="list" />
+            <ul class="sch-suggest" id="find-list" role="listbox" aria-label="Подсказки" hidden></ul>
+          </div>
+          <p class="field__hint" data-find-hint>Любая группа и любой преподаватель УрФУ — данные открытого расписания urfu.ru</p>
         </div>
       </form>
     </div>
@@ -58,7 +60,7 @@ const altBells = schedule.pairs_alt;
 
   <div class="sch-bar">
     <div class="container sch-bar__inner">
-      <p class="sch-bar__group"><b>Группа {schedule.group.title}</b><span>открытое расписание urfu.ru</span></p>
+      <p class="sch-bar__group" data-sch-title><b>Группа {schedule.group.title}</b><span>{schedule.group.institute}, {schedule.group.course} курс · открытое расписание urfu.ru</span></p>
       <div class="sch-week-nav">
         <button class="btn btn--sm" type="button" data-week-step="-1" aria-label="Предыдущая неделя">←</button>
         <p class="sch-week-label" aria-live="polite" data-week-label>{range(weeks[0].start, weeks[0].end)}</p>
@@ -72,10 +74,11 @@ const altBells = schedule.pairs_alt;
   <div class="container sch-body">
     <section class="sch-view">
         <div class="notice notice--info sch-note"><span class="notice__mark" aria-hidden="true"></span><div>
-        <p class="notice__title">Общее расписание группы — реальные данные urfu.ru</p>
-        <p class="notice__text">Большая часть занятий в УрФУ — курсы индивидуальной траектории, их видно только в личном кабинете. Поэтому у группы почти пусто. На новом сайте после входа сюда добавятся и курсы траектории.</p>
+        <p class="notice__title" data-note-title>Общее расписание группы — реальные данные urfu.ru</p>
+        <p class="notice__text" data-note-text>Большая часть занятий в УрФУ — курсы индивидуальной траектории, их видно только в личном кабинете. Поэтому у группы почти пусто. На новом сайте после входа сюда добавятся и курсы траектории.</p>
         </div></div>
 
+        <div class="sch-weeks" data-sch-weeks aria-live="polite">
         {weeks.map((w, wi) => (
         <div class="sch-week" data-week={wi} hidden={wi !== 0}>
           <!-- Desktop: week grid -->
@@ -135,6 +138,7 @@ const altBells = schedule.pairs_alt;
           </ol>
         </div>
         ))}
+        </div>
     </section>
 
     <aside class="sch-legend" aria-label="Звонки и обозначения">
@@ -155,62 +159,249 @@ const altBells = schedule.pairs_alt;
     </aside>
   </div>
 
-  <script type="application/json" id="ics-data" set:html={JSON.stringify(icsData)} />
 </Base>
 
 <script>
-  const label = document.querySelector<HTMLElement>('[data-week-label]')!;
-  const WEEKS = [{ s: '2026-10-26', l: '26 октября — 1 ноября' }, { s: '2026-11-02', l: '2–8 ноября' }];
-  let week = 0;
+  // Live schedule from the open API of urfu.ru (it allows requests from this site).
+  // The page is rendered with the saved data of РИ-250902; if the API is unreachable, that stays.
+  const API = 'https://urfu.ru/api/v2/schedule';
+  type Target = { kind: 'group' | 'teacher'; id: string; title: string; sub?: string };
+  type Ev = { date: string; pair: number; begin?: string; end?: string; title: string; type: string; room?: string; location?: string; teacher?: string; group?: string };
+  const DEFAULT: Target = { kind: 'group', id: '64108', title: 'РИ-250902', sub: 'ИРИТ-РтФ, 2 курс' };
+  const BELLS: Record<number, [string, string]> = { 1: ['08:30', '10:00'], 2: ['10:15', '11:45'], 3: ['12:00', '13:30'], 4: ['14:15', '15:45'], 5: ['16:00', '17:30'], 6: ['17:40', '19:05'], 7: ['19:15', '20:40'] };
+  const DAY = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const DAY_FULL = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+  const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  const TYPE: Record<string, [string, string]> = { 'лекции': ['Лекция', 'lec'], 'практические занятия': ['Практика', 'pr'], 'лабораторные работы': ['Лабораторная', 'lab'] };
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-  // Start on the week that contains today, when it is in range.
-  const today = new Date().toISOString().slice(0, 10);
-  const todayWeek = WEEKS.findIndex((w, i) => today >= w.s && (!WEEKS[i + 1] || today < WEEKS[i + 1].s));
-  if (todayWeek >= 0 && today <= '2026-11-08') week = todayWeek;
-  document.querySelectorAll<HTMLElement>(`[data-date="${today}"]`).forEach(el => el.classList.add('is-today'));
+  const $ = <T extends Element>(s: string) => document.querySelector<T>(s)!;
+  const weeksEl = $<HTMLElement>('[data-sch-weeks]');
+  const label = $<HTMLElement>('[data-week-label]');
+  const titleEl = $<HTMLElement>('[data-sch-title]');
+  const noteTitle = $<HTMLElement>('[data-note-title]');
+  const noteText = $<HTMLElement>('[data-note-text]');
+  const esc = (v: unknown) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const monday = (d: Date) => addDays(d, -((d.getDay() + 6) % 7));
+  const dLabel = (d: Date) => `${d.getDate()} ${MON[d.getMonth()]}`;
+  const range = (a: Date, b: Date) => a.getMonth() === b.getMonth() ? `${a.getDate()}–${dLabel(b)}` : `${dLabel(a)} — ${dLabel(b)}`;
+  const today = iso(new Date());
 
-  function render() {
-    document.querySelectorAll<HTMLElement>('[data-week]').forEach(w => (w.hidden = +w.dataset.week! !== week));
-    label.textContent = WEEKS[week].l;
-    document.querySelector<HTMLButtonElement>('[data-week-step="-1"]')!.disabled = week === 0;
-    document.querySelector<HTMLButtonElement>('[data-week-step="1"]')!.disabled = week === WEEKS.length - 1;
+  let target: Target = DEFAULT;
+  let weekStart = monday(new Date());
+  let shown: Ev[] = [];
+  const cache = new Map<string, Ev[]>();
+
+  async function load(t: Target, start: Date): Promise<Ev[]> {
+    const key = `${t.kind}:${t.id}:${iso(start)}`;
+    if (cache.has(key)) return cache.get(key)!;
+    const url = `${API}/${t.kind === 'group' ? 'groups' : 'teachers'}/${t.id}/schedule?date_gte=${iso(start)}&date_lte=${iso(addDays(start, 6))}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(String(r.status));
+    const data = await r.json();
+    const list: Ev[] = (data.events || []).map((e: any) => ({
+      date: e.date, pair: e.pairNumber || 0, begin: e.timeBegin?.slice(0, 5), end: e.timeEnd?.slice(0, 5),
+      title: e.title, type: e.loadType || '', room: e.auditoryTitle || undefined, location: e.auditoryLocation || undefined,
+      teacher: e.teacherName || undefined, group: e.groupTitle || undefined,
+    }));
+    cache.set(key, list);
+    return list;
   }
-  document.querySelectorAll<HTMLButtonElement>('[data-week-step]').forEach(b => b.addEventListener('click', () => {
-    week = Math.min(WEEKS.length - 1, Math.max(0, week + Number(b.dataset.weekStep)));
-    render();
-  }));
-  document.querySelector('[data-week-today]')!.addEventListener('click', () => { week = todayWeek >= 0 ? todayWeek : 0; render(); });
 
-  // Search: in the prototype only the sample group is available.
-  const mode = [...document.querySelectorAll<HTMLButtonElement>('[data-find-mode]')];
-  const q = document.querySelector<HTMLInputElement>('#find-q')!;
-  const hint = document.querySelector<HTMLElement>('[data-find-hint]')!;
-  const HINTS: Record<string, string> = { group: 'Например, РИ-250902', teacher: 'Фамилия преподавателя, например Мамаев', room: 'Номер аудитории, например I105' };
-  mode.forEach(b => b.addEventListener('click', () => {
-    mode.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-    q.value = '';
-    q.placeholder = HINTS[b.dataset.findMode!];
-    hint.textContent = 'В прототипе доступна группа РИ-250902; на сайте поиск идёт по открытому API расписания УрФУ.';
-    q.focus();
+  const online = (e: Ev) => !e.pair || /^https?:/.test(e.location ?? '');
+  const place = (e: Ev) => online(e)
+    ? (e.location ? `<a class="sch-ev__place" href="${esc(e.location)}">Онлайн${e.room ? ': ' + esc(e.room) : ''}</a>` : '<span class="sch-ev__place">Онлайн</span>')
+    : e.room ? `<a class="sch-ev__place" href="${base}/life/campus?room=${encodeURIComponent(e.room)}">${esc(e.room)}${e.location ? `<small>${esc(e.location)}</small>` : ''}</a>`
+    : '<span class="sch-ev__place sch-ev__place--none">Аудитория уточняется</span>';
+  // A pair can run on the second bell schedule: show its own time when it differs from the standard one.
+  const ownTime = (e: Ev) => e.pair && e.begin && BELLS[e.pair] && e.begin !== BELLS[e.pair][0] ? `<span class="sch-ev__time">${e.begin}–${e.end}</span>` : '';
+  const who = (e: Ev) => target.kind === 'teacher' ? (e.group ? `<span class="sch-ev__teacher">${esc(e.group)}</span>` : '') : (e.teacher ? `<span class="sch-ev__teacher">${esc(e.teacher)}</span>` : '');
+
+  function renderWeek(list: Ev[]) {
+    const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+    const ds = days.map(iso);
+    const at = (d: string, n: number) => list.filter(e => e.date === d && (n === 0 ? !e.pair : e.pair === n));
+    // Only the span of pairs actually used this week (evening-only teachers do not scroll past empty rows).
+    const used = list.filter(e => e.pair).map(e => e.pair);
+    const lo = used.length ? Math.min(...used) : 1, hi = used.length ? Math.max(...used) : 7;
+    const rows = [0, 1, 2, 3, 4, 5, 6, 7].filter(n => n === 0 ? ds.some(d => at(d, 0).length) : n >= lo && n <= hi);
+    const card = (e: Ev) => {
+      const t = TYPE[e.type] ?? [e.type || 'Занятие', 'pr'];
+      return `<article class="sch-ev sch-ev--${t[1]}"><span class="sch-ev__type">${esc(t[0])}</span><span class="sch-ev__title">${esc(e.title)}</span>${ownTime(e)}${place(e)}${who(e)}</article>`;
+    };
+    const grid = `<div class="sch-grid" role="table" aria-label="Неделя ${range(days[0], days[6])}">
+      <div class="sch-grid__row sch-grid__row--head" role="row"><span class="sch-grid__corner" role="columnheader">Пара</span>${days.map((d, i) => `<span class="sch-grid__day${ds[i] === today ? ' is-today' : ''}" role="columnheader"><b>${DAY[i]}</b> ${dLabel(d)}</span>`).join('')}</div>
+      ${rows.map(n => `<div class="sch-grid__row" role="row"><span class="sch-grid__time${n === 0 ? ' sch-grid__time--online' : ''}" role="rowheader">${n === 0 ? '<b>Онлайн</b><small>в своём темпе</small>' : `<b>${n}</b><small>${BELLS[n][0]}–${BELLS[n][1]}</small>`}</span>${ds.map(d => `<div class="sch-grid__cell${d === today ? ' is-today' : ''}" role="cell">${at(d, n).map(card).join('')}</div>`).join('')}</div>`).join('')}
+    </div>`;
+    const agenda = `<ol class="sch-agenda">${days.map((d, i) => {
+      const items = list.filter(e => e.date === ds[i]).sort((a, b) => (a.begin || '99').localeCompare(b.begin || '99'));
+      return `<li class="sch-day${ds[i] === today ? ' is-today' : ''}"><h2 class="sch-day__title"><span>${DAY_FULL[i]}</span> ${dLabel(d)}</h2>${items.length ? items.map(e => {
+        const t = TYPE[e.type] ?? [e.type || 'Занятие', 'pr'];
+        const meta = [t[0], e.room && (online(e) ? 'онлайн: ' + e.room : 'ауд. ' + e.room), !online(e) && e.location, target.kind === 'teacher' ? e.group : e.teacher].filter(Boolean).map(esc).join(' · ');
+        return `<div class="lesson sch-lesson"><span class="lesson__time">${e.begin ? `${e.begin}–${e.end}` : 'Онлайн'}<small>${e.pair ? e.pair + ' пара' : 'в своём темпе'}</small></span><span><span class="lesson__title">${esc(e.title)}</span><span class="lesson__meta">${meta}</span></span></div>`;
+      }).join('') : '<p class="sch-day__empty">Занятий нет</p>'}</li>`;
+    }).join('')}</ol>`;
+    const empty = list.length ? '' : `<p class="sch-empty">На этой неделе в открытом расписании занятий нет. ${target.kind === 'group' ? 'Курсы траектории видны в личном кабинете.' : ''}</p>`;
+    weeksEl.innerHTML = `<div class="sch-week">${empty}${grid}${agenda}</div>`;
+  }
+
+  function setHeader() {
+    label.textContent = range(weekStart, addDays(weekStart, 6));
+    // «Мамаев Илья Евгеньевич» → «Мамаев И. Е.» in the bar; the field keeps the full name.
+    const short = target.kind === 'teacher' ? target.title.replace(/^(\S+)\s+(\S)\S*(?:\s+(\S)\S*)?$/, (m, f, i, o) => `${f} ${i}.${o ? ' ' + o + '.' : ''}`) : target.title;
+    titleEl.innerHTML = `<b>${target.kind === 'group' ? 'Группа' : 'Преподаватель'} ${esc(short)}</b><span>${target.sub ? esc(target.sub) + ' · ' : ''}открытое расписание urfu.ru</span>`;
+    if (target.kind === 'teacher') {
+      noteTitle.textContent = 'Расписание преподавателя — реальные данные urfu.ru';
+      noteText.textContent = 'Все пары преподавателя за неделю с группами и аудиториями. Адрес аудитории ведёт на карту кампуса.';
+    } else {
+      noteTitle.textContent = 'Общее расписание группы — реальные данные urfu.ru';
+      noteText.textContent = 'Большая часть занятий в УрФУ — курсы индивидуальной траектории, их видно только в личном кабинете, поэтому у группы бывает почти пусто. На новом сайте после входа сюда добавятся и курсы траектории.';
+    }
+  }
+
+  let seq = 0;
+  async function show() {
+    setHeader();
+    const my = ++seq;
+    weeksEl.setAttribute('aria-busy', 'true');
+    try {
+      const list = await load(target, weekStart);
+      if (my !== seq) return;
+      shown = list;
+      renderWeek(list);
+    } catch {
+      if (my !== seq) return;
+      weeksEl.insertAdjacentHTML('afterbegin', '<p class="sch-empty">Не удалось связаться с расписанием urfu.ru — показаны сохранённые данные группы РИ-250902.</p>');
+    } finally {
+      if (my === seq) weeksEl.removeAttribute('aria-busy');
+    }
+  }
+
+  function choose(t: Target) {
+    target = t;
+    syncMode(t.kind);
+    const u = new URL(location.href);
+    u.searchParams.delete('group'); u.searchParams.delete('teacher');
+    if (!(t.kind === DEFAULT.kind && t.id === DEFAULT.id)) u.searchParams.set(t.kind, t.id);
+    history.replaceState(null, '', u);
+    try { localStorage.setItem('urfu-schedule', JSON.stringify(t)); } catch {}
+    q.value = t.title;
+    show();
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-week-step]').forEach(b => b.addEventListener('click', () => { weekStart = addDays(weekStart, 7 * Number(b.dataset.weekStep)); show(); }));
+  $('[data-week-today]').addEventListener('click', () => { weekStart = monday(new Date()); show(); });
+
+  // ---------- Search with suggestions: groups and teachers from the API, rooms go to the campus map ----------
+  const q = $<HTMLInputElement>('#find-q');
+  const list = $<HTMLUListElement>('#find-list');
+  const hint = $<HTMLElement>('[data-find-hint]');
+  const modes = [...document.querySelectorAll<HTMLButtonElement>('[data-find-mode]')];
+  let mode: 'group' | 'teacher' | 'room' = 'group';
+  let items: { label: string; sub?: string; pick: () => void }[] = [];
+  let active = -1;
+  const PH = { group: 'Например, РИ-250902', teacher: 'Фамилия, например Мамаев', room: 'Например, Р-327 или I105' };
+  const HINT = { group: 'Любая группа УрФУ — данные открытого расписания urfu.ru', teacher: 'Любой преподаватель УрФУ — все его пары за неделю', room: 'Покажем корпус и адрес на карте кампуса' };
+
+  function paint() {
+    list.innerHTML = items.map((it, i) => `<li role="option" id="opt-${i}" aria-selected="${i === active}" data-i="${i}"><span>${esc(it.label)}</span>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</li>`).join('');
+    list.hidden = !items.length;
+    q.setAttribute('aria-expanded', String(!!items.length));
+    if (active >= 0) q.setAttribute('aria-activedescendant', 'opt-' + active); else q.removeAttribute('aria-activedescendant');
+  }
+  const close = () => { items = []; active = -1; paint(); };
+
+  let timer = 0, qseq = 0;
+  q.addEventListener('input', () => {
+    clearTimeout(timer);
+    const v = q.value.trim();
+    if (mode === 'room') {
+      items = v ? [{ label: `Где аудитория «${v}»?`, sub: 'Корпус и адрес на карте кампуса', pick: () => (location.href = `${base}/life/campus?room=${encodeURIComponent(v)}`) }] : [];
+      active = items.length ? 0 : -1; paint(); return;
+    }
+    if (v.length < 2) { close(); return; }
+    timer = window.setTimeout(async () => {
+      const my = ++qseq;
+      try {
+        const r = await fetch(`${API}/${mode === 'group' ? 'groups' : 'teachers'}?search=${encodeURIComponent(v)}`);
+        const data: any[] = await r.json();
+        if (my !== qseq) return;
+        items = data.slice(0, 8).map(d => mode === 'group'
+          ? { label: d.title, sub: d.course ? `${d.course} курс` : undefined, pick: () => choose({ kind: 'group', id: String(d.id), title: d.title, sub: d.course ? `${d.course} курс` : undefined }) }
+          : { label: d.name, pick: () => choose({ kind: 'teacher', id: String(d.id), title: d.name }) });
+        if (!items.length) items = [{ label: 'Ничего не нашли', sub: mode === 'group' ? 'Проверьте номер группы: например, РИ-250902' : 'Попробуйте только фамилию', pick: () => {} }];
+        active = -1; paint();
+      } catch { items = [{ label: 'Расписание urfu.ru сейчас недоступно', sub: 'Попробуйте позже', pick: () => {} }]; paint(); }
+    }, 250);
+  });
+  q.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      if (!items.length) return;
+      e.preventDefault();
+      active = (active + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length; paint();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      const it = items[active >= 0 ? active : 0];
+      if (it) { it.pick(); close(); }
+    } else if (e.key === 'Escape') close();
+  });
+  list.addEventListener('mousedown', e => {
+    const li = (e.target as HTMLElement).closest<HTMLElement>('[data-i]');
+    if (!li) return;
+    e.preventDefault();
+    items[+li.dataset.i!].pick(); close();
+  });
+  q.addEventListener('blur', () => setTimeout(close, 150));
+  q.addEventListener('focus', () => q.select());
+  // The mode switch follows what is shown (e.g. a shared teacher link opens in «Преподаватель»).
+  function syncMode(kind: typeof mode) {
+    mode = kind;
+    modes.forEach(x => x.setAttribute('aria-pressed', String(x.dataset.findMode === kind)));
+    q.placeholder = PH[kind]; hint.textContent = HINT[kind];
+  }
+  modes.forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.findMode as typeof mode;
+    modes.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    q.value = ''; q.placeholder = PH[mode]; hint.textContent = HINT[mode];
+    close(); q.focus();
   }));
 
-  // Export the group schedule as .ics.
-  type IcsEv = { date: string; start: string; end: string; title: string; room?: string; location?: string };
-  const evs: IcsEv[] = JSON.parse(document.getElementById('ics-data')!.textContent!);
-  document.querySelector('[data-ics]')!.addEventListener('click', () => {
+  // ---------- Export the shown week as .ics ----------
+  $('[data-ics]').addEventListener('click', () => {
     const stamp = (d: string, t: string) => d.replace(/-/g, '') + 'T' + t.replace(':', '') + '00';
-    const esc = (s: string) => s.replace(/[,;\\]/g, m => '\\' + m);
+    const ics = (s: string) => s.replace(/[,;\\]/g, m => '\\' + m);
     const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//UrFU redesign//Schedule//RU', 'X-WR-TIMEZONE:Asia/Yekaterinburg'];
-    evs.forEach((e, i) => lines.push('BEGIN:VEVENT', `UID:${e.date}-${i}@urfu-redesign`, `DTSTAMP:${stamp(e.date, e.start)}`,
-      `DTSTART;TZID=Asia/Yekaterinburg:${stamp(e.date, e.start)}`, `DTEND;TZID=Asia/Yekaterinburg:${stamp(e.date, e.end)}`,
-      `SUMMARY:${esc(e.title)}`, `LOCATION:${esc([e.room, e.location].filter(Boolean).join(', '))}`, 'END:VEVENT'));
+    shown.filter(e => e.begin).forEach((e, i) => lines.push('BEGIN:VEVENT', `UID:${e.date}-${i}-${target.id}@urfu-redesign`, `DTSTAMP:${stamp(e.date, e.begin!)}`,
+      `DTSTART;TZID=Asia/Yekaterinburg:${stamp(e.date, e.begin!)}`, `DTEND;TZID=Asia/Yekaterinburg:${stamp(e.date, e.end!)}`,
+      `SUMMARY:${ics(e.title)}`, `LOCATION:${ics([e.room, e.location].filter(Boolean).join(', '))}`, 'END:VEVENT'));
     lines.push('END:VCALENDAR');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar' }));
-    a.download = 'raspisanie-RI-250902.ics';
+    a.download = `raspisanie-${target.title.replace(/[^\wА-Яа-яЁё-]+/g, '-')}.ics`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   });
 
-  render();
+  // ---------- Start: a shared link, then the last choice, then the sample group ----------
+  const params = new URLSearchParams(location.search);
+  let start: Target = DEFAULT;
+  try { const saved = JSON.parse(localStorage.getItem('urfu-schedule') || 'null'); if (saved?.id) start = saved; } catch {}
+  if (params.get('group')) start = { kind: 'group', id: params.get('group')!, title: 'группа', sub: '' };
+  if (params.get('teacher')) start = { kind: 'teacher', id: params.get('teacher')!, title: '', sub: '' };
+  target = start;
+  syncMode(start.kind);
+  q.value = start.title;
+  show().then(async () => {
+    // Shared links carry only the id: take the name from the API response.
+    if (start.title && start.title !== 'группа') return;
+    try {
+      const r = await fetch(`${API}/${start.kind === 'group' ? 'groups' : 'teachers'}/${start.id}/schedule?date_gte=${iso(weekStart)}&date_lte=${iso(weekStart)}`);
+      const d = await r.json();
+      target.title = start.kind === 'group' ? d.group?.title : d.teacher?.name;
+      if (start.kind === 'group' && d.group?.course) target.sub = `${d.group.course} курс`;
+      q.value = target.title; setHeader();
+    } catch {}
+  });
 </script>

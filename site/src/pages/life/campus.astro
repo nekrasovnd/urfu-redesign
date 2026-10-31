@@ -164,4 +164,7 @@ const roomsIndex = B.flatMap(b => (b.rooms ?? []).map(r => ({ p: r, id: b.id }))
 
   document.querySelectorAll<SVGAElement>('[data-pin]').forEach(p => p.addEventListener('click', e => { e.preventDefault(); select(p.dataset.pin!); }));
   if (location.hash.startsWith('#corp-')) select(location.hash.slice(6), false);
+  // Links from the schedule: /life/campus?room=I105 finds the building straight away.
+  const qRoom = new URLSearchParams(location.search).get('room');
+  if (qRoom) { input.value = qRoom; document.querySelector<HTMLFormElement>('[data-room-form]')!.requestSubmit(); }
 </script>

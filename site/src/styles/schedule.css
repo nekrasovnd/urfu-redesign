@@ -27,7 +27,7 @@
 .sch-grid__corner, .sch-grid__day { padding: 10px 8px; font: 500 13px/1.25 var(--font-text); color: var(--fg-muted); }
 .sch-grid__day b { display: block; font: 800 20px/1 var(--font-display); color: var(--fg); letter-spacing: -0.02em; margin-bottom: 2px; }
 .sch-grid__day.is-today { background: var(--fg); color: var(--bg); }
-.sch-grid__day.is-today b { color: var(--accent-text); }
+.sch-grid__day.is-today b { color: inherit; }
 .sch-grid__time { padding: 8px; display: grid; align-content: start; gap: 2px; }
 .sch-grid__time b { font: 800 22px/1 var(--font-display); }
 .sch-grid__time b:only-of-type { overflow-wrap: anywhere; }
@@ -87,3 +87,19 @@
   .sch-find .segmented button { white-space: nowrap; flex: 1; }
   .sch-week-nav [data-week-today] { display: none; }
 }
+
+/* Live search: suggestions from the open API of urfu.ru */
+.sch-find__box { position: relative; }
+.sch-find .input::placeholder { font: 500 16px/1.2 var(--font-text); letter-spacing: 0; color: var(--fg-muted); }
+.sch-suggest { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; right: 0; margin: 0; padding: 0; list-style: none; max-height: 320px; overflow-y: auto; background: var(--surface); border: var(--rule-thick) solid var(--rule); box-shadow: var(--shadow-pop); }
+.sch-suggest li { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); padding: 10px 14px; border-bottom: var(--rule-thin) solid var(--rule-soft); cursor: pointer; font-weight: 600; }
+.sch-suggest li:last-child { border-bottom: 0; }
+.sch-suggest li small { font: 500 var(--fs-caption)/1.3 var(--font-text); color: var(--fg-muted); white-space: nowrap; }
+.sch-suggest li:hover, .sch-suggest li[aria-selected="true"] { background: var(--fg); color: var(--bg); }
+.sch-suggest li:hover small, .sch-suggest li[aria-selected="true"] small { color: inherit; opacity: .75; }
+.sch-weeks { display: grid; gap: var(--s-5); transition: opacity var(--dur-2) var(--ease); }
+.sch-weeks[aria-busy="true"] { opacity: .45; }
+.sch-week { display: grid; gap: var(--s-5); }
+.sch-empty { padding: var(--s-4) var(--s-5); background: var(--surface-2); font-size: var(--fs-small); }
+.sch-ev__time { font: 600 12px/1.2 var(--font-text); color: var(--accent-text); font-variant-numeric: tabular-nums; }
+
