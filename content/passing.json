@@ -1,0 +1,182 @@
+{
+ "_source": "https://priem-rtf.urfu.ru — страницы программ (поля passingScore, budgetSeatsCount), выгружено 2026-10-31",
+ "_note": "Проходной балл прошлого приёма по данным сайта приёмной комиссии ИРИТ-РтФ; год на сайте не указан. Остальные институты открыто проходные не публикуют. Формат рассчитан на несколько лет: passing { \"2024\": …, \"2025\": …, \"2026\": … } — тогда ориентир на 2027 = среднее.",
+ "programs": [
+  {
+   "code": "09.03.01",
+   "name": "Алгоритмы искусственного интеллекта",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/artificial-intelligence-algorithms/",
+   "budget": 105,
+   "contract": 60,
+   "passing": {
+    "last": 258
+   }
+  },
+  {
+   "code": "09.03.01",
+   "name": "Информатика и вычислительная техника",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/informatics-and-computers/",
+   "budget": 140,
+   "contract": 20,
+   "passing": {
+    "last": 251
+   }
+  },
+  {
+   "code": "09.03.03",
+   "name": "Прикладная информатика",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/applied-informatics/",
+   "budget": 130,
+   "contract": 80,
+   "passing": {
+    "last": 258
+   }
+  },
+  {
+   "code": "09.03.03",
+   "name": "Прикладной искусственный интеллект",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/prikladnoi-iskusstvennyi-intellekt/",
+   "budget": 105,
+   "contract": 25,
+   "passing": {
+    "last": 240
+   }
+  },
+  {
+   "code": "09.03.04",
+   "name": "Программная инженерия",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/programmnaya-inzheneriya/",
+   "budget": 130,
+   "contract": 100,
+   "passing": {
+    "last": 272
+   }
+  },
+  {
+   "code": "10.03.01",
+   "name": "Безопасность компьютерных систем",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/information-security/",
+   "budget": 135,
+   "contract": 55,
+   "passing": {
+    "last": 253
+   }
+  },
+  {
+   "code": "10.05.02",
+   "name": "Информационная безопасность телекоммуникационных систем (бюджетные места)",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/information-security-telecommunication-systems-budget/",
+   "budget": 55,
+   "contract": 10,
+   "passing": {
+    "last": 234
+   }
+  },
+  {
+   "code": "10.05.02",
+   "name": "Информационная безопасность телекоммуникационных систем (целевые места)",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/information-security-telecommunication-systems-targeted/",
+   "budget": 15,
+   "contract": null,
+   "passing": {
+    "last": 124
+   }
+  },
+  {
+   "code": "10.05.04",
+   "name": "Информационно-аналитические системы безопасности",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/information-analytical-security-systems/",
+   "budget": 65,
+   "contract": 10,
+   "passing": {
+    "last": 240
+   }
+  },
+  {
+   "code": "11.03.01",
+   "name": "Радиотехника",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/radio-engineering/",
+   "budget": 57,
+   "contract": 10,
+   "passing": {
+    "last": 202
+   }
+  },
+  {
+   "code": "11.03.02",
+   "name": "Инфокоммуникационные технологии и системы связи",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/infocommunication-technologies-communication-systems/",
+   "budget": 66,
+   "contract": 10,
+   "passing": {
+    "last": 240
+   }
+  },
+  {
+   "code": "11.03.03",
+   "name": "Конструирование и технология электронных средств",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/design-technology-electronic-media/",
+   "budget": 85,
+   "contract": 10,
+   "passing": {
+    "last": 202
+   }
+  },
+  {
+   "code": "11.05.01",
+   "name": "Радиоэлектронные системы и комплексы (бюджетные места)",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/radio-electronic-systems-complexes-budget/",
+   "budget": 96,
+   "contract": 5,
+   "passing": {
+    "last": 184
+   }
+  },
+  {
+   "code": "11.05.01",
+   "name": "Радиоэлектронные системы и комплексы (целевые места)",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/radio-electronic-systems-complexes-targeted/",
+   "budget": 25,
+   "contract": null,
+   "passing": {
+    "last": 124
+   }
+  },
+  {
+   "code": "27.03.04",
+   "name": "Управление в технических системах",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/management-technical-systems/",
+   "budget": 33,
+   "contract": 5,
+   "passing": {
+    "last": 240
+   }
+  },
+  {
+   "code": "29.03.03",
+   "name": "Технология полиграфического и упаковочного производства",
+   "institute": "ИРИТ-РтФ",
+   "url": "https://priem-rtf.urfu.ru/program/technology-printing-packaging-production/",
+   "budget": 45,
+   "contract": 15,
+   "passing": {
+    "last": 201
+   }
+  }
+ ]
+}

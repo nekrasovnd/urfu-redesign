@@ -91,3 +91,17 @@
 
 /* Until the script sorts the list, lay out only the first 12 cards: no long layout, no jump when the rest hides */
 .match-list[data-list="ok"]:not(.is-ready) > :nth-child(n+13) { display: none; }
+
+/* Budget chance 2027: the sum of three exams against the passing-score guide */
+.match-chance { display: grid; gap: var(--s-2); padding: var(--s-3); background: var(--surface-2); }
+.match-chance ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.match-chance li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px var(--s-3); align-items: baseline; font-size: 14px; }
+.match-chance__name small { display: block; color: var(--fg-muted); font-size: 12px; }
+.match-chance__guide { color: var(--fg-muted); white-space: nowrap; }
+.match-chance__guide b { color: var(--fg); font-family: var(--font-display); }
+.match-chance__verdict { grid-column: 1 / -1; justify-self: start; padding: 2px 8px; font-weight: 600; font-size: 13px; }
+.match-chance__verdict.is-high { background: var(--success); color: var(--bg); }
+.match-chance__verdict.is-edge { border: 2px solid var(--warning); color: var(--fg); }
+.match-chance__verdict.is-low { border: 1px solid var(--fg-muted); color: var(--fg); }
+
+.match-head__chance { max-width: 72ch; padding: var(--s-3) var(--s-4); border-left: 4px solid var(--accent); background: var(--surface); font-size: var(--fs-small); }

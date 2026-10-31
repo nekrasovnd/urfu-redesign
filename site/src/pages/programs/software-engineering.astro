@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import '../../styles/program.css';
 import sample from '@content/program-sample.json';
-import { programs, institutes, university, figures } from '../../data/site';
+import { programs, institutes, university, figures, passing } from '../../data/site';
 
 // Programme page template, filled with «Программная инженерия» (09.03.04, ИРИТ-РтФ).
 // Sources: programms.edu.urfu.ru/ru/9797/ (description, partners, trajectory) and calcege (thresholds, price).
@@ -14,6 +14,7 @@ const related = programs
   .filter(p => p.level === 'Бакалавриат' && p.institute === 'ИРИТ-РтФ' && p.code?.startsWith('09.03') && p.name !== sample.name)
   .slice(0, 4);
 const c = university.contacts;
+const pass = passing.find(x => x.code === sample.code && x.name === sample.name);
 
 const steps = [
   { t: 'Сдайте ЕГЭ', d: 'Русский язык и математику, плюс информатику или физику. Минимум — 40, 40 и 46 или 41 балл.' },
@@ -54,6 +55,7 @@ const faq = [
         <div><dt>Язык</dt><dd>{sample.language}</dd></div>
         <div><dt>Институт</dt><dd>ИРИТ-РтФ <small>радиоэлектроники и информационных технологий</small></dd></div>
         <div><dt>Набор</dt><dd>с 2019 года</dd></div>
+        {pass && <div><dt>Проходной прошлого приёма</dt><dd>{pass.guide} <small>{pass.budget} бюджетных мест</small></dd></div>}
       </dl>
     </div>
   </section>
@@ -87,9 +89,9 @@ const faq = [
     <div class="container pg-exams">
       <div>
         <h2 class="t-h2" id="exams-title">Экзамены и минимальные баллы</h2>
-        <p class="t-body t-muted" style="margin-top: var(--s-3)">Введите свои баллы — сразу увидите, можно ли подать документы. Это минимальные баллы для подачи, проходной балл по конкурсу обычно выше.</p>
+        <p class="t-body t-muted" style="margin-top: var(--s-3)">Введите свои баллы — сразу увидите, можно ли подать документы и как сумма соотносится с проходным прошлого приёма{pass ? ` (${pass.guide}, ${pass.budget} бюджетных мест)` : ''}. Данные — сайт приёмной комиссии ИРИТ-РтФ; индивидуальные достижения не учитываются.</p>
       </div>
-      <form class="pg-check" data-check novalidate onsubmit="return false">
+      <form class="pg-check" data-check novalidate onsubmit="return false" data-guide={pass?.guide ?? ''}>
         <p class="t-label t-muted">Обязательные</p>
         {ex.required.map((e, i) => (
           <label class="pg-check__row" for={`pc-${i}`}>
@@ -237,7 +239,12 @@ const faq = [
     else {
       const margin = req.reduce((s, i) => s + val(i)! - +i.dataset.min!, 0) + bestOpt;
       result.className = 'pg-check__result is-pass';
-      result.textContent = `Можно подавать документы. Запас над минимумом — ${margin} баллов в сумме.`;
+      const guide = Number(form.dataset.guide);
+      const sum = req.reduce((s, i) => s + val(i)!, 0) + Math.max(...opt.filter(i => val(i) !== null).map(i => val(i)!));
+      const d = sum - guide;
+      // The budget guide for 2027: the published passing score (average over published years).
+      const chance = !guide ? '' : d >= 5 ? ` Сумма ${sum} — выше ориентира на бюджет-2027 (${guide}) на ${d}.` : d >= -10 ? ` Сумма ${sum} — на грани ориентира на бюджет-2027 (${guide}).` : ` Сумма ${sum} — ниже ориентира на бюджет-2027 (${guide}) на ${-d}: можно на платное или усилить баллы.`;
+      result.textContent = `Можно подавать документы. Запас над минимумом — ${margin} баллов в сумме.${chance}`;
     }
   }
   form.addEventListener('input', check);

@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import '../../styles/match.css';
-import { directions, instituteAbbr, university } from '../../data/site';
+import { directions, instituteAbbr, university, passing } from '../../data/site';
 import programsJson from '@content/programs.json';
 
 // ---------- Data: EGE thresholds (calcege.my1.urfu.ru) joined with the programme catalogue ----------
@@ -24,7 +24,10 @@ const dirs = directions.map((d, idx) => ({
   r: d.required.map(x => [x.subject, x.min] as [string, number]),
   o: d.choose_one.map(x => [x.subject, x.min] as [string, number]),
   pr: progByCode.get(d.code) ?? [],
+  pass: passing.filter(x => x.code === d.code),
 }));
+// Guides per direction for the client (sorting by budget chance).
+const guides = dirs.map(d => d.pass.map(x => x.guide));
 const institutes = [...new Set(dirs.flatMap(d => d.pr.map(p => p.i)))].sort((a, b) => a.localeCompare(b, 'ru'));
 const DETAIL: Record<string, string> = { '09.03.04': '/programs/software-engineering' };
 const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
@@ -40,6 +43,7 @@ const c = university.contacts;
     </ol>
     <h1 class="t-h1">Подбор программы по баллам ЕГЭ</h1>
     <p class="t-lead">Укажите баллы по предметам, которые сдали или собираетесь сдавать. Покажем направления, на которые можно подать документы, минимальные баллы, стоимость обучения и программы внутри каждого направления.</p>
+    <p class="match-head__chance"><b>Новое: шанс на бюджет-2027.</b> Где приёмная комиссия публикует проходные баллы, сравним сумму ваших трёх ЕГЭ с ориентиром — средним проходным за опубликованные годы. Сейчас это программы ИРИТ-РтФ: их сайт приёма даёт проходной прошлого приёма и число бюджетных мест. Индивидуальные достижения не учитываются.</p>
   </div>
 
   <div class="container match-layout">
@@ -103,6 +107,7 @@ const c = university.contacts;
           <label class="field__label" for="sort">Сортировка</label>
           <select class="select" id="sort">
             <option value="margin">По запасу баллов</option>
+            <option value="chance">По шансу на бюджет-2027</option>
             <option value="cheap">Сначала дешевле</option>
             <option value="expensive">Сначала дороже</option>
             <option value="name">По названию</option>
@@ -156,6 +161,21 @@ const c = university.contacts;
               </div>
             )}
 
+            {d.pass.length > 0 && (
+              <div class="match-chance" data-chance>
+                <span class="t-label t-muted">Шанс на бюджет-2027 · сумма трёх ЕГЭ <b data-sum>—</b></span>
+                <ul>
+                  {d.pass.map(x => (
+                    <li data-guide={x.guide}>
+                      <span class="match-chance__name">{x.name} <small>{x.institute}{x.budget ? ` · ${x.budget} бюджетных мест` : ''}</small></span>
+                      <span class="match-chance__guide">ориентир <b>{x.guide}</b></span>
+                      <span class="match-chance__verdict" data-verdict>—</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div class="match-card__foot">
               <span class="match-card__price">{d.p ? `до ${rub(d.p)} в год` : 'Стоимость уточняется'}</span>
               <a class="btn btn--sm btn--ink" href={DETAIL[d.c] ?? `/programs?code=${d.c}`}>Подробнее о направлении</a>
@@ -190,11 +210,11 @@ const c = university.contacts;
     </section>
   </div>
 
-  <script type="application/json" id="match-data" set:html={JSON.stringify(dirs.map(d => ({ id: d.id, r: d.r, o: d.o, p: d.p, n: d.n })))} />
+  <script type="application/json" id="match-data" set:html={JSON.stringify(dirs.map((d, i) => ({ id: d.id, r: d.r, o: d.o, p: d.p, n: d.n, g: guides[i] })))} />
 </Base>
 
 <script>
-  type Dir = { id: number; r: [string, number][]; o: [string, number][]; p: number | null; n: string };
+  type Dir = { id: number; r: [string, number][]; o: [string, number][]; p: number | null; n: string; g: number[] };
   const dirs: Dir[] = JSON.parse(document.getElementById('match-data')!.textContent!);
   const form = document.querySelector<HTMLFormElement>('[data-match-form]')!;
   const okList = document.querySelector<HTMLElement>('[data-list="ok"]')!;
@@ -254,7 +274,9 @@ const c = university.contacts;
       }
     }
     const status = missing ? 'none' : deficit === 0 ? 'ok' : deficit <= 10 ? 'close' : 'none';
-    return { status, margin, deficit };
+    // Sum of the three exams the contest counts: the required ones and the best optional one.
+    const sum = d.r.reduce((a, [subj]) => a + (s[subj] ?? 0), 0) + (d.o.length ? Math.max(0, ...d.o.map(([subj]) => s[subj] ?? 0)) : 0);
+    return { status, margin, deficit, sum };
   }
 
   function paintExams(card: HTMLElement, s: Record<string, number>) {
@@ -291,18 +313,30 @@ const c = university.contacts;
         (!insts.size || card.dataset.inst!.split('|').some(i => insts.has(i)));
       const e = evaluate(d, s);
       paintExams(card, s);
+      // Budget chance against the 2027 guide (average of published passing scores), where it is published.
+      const ch = card.querySelector<HTMLElement>('[data-chance]');
+      if (ch) {
+        ch.querySelector('[data-sum]')!.textContent = e.status === 'none' && e.sum === 0 ? '—' : String(e.sum);
+        ch.querySelectorAll<HTMLElement>('[data-guide]').forEach(li => {
+          const diff = e.sum - Number(li.dataset.guide);
+          const v = li.querySelector<HTMLElement>('[data-verdict]')!;
+          v.className = 'match-chance__verdict ' + (diff >= 5 ? 'is-high' : diff >= -10 ? 'is-edge' : 'is-low');
+          v.textContent = diff >= 5 ? `выше на ${diff}` : diff >= -10 ? (diff >= 0 ? `на грани, +${diff}` : `на грани, −${-diff}`) : `ниже на ${-diff}`;
+        });
+      }
       const st = card.querySelector<HTMLElement>('[data-status]')!;
       st.className = 'match-card__status';
       if (!passesFilters || e.status === 'none') { card.hidden = true; continue; }
       card.hidden = false;
-      if (e.status === 'ok') { ok.push({ d, m: e.margin }); st.textContent = `Запас ${e.margin} ${plural(e.margin, 'балл', 'балла', 'баллов')}`; st.classList.add('is-ok'); }
+      if (e.status === 'ok') { ok.push({ d, m: e.margin, c: d.g.length ? Math.max(...d.g.map(g => e.sum - g)) : -1e9 }); st.textContent = `Запас ${e.margin} ${plural(e.margin, 'балл', 'балла', 'баллов')}`; st.classList.add('is-ok'); }
       else { close.push({ d, m: e.margin, def: e.deficit }); st.textContent = `Не хватает ${e.deficit} ${plural(e.deficit, 'балла', 'баллов', 'баллов')}`; st.classList.add('is-close'); }
     }
 
     const cmp = (a: { d: Dir; m: number }, b: { d: Dir; m: number }) =>
       sort === 'cheap' ? (a.d.p ?? 1e9) - (b.d.p ?? 1e9) :
       sort === 'expensive' ? (b.d.p ?? -1) - (a.d.p ?? -1) :
-      sort === 'name' ? a.d.n.localeCompare(b.d.n, 'ru') : b.m - a.m;
+      sort === 'name' ? a.d.n.localeCompare(b.d.n, 'ru') :
+      sort === 'chance' ? (b as any).c - (a as any).c || b.m - a.m : b.m - a.m;
     ok.sort(cmp).forEach((x, i) => { const c = cards.get(x.d.id)!; okList.append(c); c.hidden = i >= limit; });
     okList.classList.add('is-ready');
     const left = ok.length - limit;

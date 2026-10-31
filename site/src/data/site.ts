@@ -92,3 +92,14 @@ export const protoPages: { href: string; label: string; type: string }[] = [
   { href: '/sveden', label: 'Сведения об образовательной организации', type: 'Обязательный раздел' },
 ];
 export const builtRoutes = [...protoPages.map(p => p.href), ...news.map(n => `/news/${n.id}`)];
+
+// Passing scores (official: priem-rtf.urfu.ru). The 2027 guide is the average of the published years;
+// today only the last admission is published, so the guide equals it. Target places (целевые) are a separate contest.
+import passingJson from '@content/passing.json';
+export type Passing = { code: string; name: string; institute: string; url: string; budget: number | null; years: number; guide: number };
+export const passing: Passing[] = passingJson.programs
+  .filter(p => !/целев/i.test(p.name))
+  .map(p => {
+    const vals = Object.values(p.passing as Record<string, number>).filter(Boolean);
+    return { code: p.code, name: p.name.replace(/\s*\(бюджетные места\)/i, ''), institute: p.institute, url: p.url, budget: p.budget, years: vals.length, guide: Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) };
+  });

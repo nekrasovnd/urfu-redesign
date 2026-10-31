@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import MyPairs from '../components/MyPairs.astro';
 import InstituteCards from '../components/InstituteCards.astro';
-import { news, events, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
+import { passing, news, events, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
 
 // ---------- Roles: what each audience needs first ----------
 type Action = { t: string; h: string; s?: string; ext?: boolean };
@@ -90,7 +90,7 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
 // Russian is required on all 113 directions; maths only on some (48 required, 37 as an option, 28 none), so both other subjects are chosen.
 const otherSubjects = ['Математика', 'Информатика', 'Физика', 'Обществознание', 'Химия', 'Биология', 'История', 'Иностранный язык', 'Литература', 'География'];
 const mathOptional = directions.filter(d => !d.required.some(e => e.subject === 'Математика')).length;
-const egeCompact = directions.map(d => ({ c: d.code, n: d.name, p: d.max_cost_rub, r: d.required.map(x => [x.subject, x.min]), o: d.choose_one.map(x => [x.subject, x.min]) }));
+const egeCompact = directions.map(d => ({ c: d.code, n: d.name, p: d.max_cost_rub, r: d.required.map(x => [x.subject, x.min]), o: d.choose_one.map(x => [x.subject, x.min]), g: passing.filter(x => x.code === d.code).map(x => x.guide) }));
 
 const featured = news[9]; // карбоновый полигон
 const restNews = [news[0], news[4], news[6], news[1]];
@@ -346,7 +346,7 @@ const roleEvents = (aud?: string) => upcoming.filter(e => !aud || e.audience.inc
   try { const saved = localStorage.getItem(ROLE_KEY); if (saved) setRole(saved, false); } catch {}
 
   // ---------- Quick match by EGE scores ----------
-  type Dir = { c: string; n: string; p: number | null; r: [string, number][]; o: [string, number][] };
+  type Dir = { c: string; n: string; p: number | null; r: [string, number][]; o: [string, number][]; g: number[] };
   const dirs: Dir[] = JSON.parse(document.getElementById('ege-data')!.textContent!);
   const form = document.querySelector<HTMLFormElement>('[data-quick-match]');
   if (form) {
@@ -366,7 +366,14 @@ const roleEvents = (aud?: string) => upcoming.filter(e => !aud || e.audience.inc
       matched.sort((a, b) => Number(b.o.some(([s]) => s === third)) - Number(a.o.some(([s]) => s === third)) || (b.p ?? 0) - (a.p ?? 0));
       countEl.textContent = String(matched.length);
       labelEl.textContent = `${plural(matched.length, 'направление подходит', 'направления подходят', 'направлений подходят')} по минимальным баллам из ${dirs.length}`;
-      listEl.innerHTML = matched.slice(0, 3).map(d => `<li><b>${d.n}</b><span>${d.c}${d.p ? ' · до ' + rub(d.p) : ''}</span></li>`).join('')
+      // Budget chance 2027 where a passing score is published: sum of the three exams vs the best programme's guide.
+      const chance = (d: Dir) => {
+        if (!d.g.length) return '';
+        const sum = d.r.reduce((a, [s]) => a + (scores[s] ?? 0), 0) + (d.o.length ? Math.max(0, ...d.o.map(([s]) => scores[s] ?? 0)) : 0);
+        const diff = Math.max(...d.g.map(g => sum - g));
+        return ` · бюджет-2027: ${diff >= 5 ? 'выше ориентира' : diff >= -10 ? 'на грани' : 'ниже ориентира'}`;
+      };
+      listEl.innerHTML = matched.slice(0, 3).map(d => `<li><b>${d.n}</b><span>${d.c}${d.p ? ' · до ' + rub(d.p) : ''}${chance(d)}</span></li>`).join('')
         || '<li>Пока ни одно направление не подходит. Проверьте баллы: минимум по большинству предметов — 40.</li>';
     }
     form.addEventListener('input', update);
