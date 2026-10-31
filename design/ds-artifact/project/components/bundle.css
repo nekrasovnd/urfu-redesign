@@ -499,7 +499,7 @@ html.motion :is(.pg-hero, .in-hero, .hub-lk, .ev-promo, .diagonal)::after { anim
 /* 2. Плашки привязаны к прокрутке в обе стороны: скрипт ставит --p от 0 (за краем) до 1 (на месте) */
 html.motion .slope-scrub::after { transform: skewX(var(--slope)) translateX(calc((1 - var(--p, 1)) * 105%)); transition: transform 180ms linear; }
 
-/* 3. Обложка вуза: синий срез проходит по фото и открывает его, «галочка» знака дорисовывается */
+/* 3. Обложка вуза: синий срез проходит по фото и открывает его, правый склон знака с крючком въезжает по наклону */
 html.motion .intro::after {
   content: ""; position: absolute; z-index: 2; top: 0; bottom: 0; left: -40%; width: 180%;
   background: var(--c-blue); pointer-events: none; transform-origin: top;
@@ -521,7 +521,7 @@ html.motion .intro__arm { animation: arm-draw 480ms var(--ease) 520ms both; }
   to { clip-path: polygon(-30% 0, 200% 0, 200% 100%, -60% 100%); }
 }
 
-/* 5. Загрузка: полоса со штриховкой под наклоном знака; если ждать дольше 0,6 с — знак с рисующейся «галочкой» */
+/* 5. Загрузка: полоса со штриховкой под наклоном знака; если ждать дольше 0,6 с — знак, у которого въезжает правый склон */
 .loadbar { position: fixed; top: 0; left: 0; right: 0; z-index: calc(var(--z-header) + 5); height: 4px; pointer-events: none; transform: scaleX(0); transform-origin: left; opacity: 0;
   background: repeating-linear-gradient(-63.435deg, var(--accent) 0 8px, var(--c-blue-light) 8px 12px); }
 html.is-loading .loadbar { opacity: 1; animation: loadbar 6s cubic-bezier(.08, .7, .2, 1) forwards; }

@@ -34,79 +34,79 @@
       "files": {
         "urfu-short-ru-color.svg": {
           "name": "urfu-short-ru-color.svg",
-          "blob": "1ce52d90ee77e5d3b96705ca0e8357b5",
-          "size": 16148,
+          "blob": "9190aed73c102ada49c92a7a2319dac1",
+          "size": 16136,
           "type": "image/svg+xml"
         },
         "urfu-short-ru-white.svg": {
           "name": "urfu-short-ru-white.svg",
-          "blob": "97e8bfd1ae5633596d1a02e42e0def71",
-          "size": 16148,
+          "blob": "5c190d10677b2a804f989a03c1676912",
+          "size": 16136,
           "type": "image/svg+xml"
         },
         "urfu-full-ru-color.svg": {
           "name": "urfu-full-ru-color.svg",
-          "blob": "7cb4a174d2a2466f0da4a7eeb0f4ef58",
-          "size": 34974,
+          "blob": "c539133041f63d5e9ed6d40f1aa5cff2",
+          "size": 34947,
           "type": "image/svg+xml"
         },
         "urfu-full-ru-white.svg": {
           "name": "urfu-full-ru-white.svg",
-          "blob": "ccb53ee4bc8f8cad1d334a163ac44e76",
-          "size": 34974,
+          "blob": "ff3bed94972f189e85cdabe11baf4b2f",
+          "size": 34947,
           "type": "image/svg+xml"
         },
         "urfu-abbr-color.svg": {
           "name": "urfu-abbr-color.svg",
-          "blob": "c3a8bef456067618e1cccced2af65885",
+          "blob": "3a89fc26b5007be5dc77d945dce93da7",
           "size": 2388,
           "type": "image/svg+xml"
         },
         "urfu-short-en-color.svg": {
           "name": "urfu-short-en-color.svg",
-          "blob": "9477af2437934744dca514137a0e9136",
-          "size": 11532,
+          "blob": "59a95bce5baecefd9125a8e22a505865",
+          "size": 11520,
           "type": "image/svg+xml"
         },
         "urfu-sign-color.svg": {
           "name": "urfu-sign-color.svg",
-          "blob": "1a52bf1cfcf6be7ddca46fe0c7700937",
-          "size": 299,
+          "blob": "5cb5e08ff242ee37b183cdd559044be9",
+          "size": 305,
           "type": "image/svg+xml"
         },
         "urfu-sign-white.svg": {
           "name": "urfu-sign-white.svg",
-          "blob": "007a831f5e2598c5694b37b1e71946bd",
-          "size": 299,
+          "blob": "fd3ae67a73443f5e5720a173f83c9540",
+          "size": 305,
           "type": "image/svg+xml"
         },
         "favicon.svg": {
           "name": "favicon.svg",
-          "blob": "51a8b9f1085295b22124ff1f0e8931c3",
+          "blob": "04ccb22952c3c059243780a10f5c7c37",
           "size": 377,
           "type": "image/svg+xml"
         },
         "app-icon.svg": {
           "name": "app-icon.svg",
-          "blob": "0bc90c92cd3c4adfdea3ab748f03b7b2",
-          "size": 386,
+          "blob": "6b84b238f2d9cb8223a24ad828f7e0a6",
+          "size": 385,
           "type": "image/svg+xml"
         },
         "construction.svg": {
           "name": "construction.svg",
-          "blob": "855d39ce8ef3ceadde96d684966afb1e",
-          "size": 3822,
+          "blob": "15dc575cb19a12152c25b6344e2925ab",
+          "size": 3328,
           "type": "image/svg+xml"
         },
         "urfu-short-ru-dark.svg": {
           "name": "urfu-short-ru-dark.svg",
-          "blob": "1b210b235fce5301009d8a4f40eb9f5e",
-          "size": 16148,
+          "blob": "642f4e9865470d9ca424bde178a0dff0",
+          "size": 16136,
           "type": "image/svg+xml"
         },
         "urfu-abbr-dark.svg": {
           "name": "urfu-abbr-dark.svg",
-          "blob": "bf32d5785f16f85ae9fb62612f93939e",
+          "blob": "3ac1bd8b7d5c1927f4b4b154fddde62b",
           "size": 2388,
           "type": "image/svg+xml"
         }
@@ -119,8 +119,8 @@
   },
   "lastChange": {
     "by": "Никита Некрасов",
-    "at": "2026-10-31T15:00:00Z",
+    "at": "2026-11-01T05:00:00Z",
     "via": "Claude Code",
-    "note": "Знак — первая буква «Уральский» на обложке вуза; логотип «полноцветное на тёмном» (красный знак, белый текст) для тёмной темы; плашки следуют за прокруткой в обе стороны"
+    "note": "Новый знак «У-долина»: латинская U с крючком (рукописная «у»), верх ножек срезан под наклоном 1:2 — склоны Урала"
   }
 }
