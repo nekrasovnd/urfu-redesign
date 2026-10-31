@@ -66,10 +66,26 @@ const totalPages = structure.reduce((n, s) => n + s.children.length, 0);
     if (!built.has(norm(u.pathname))) a.dataset.unbuilt = '';
   });
 
+  // Whole sections with nothing built (in the menu: «Наука»): the header button and the mobile
+  // accordion behave like a dimmed link instead of opening a menu of disabled items.
+  const sectionTriggers: HTMLElement[] = [];
+  document.querySelectorAll<HTMLElement>('.megamenu[data-mm]').forEach(mm => {
+    if (mm.matches('.a11y-panel, .services-panel')) return;
+    const links = [...mm.querySelectorAll<HTMLAnchorElement>('a[href]')];
+    if (!links.length || links.some(a => !a.hasAttribute('data-unbuilt'))) return;
+    const t = document.querySelector<HTMLElement>(`[data-mm-trigger="${mm.dataset.mm}"]`);
+    if (t) { t.dataset.unbuiltSection = ''; sectionTriggers.push(t); }
+  });
+  document.querySelectorAll<HTMLDetailsElement>('.mobile-menu details').forEach(d => {
+    const links = [...d.querySelectorAll('a[href]')];
+    if (links.length && links.every(a => a.hasAttribute('data-unbuilt'))) d.dataset.unbuiltSection = '';
+  });
+
   function setMode(mode: string) {
     root.dataset.proto = mode;
     // Inactive in «только готовые»: say so to assistive tech too.
     document.querySelectorAll('a[data-unbuilt]').forEach(l => mode === 'ready' ? l.setAttribute('aria-disabled', 'true') : l.removeAttribute('aria-disabled'));
+    sectionTriggers.forEach(t => mode === 'ready' ? t.setAttribute('aria-disabled', 'true') : t.removeAttribute('aria-disabled'));
     guide.querySelectorAll<HTMLButtonElement>('[data-proto-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.protoMode === mode)));
     // What the switch did on this very page — most of it is in menus and the footer, out of sight.
     const n = [...document.querySelectorAll('a[data-unbuilt]')].filter(a => !a.closest('[data-proto-guide]')).length;
@@ -89,6 +105,20 @@ const totalPages = structure.reduce((n, s) => n + s.children.length, 0);
 
   // In «только готовые» a dimmed link explains itself instead of leading to the 404 page.
   let timer = 0;
+  const say = (name: string, what: string) => {
+    toast.textContent = `«${name}» — ${what} новой структуры, в прототип не вошёл. Готовые страницы — в гиде справа внизу.`;
+    toast.hidden = false;
+    clearTimeout(timer);
+    timer = window.setTimeout(() => (toast.hidden = true), 4200);
+  };
+  // Capture phase: runs before the header's own handler, so the empty menu never opens.
+  document.addEventListener('click', e => {
+    const t = (e.target as HTMLElement).closest<HTMLElement>('[data-unbuilt-section]');
+    if (!t || root.dataset.proto !== 'ready' || !t.matches('[data-mm-trigger]')) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    say((t.textContent || '').trim(), 'раздел');
+  }, true);
   document.addEventListener('click', e => {
     // Checked on click too, so links rendered later (search results) are covered.
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
@@ -100,9 +130,6 @@ const totalPages = structure.reduce((n, s) => n + s.children.length, 0);
     const c = a.cloneNode(true) as HTMLElement;
     c.querySelectorAll('small, .visually-hidden, [aria-hidden="true"]').forEach(n => n.remove());
     const name = (c.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 60);
-    toast.textContent = `«${name}» — раздел новой структуры, в прототип не вошёл. Готовые страницы — в гиде справа внизу.`;
-    toast.hidden = false;
-    clearTimeout(timer);
-    timer = window.setTimeout(() => (toast.hidden = true), 4200);
+    say(name, 'страница');
   });
 </script>

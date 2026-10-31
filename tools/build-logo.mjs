@@ -125,8 +125,9 @@ function icon(size, bg, fg) {
   const dy = (size - SIGN.h * k) / 2;
   return svg(size, size, `<rect width="${size}" height="${size}" fill="${bg}"/>` + signPaths(fg, dx, dy, k), 'УрФУ');
 }
-fs.writeFileSync(path.join(OUT, 'favicon.svg'), icon(32, '#E50046', '#FFFFFF'));
-fs.writeFileSync(path.join(OUT, 'app-icon.svg'), icon(512, '#E50046', '#FFFFFF'));
+// Brand blue field, white sign — the brand book's «белое на фирменном синем»; red stays the sign colour on light backgrounds.
+fs.writeFileSync(path.join(OUT, 'favicon.svg'), icon(32, '#174496', '#FFFFFF'));
+fs.writeFileSync(path.join(OUT, 'app-icon.svg'), icon(512, '#174496', '#FFFFFF'));
 fs.writeFileSync(path.join(OUT, 'app-icon-ink.svg'), icon(512, '#1D1D1B', '#E50046'));
 
 // 7. Construction drawing for the brand guide

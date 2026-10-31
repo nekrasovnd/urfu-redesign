@@ -216,6 +216,9 @@ a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 
 
 /* ---------- Prototype guide (competition only) ---------- */
 html[data-proto="ready"] :is([data-unbuilt-item], [data-unbuilt-list]) { display: none; }
+html[data-proto="ready"] .mobile-menu details[data-unbuilt-section] { display: none; }
+html[data-proto="ready"] .nav__item[data-unbuilt-section] { opacity: .5; cursor: help; }
+html[data-proto="ready"] .nav__item[data-unbuilt-section]::after { display: none; }
 html[data-proto="ready"] a[data-unbuilt] { opacity: .5; filter: grayscale(1); cursor: help; }
 html[data-proto="ready"] a[data-unbuilt]:hover { transform: none; box-shadow: none; background: transparent; color: inherit; }
 .proto { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: var(--z-toast); display: grid; gap: var(--s-2); justify-items: end; }

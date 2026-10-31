@@ -210,6 +210,8 @@ const promo: Record<string, { label: string; title: string; text: string; href: 
         if (v === 'contrast') root.dataset.contrast = 'high'; else root.removeAttribute('data-contrast');
       } else if (v) root.setAttribute('data-' + k, v); else root.removeAttribute('data-' + k);
     }
+    // Motion follows the setting at once (and the system preference), without a reload.
+    root.classList.toggle('motion', root.dataset.motion !== 'off' && !matchMedia('(prefers-reduced-motion: reduce)').matches);
     try { localStorage.setItem(A11Y_KEY, JSON.stringify(a11y)); } catch {}
   }
   a11yGroups.forEach(g => g.addEventListener('click', e => {

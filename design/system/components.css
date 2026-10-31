@@ -467,3 +467,58 @@ a.card:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); 
   .intro__stats li + li { padding-left: var(--s-3); }
   .intro__stats b { font-size: 30px; }
 }
+
+/* =========================================================
+   Движение «Диагональ». Всё движется по наклону знака 1:2 и только
+   в трёх местах: первый экран, фирменные плашки, переходы между
+   страницами. Текст не прячется никогда — CLS и LCP не страдают.
+   html.motion ставится в <head>, только если не включены
+   prefers-reduced-motion и «Анимация: выключена».
+   ========================================================= */
+@keyframes slope-enter { from { transform: skewX(var(--slope)) translateX(105%); } to { transform: skewX(var(--slope)); } }
+@keyframes intro-wipe { from { transform: skewX(var(--slope)) translateX(0); } to { transform: skewX(var(--slope)) translateX(125%); } }
+@keyframes arm-draw { from { transform: translate(10px, -20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 1. Плашки в шапках страниц въезжают по наклону при загрузке */
+html.motion :is(.pg-hero, .in-hero, .hub-lk, .ev-promo, .diagonal)::after { animation: slope-enter 900ms var(--ease) both; }
+
+/* 2. Плашки ниже первого экрана въезжают, когда секция появляется (класс ставит скрипт) */
+html.motion .slope-wait::after { transform: skewX(var(--slope)) translateX(105%); transition: transform 1100ms var(--ease); }
+html.motion .slope-wait.slope-in::after { transform: skewX(var(--slope)); }
+
+/* 3. Обложка вуза: синий срез проходит по фото и открывает его, «галочка» знака дорисовывается */
+html.motion .intro::after {
+  content: ""; position: absolute; z-index: 2; top: 0; bottom: 0; left: -40%; width: 180%;
+  background: var(--c-blue); pointer-events: none; transform-origin: top;
+  animation: intro-wipe 1100ms cubic-bezier(.75, 0, .2, 1) 80ms both;
+}
+html.motion .intro__arm { animation: arm-draw 520ms var(--ease) 900ms both; }
+
+/* 4. Переходы между страницами: новая открывается косым срезом, шапка стоит на месте */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+.site-header { view-transition-name: site-header; }
+::view-transition-group(site-header) { animation: none; }
+::view-transition-old(root) { animation: vt-old 560ms cubic-bezier(.7, 0, .2, 1) both; }
+::view-transition-new(root) { animation: vt-new 560ms cubic-bezier(.7, 0, .2, 1) both; }
+@keyframes vt-old { to { transform: translateX(-6%); opacity: .5; } }
+@keyframes vt-new {
+  from { clip-path: polygon(130% 0, 200% 0, 200% 100%, 100% 100%); }
+  to { clip-path: polygon(-30% 0, 200% 0, 200% 100%, -60% 100%); }
+}
+
+/* 5. Загрузка: полоса со штриховкой под наклоном знака; если ждать дольше 0,6 с — знак с рисующейся «галочкой» */
+.loadbar { position: fixed; top: 0; left: 0; right: 0; z-index: calc(var(--z-header) + 5); height: 4px; pointer-events: none; transform: scaleX(0); transform-origin: left; opacity: 0;
+  background: repeating-linear-gradient(-63.435deg, var(--accent) 0 8px, var(--c-blue-light) 8px 12px); }
+html.is-loading .loadbar { opacity: 1; animation: loadbar 6s cubic-bezier(.08, .7, .2, 1) forwards; }
+html.is-loaded .loadbar { transform: scaleX(1); opacity: 0; transition: transform 200ms ease-out, opacity 300ms ease-out 200ms; }
+@keyframes loadbar { from { transform: scaleX(0); } to { transform: scaleX(.92); } }
+.loader { position: fixed; inset: 0; z-index: calc(var(--z-header) + 4); display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 88%, transparent); opacity: 0; visibility: hidden; pointer-events: none; }
+html.is-loading .loader { animation: loader-in 200ms ease-out 600ms forwards; }
+.loader svg { width: 56px; height: auto; }
+.loader .loader__arm { animation: arm-loop 900ms var(--ease) infinite; }
+@keyframes loader-in { to { opacity: 1; visibility: visible; } }
+@keyframes arm-loop { 0% { transform: translate(10px, -20px); opacity: 0; } 55%, 100% { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .loader, html.is-loading .loadbar { animation: none; } }
+:root[data-motion="off"] .loader { display: none; }

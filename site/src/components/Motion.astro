@@ -1,0 +1,76 @@
+---
+// Motion «Диагональ»: load bar and loader, slope plates sliding in on scroll, figures counting up,
+// a light parallax on the main-building photo. Styles live in the design system (components.css).
+---
+<div class="loadbar" aria-hidden="true"></div>
+<div class="loader" aria-hidden="true">
+  <svg viewBox="0 0 92 118" fill="var(--accent)"><path d="M0 0H22L64 84C68 92 62 118 38 118V110C50 110 52 102 46 92Z"/><path class="loader__arm" d="M74 0H92L72 40H54Z"/></svg>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const done = () => { root.classList.remove('is-loading'); root.classList.add('is-loaded'); };
+  done(); // this script runs after the document is parsed
+  addEventListener('pageshow', done); // back/forward cache
+
+  // Navigation feedback: the bar starts as soon as an internal link is followed.
+  document.addEventListener('click', e => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    const u = new URL(a.href, location.href);
+    if (u.origin !== location.origin || (u.pathname === location.pathname && u.hash)) return;
+    root.classList.remove('is-loaded');
+    void root.offsetWidth; // restart the bar animation
+    root.classList.add('is-loading');
+  });
+
+  const motion = () => root.classList.contains('motion') && root.dataset.motion !== 'off';
+
+  // Slope plates below the first screen slide in along the 1:2 slope when their section appears.
+  const plates = document.querySelectorAll<HTMLElement>('.hero, .campus-tile--lead, .cp-new, .band--science, .in-science');
+  const plateIO = new IntersectionObserver(entries => entries.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add('slope-in'); plateIO.unobserve(en.target); }
+  }), { rootMargin: '0px 0px -15% 0px' });
+  plates.forEach(el => {
+    if (!motion() || el.getBoundingClientRect().top < innerHeight) return; // already on screen: leave as is
+    el.classList.add('slope-wait');
+    plateIO.observe(el);
+  });
+
+  // Figures count up once when they come into view; the final text is the real value.
+  const figures = document.querySelectorAll<HTMLElement>('.intro__stats b, .campus-tile b, .stat__value, .cp-new__facts dd');
+  const fmt = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ');
+  const countIO = new IntersectionObserver(entries => entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    countIO.unobserve(en.target);
+    const el = en.target as HTMLElement;
+    const m = el.textContent!.trim().match(/^([\d\s ]+)(\+?)$/);
+    if (!m) return;
+    const end = Number(m[1].replace(/[\s ]/g, ''));
+    if (!end || end < 10) return;
+    const final = el.textContent!;
+    const t0 = performance.now(), dur = 1200;
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - t0) / dur);
+      el.textContent = k < 1 ? fmt(Math.round(end * (1 - Math.pow(1 - k, 3)))) + m[2] : final;
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }), { threshold: .6 });
+  if (motion()) figures.forEach(el => { el.setAttribute('aria-label', el.textContent!.trim()); countIO.observe(el); });
+
+  // The main-building photo drifts slower than the page while the first screen is in view.
+  const intro = document.querySelector<HTMLElement>('.intro');
+  const photo = intro?.querySelector<HTMLElement>('.intro__photo');
+  if (intro && photo && motion()) {
+    let ticking = false;
+    const drift = () => {
+      ticking = false;
+      const y = Math.min(scrollY, intro.offsetHeight);
+      photo.style.transform = `translate3d(0, ${(y * .28).toFixed(1)}px, 0) scale(1.04)`;
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(drift); } }, { passive: true });
+    drift();
+  }
+</script>
