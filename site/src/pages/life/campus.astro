@@ -170,6 +170,7 @@ const roomsIndex = B.flatMap(b => (b.rooms ?? []).map(r => ({ p: r, id: b.id }))
         <h2 class="cp-new__title" id="new-title">Новый кампус УрФУ</h2>
         <p class="cp-new__text">Кампус построен в рамках национального проекта «Молодёжь и дети». Сюда переехал лицей УрФУ: у учащихся три спортзала и стадион с теннисным кортом.</p>
         <div class="cp-new__cta">
+          <a class="btn btn--light" href="/life/new-campus">Всё о кампусе →</a>
           <a class="btn btn--light" href={ymap('ул. 100-летия Уральского университета, 5')}>Как добраться ↗</a>
           <a class="btn btn--ghost cp-new__ghost" href="/news/60458">Новость о переезде лицея</a>
         </div>
@@ -184,7 +185,7 @@ const roomsIndex = B.flatMap(b => (b.rooms ?? []).map(r => ({ p: r, id: b.id }))
   </section>
 
   <section class="container cp-more" aria-label="Полезное">
-    <a class="campus-tile" href="https://urfu.ru/ru/students/social/campus/"><b>{figures.dormitories}</b><span>общежитий — поселение студентов ↗</span></a>
+    <a class="campus-tile" href="/life/housing"><b>{figures.dormitories}</b><span>общежитий — как заселиться</span></a>
     <a class="campus-tile" href="/study/schedule"><b>1–7</b><span>пар в расписании — адрес аудитории ведёт сюда</span></a>
     <a class="campus-tile" href="tel:88001005044"><b>8-800</b><span>контакт-центр: {university.contacts.contact_center}</span></a>
   </section>

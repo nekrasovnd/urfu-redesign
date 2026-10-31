@@ -87,6 +87,8 @@ export const protoPages: { href: string; label: string; type: string }[] = [
   { href: '/institutes', label: 'Институты', type: 'Список с фото' },
   { href: '/institutes/irit-rtf', label: 'Институт ИРИТ-РтФ', type: 'Институт' },
   { href: '/life/campus', label: 'Кампус и карта', type: 'Карта' },
+  { href: '/life/new-campus', label: 'Кампус в Новокольцовском', type: 'Промо' },
+  { href: '/life/housing', label: 'Общежития', type: 'Инструкция' },
   { href: '/sveden', label: 'Сведения об образовательной организации', type: 'Обязательный раздел' },
 ];
 export const builtRoutes = [...protoPages.map(p => p.href), ...news.map(n => `/news/${n.id}`)];

@@ -15,7 +15,7 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
       { t: 'Подобрать программу по баллам', h: '/admission/match', s: `${directions.length} направлений бакалавриата и специалитета` },
       { t: 'Все программы', h: '/programs', s: 'Фильтры по институту и уровню' },
       { t: 'Стоимость обучения', h: '/programs', s: 'Указана для каждого направления в каталоге' },
-      { t: 'Общежития', h: 'https://urfu.ru/ru/students/social/campus/', s: `${figures.dormitories} общежитий, ${figures.dorm_places} мест`, ext: true },
+      { t: 'Общежития', h: '/life/housing', s: `${figures.dormitories} общежитий, ${figures.dorm_places} мест` },
       { t: 'Приёмная комиссия', h: 'https://urfu.ru/ru/applicant/contacts/', s: `${c.admissions.phone} · ${c.admissions.address}`, ext: true },
     ],
   },
@@ -292,13 +292,13 @@ const roleEvents = (aud?: string) => upcoming.filter(e => !aud || e.audience.inc
       <a class="btn btn--ghost section-head__more" href="/life/campus">Кампус и карта</a>
     </div>
     <div class="campus-grid">
-      <a class="campus-tile campus-tile--lead campus-tile--photo" href="/life/campus">
+      <a class="campus-tile campus-tile--lead campus-tile--photo" href="/life/new-campus">
         <img class="photo-bg" src="/photos/campus.webp" alt="" width="1200" height="680" loading="lazy" decoding="async" />
         <h3>Новый кампус в Новокольцовском</h3>
         <p>Кампус построен по нацпроекту «Молодёжь и дети», сюда переехал лицей УрФУ. На карте — он и все {figures.academic_buildings} учебных корпусов.</p>
         <span class="btn btn--primary" style="justify-self:start">Открыть карту <span class="arrow" aria-hidden="true">→</span></span>
       </a>
-      <a class="campus-tile" href="https://urfu.ru/ru/students/social/campus/"><b>{figures.dormitories}</b><span>общежитий на {figures.dorm_places} мест</span></a>
+      <a class="campus-tile" href="/life/housing"><b>{figures.dormitories}</b><span>общежитий на {figures.dorm_places} мест</span></a>
       <a class="campus-tile" href="https://sport.urfu.ru/"><b>{figures.sports_facilities}</b><span>спортивных объектов и {figures.sports_teams} команды</span></a>
       <a class="campus-tile" href="https://urfu.ru/ru/students/leisure/oso/tvorchestvo/"><b>{figures.creative_groups}</b><span>творческих коллективов</span></a>
       <a class="campus-tile" href="https://urfu.ru/ru/international/mobility/"><b>400+</b><span>зарубежных вузов-партнёров из 72 стран</span></a>

@@ -1,0 +1,102 @@
+---
+import Base from '../../layouts/Base.astro';
+import { figures } from '../../data/site';
+// Source: urfu.ru «Поселение в общежитие» (/ru/students/social/campus/), checked 01.11.2026.
+// Only what the page says; dormitory street addresses are not published there, so they are not invented here.
+const SRC = 'https://urfu.ru/ru/students/social/campus/';
+const commissions: [string, string][] = [
+  ['ИРИТ-РтФ', 'https://vk.ru/housertf'], ['ИЕНиМ', 'https://vk.ru/poselenie_ien_urfu'], ['ИНМТ', 'https://vk.ru/poselinmt'],
+  ['ИнЭУ', 'https://vk.ru/poselenie_ineu'], ['ИФКСиМП', 'https://vk.ru/poselenifksimp'], ['УГИ', 'https://vk.ru/ugi_hostel'],
+  ['ХТИ', 'https://vk.ru/hti_urfu'], ['ИСА', 'https://vk.ru/isa_urfu'], ['ФТИ', 'https://vk.ru/profburo_fti'],
+  ['ИнФО', 'https://vk.ru/info_urfu'], ['УралЭНИН', 'https://vk.ru/uralei'], ['УПИШ', 'https://vk.ru/upish_urfu'],
+];
+const steps: [string, string][] = [
+  ['Получите ордер и договор', 'Места распределяют жилищные комиссии институтов в два этапа: сначала на места, не занятые студентами 2–6 курсов, затем на оставшиеся. Где и когда выдают документы — в группе вашего института.'],
+  ['Пройдите медосмотр', 'МСЧ УрФУ, ул. Комсомольская, 59, или Медцентр Новокольцовский, ул. 100-летия Уральского университета, 10. Стоимость — 210 ₽. Шаги 1 и 2 можно делать в любом порядке.'],
+  ['Оплатите проживание', 'По девятизначному коду из ордера: в отделениях Банка Синара и Сбербанка (есть в ГУК, Мира, 19), через электронные платежи УрФУ или «Сбербанк Онлайн».'],
+  ['Оформите временную регистрацию', 'В паспортном отделе студгородка по номеру своего общежития — адреса ниже. Сниматься с регистрации по месту жительства не нужно.'],
+  ['Заселитесь', 'В общежитии из ордера: ордер, договор, медкарта, квитанция и шесть фото 3×4. На всё — 7 рабочих дней с получения ордера.'],
+];
+---
+<Base title="Общежития" section="life" description={`${figures.dormitories} общежитий УрФУ, ${figures.dorm_places} мест: городские и в кампусе Новокольцовский. Как получить место и заселиться — по шагам.`}>
+  <div class="container hs-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/life/campus">Жизнь в УрФУ</a></li><li aria-current="page">Общежития</li></ol>
+    <h1 class="t-h1">Общежития</h1>
+    <p class="t-lead">{figures.dormitories} общежитий и {figures.dorm_places} мест для иногородних студентов — в городе и в новом кампусе в Новокольцовском.</p>
+  </div>
+
+  <section class="container hs-where" aria-labelledby="hs-where">
+    <h2 class="visually-hidden" id="hs-where">Где общежития</h2>
+    <article class="hs-site">
+      <p class="t-label t-muted">Городская площадка</p>
+      <h3 class="hs-site__title">Общежития № 1, 2, 4, 6 и № 5, 7–15</h3>
+      <p class="t-small">Рядом с учебными корпусами во Втузгородке.</p>
+      <dl class="hs-dl">
+        <div><dt>Регистрация для № 1, 2, 4, 6</dt><dd>ул. Чапаева, 16, вход с торца</dd></div>
+        <div><dt>Регистрация для № 5, 7–15</dt><dd>ул. Коминтерна, 11</dd></div>
+      </dl>
+      <a class="btn btn--sm" href={SRC}>Памятка для городской площадки ↗</a>
+    </article>
+    <article class="hs-site hs-site--nvk" id="nvk">
+      <img class="photo-bg" src="/photos/campus.webp" alt="" width="1200" height="680" loading="lazy" decoding="async" />
+      <p class="t-label">Кампус Новокольцовский</p>
+      <h3 class="hs-site__title">Общежития НВК № 1, 2, 4, 5</h3>
+      <p class="t-small">Рядом с учебными корпусами кампуса и медцентром.</p>
+      <dl class="hs-dl">
+        <div><dt>Регистрация</dt><dd>ул. 100-летия Уральского университета, 6 к. 2</dd></div>
+        <div><dt>Медосмотр</dt><dd>Медцентр Новокольцовский, дом 10</dd></div>
+      </dl>
+      <div class="hs-site__actions"><a class="btn btn--sm btn--light" href="/life/new-campus">О кампусе →</a><a class="btn btn--sm btn--light" href={SRC}>Памятка ↗</a></div>
+    </article>
+  </section>
+
+  <section class="container hs-section" aria-labelledby="hs-steps">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="hs-steps">Как заселиться: пять шагов</h2></div>
+    <ol class="hs-steps">
+      {steps.map(([t, d], i) => <li><span class="hs-steps__n">{i + 1}</span><b>{t}</b><span>{d}</span></li>)}
+    </ol>
+    <p class="t-caption t-muted">По странице «Поселение в общежитие» на urfu.ru. Паспортный отдел: пн–чт 8:30–17:00, пт 8:30–16:00.</p>
+  </section>
+
+  <section class="container hs-section hs-last hs-two" aria-labelledby="hs-who">
+    <div>
+      <h2 class="t-h3" id="hs-who">Жилищная комиссия вашего института</h2>
+      <p class="t-small t-muted" style="margin-top: var(--s-2)">Здесь распределяют места и публикуют графики заселения.</p>
+      <ul class="hs-comm">{commissions.map(([n, h]) => <li><a href={h}>{n} <span aria-hidden="true">↗</span></a></li>)}</ul>
+    </div>
+    <div class="hs-note">
+      <h2 class="t-h3">Не досталось места?</h2>
+      <p class="t-small">Союз студентов помогает снять комнату или квартиру — проект «Платное жильё»: ГУК-309, Мира, 19, <a class="link" href="tel:+73433754518">+7 (343) 375-45-18</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hs-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); padding-block: var(--s-6); }
+  .hs-head .t-lead { max-width: 60ch; }
+  .hs-where { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gutter); }
+  .hs-site { position: relative; isolation: isolate; overflow: hidden; display: grid; gap: var(--s-3); align-content: start; padding: var(--s-6); border: var(--rule-thick) solid var(--rule); background: var(--surface); }
+  .hs-site--nvk { background: #1D1D1B; color: #FFFFFF; border-color: #1D1D1B; }
+  .hs-site--nvk::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(13 32 72 / .95), rgb(13 32 72 / .7)); }
+  .hs-site__title { font: 800 var(--fs-h3)/1.1 var(--font-display); letter-spacing: -0.02em; }
+  .hs-dl { margin: var(--s-2) 0; display: grid; gap: var(--s-2); }
+  .hs-dl dt { font: 600 var(--fs-label)/1.2 var(--font-text); letter-spacing: var(--tracking-label); text-transform: uppercase; opacity: .75; }
+  .hs-dl dd { margin: 2px 0 0; font-weight: 600; }
+  .hs-site .btn { justify-self: start; }
+  .hs-site__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .hs-site--nvk .btn--light { --btn-bg: #FFFFFF; --btn-fg: #0F3373; --btn-bd: #FFFFFF; }
+  .hs-section { padding-top: var(--section-gap); }
+  .hs-last { padding-bottom: var(--section-gap); }
+  .hs-steps { list-style: none; margin: var(--s-5) 0 var(--s-3); padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: var(--rule-thick) solid var(--rule); }
+  .hs-steps li { display: grid; gap: var(--s-2); align-content: start; padding: var(--s-4) var(--s-4) var(--s-4) 0; font-size: var(--fs-small); line-height: 1.45; }
+  .hs-steps li + li { padding-left: var(--s-4); border-left: var(--rule-thin) solid var(--rule-soft); }
+  .hs-steps__n { font: 800 40px/1 var(--font-display); color: var(--accent-text); }
+  .hs-steps b { font-size: var(--fs-body); }
+  .hs-two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7); align-items: start; }
+  .hs-comm { list-style: none; margin: var(--s-4) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .hs-comm a { display: inline-block; padding: 8px 12px; border: 2px solid var(--rule); color: inherit; text-decoration: none; font-weight: 600; }
+  .hs-comm a:hover { background: var(--fg); color: var(--bg); }
+  .hs-note { display: grid; gap: var(--s-3); padding: var(--s-5); background: var(--surface-2); }
+  @media (max-width: 1099px) { .hs-steps { grid-template-columns: minmax(0, 1fr); } .hs-steps li + li { padding-left: 0; border-left: 0; border-top: var(--rule-thin) solid var(--rule-soft); } }
+  @media (max-width: 899px) { .hs-where, .hs-two { grid-template-columns: minmax(0, 1fr); } }
+</style>

@@ -1,0 +1,106 @@
+---
+import Base from '../../layouts/Base.astro';
+// Facts only from sources: campus.urfu.ru and its news, urfu.ru «Поселение в общежитие», med.urfu.ru,
+// the open schedule API (room letters per address, tools/rooms.mjs) and the UrFU news about the lyceum.
+const ymap = (a: string) => `https://yandex.ru/maps/?text=${encodeURIComponent('Екатеринбург, ' + a)}`;
+const places: [string, string, string, string][] = [
+  ['Учебные корпуса', 'ул. 100-летия Уральского университета, 5', 'Аудитории с латинскими буквами I, D, J, K — например, I105', '/life/campus#corp-campus'],
+  ['Учебный корпус', 'ул. 100-летия Уральского университета, 7', 'Аудитории с латинскими M и N', '/life/campus#corp-campus-7'],
+  ['Общежития НВК', 'НВК № 1, 2, 4, 5', 'Регистрация — паспортный отдел: ул. 100-летия Уральского университета, 6 к. 2', '/life/housing#nvk'],
+  ['Медцентр Новокольцовский', 'ул. 100-летия Уральского университета, 10', 'Поликлиника МСЧ УрФУ: здесь можно пройти медосмотр для поселения', 'http://med.urfu.ru/ru/poliklinika-v-novokolcovskom/'],
+  ['Лицей УрФУ (СУНЦ)', 'в кампусе', 'Переехал в кампус: три спортзала и стадион с теннисным кортом', '/news/60458'],
+];
+---
+<Base title="Кампус в Новокольцовском" section="life" description="Новый кампус УрФУ в Новокольцовском: учебные корпуса, общежития НВК, медцентр и лицей. Как найти аудиторию и где жить.">
+
+  <section class="nc-hero">
+    <picture><source media="(max-width: 700px)" srcset="/photos/campus-700.webp" /><img class="photo-bg" src="/photos/campus.webp" alt="" width="1200" height="680" fetchpriority="high" /></picture>
+    <div class="container nc-hero__inner">
+      <ol class="breadcrumbs nc-crumbs"><li><a href="/">Главная</a></li><li><a href="/life/campus">Кампус и карта</a></li><li aria-current="page">Новокольцовский</li></ol>
+      <p class="t-label">Новый кампус УрФУ</p>
+      <h1 class="nc-hero__title">Учиться, жить и заниматься спортом в одном месте</h1>
+      <p class="nc-hero__lead">Кампус в Новокольцовском районе Екатеринбурга построен по нацпроекту «Молодёжь и дети». Летом 2026 года он принимал Международный фестиваль молодёжи, а с октября в него вернулись студенты.</p>
+      <ul class="nc-facts">
+        <li><b>≈ 4 000</b><span>студентов живут в кампусе</span></li>
+        <li><b>4</b><span>общежития НВК: № 1, 2, 4, 5</span></li>
+        <li><b>2</b><span>учебных адреса: дома 5 и 7</span></li>
+      </ul>
+      <p class="nc-credit">Цифра — по сюжету ОТВ «В кампус УрФУ возвращаются студенты», октябрь 2026. Фото — пресс-служба УрФУ.</p>
+    </div>
+  </section>
+
+  <section class="container nc-section" aria-labelledby="nc-what">
+    <div class="section-head section-head--plain"><h2 class="section-head__title" id="nc-what">Что где в кампусе</h2><a class="btn btn--ghost section-head__more" href={ymap('ул. 100-летия Уральского университета, 5')}>Как добраться ↗</a></div>
+    <ul class="nc-places">
+      {places.map(([t, addr, note, h]) => (
+        <li><a href={h}><span class="nc-places__t">{t}</span><span class="nc-places__a">{addr}</span><span class="t-small t-muted">{note}</span></a></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="container nc-section nc-two" aria-labelledby="nc-lost">
+    <div>
+      <h2 class="t-h2" id="nc-lost">Чтобы не запутаться</h2>
+      <ol class="nc-tips">
+        <li><b>Смотрите на букву аудитории.</b> Латинские I, D, J, K, M, N — это кампус в Новокольцовском. Р, ГУК, Ф, С и другие кириллические буквы — корпуса в городе, во Втузгородке и в центре.</li>
+        <li><b>«М» бывает двух видов.</b> Кириллическая «М-418» — главный корпус на Мира, 19, латинская «M» — кампус, дом 7. Адрес всегда указан в расписании рядом с аудиторией.</li>
+        <li><b>Пары в городе и в кампусе в один день</b> — закладывайте дорогу. Часть корпусов работает по второй сетке звонков: пары 1–5 начинаются позже.</li>
+      </ol>
+      <div class="nc-actions">
+        <a class="btn btn--primary" href="/study/schedule">Найти своё расписание</a>
+        <a class="btn" href="/life/campus#rooms-guide">Как читать номер аудитории</a>
+      </div>
+    </div>
+    <blockquote class="nc-quote">
+      <p>«Все будут в одном месте жить, и будет очень круто»</p>
+      <footer>студентка 3 курса ИРИТ-РтФ — о переезде в кампус, сюжет ОТВ, октябрь 2026</footer>
+    </blockquote>
+  </section>
+
+  <section class="container nc-section nc-last" aria-labelledby="nc-live">
+    <a class="nc-cta" href="/life/housing">
+      <span class="t-label">Где жить</span>
+      <span class="nc-cta__title" id="nc-live">Общежития: городские и в Новокольцовском</span>
+      <span>18 общежитий, 13 800+ мест. Как получить место и заселиться — по шагам</span>
+      <span class="btn btn--light">Общежития <span class="arrow" aria-hidden="true">→</span></span>
+    </a>
+  </section>
+</Base>
+
+<style>
+  .nc-hero { position: relative; isolation: isolate; overflow: hidden; color: #FFFFFF; background: #0D2048; }
+  .nc-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgb(13 32 72 / .94) 0%, rgb(13 32 72 / .78) 55%, rgb(13 32 72 / .35) 100%); }
+  .nc-hero__inner { display: grid; gap: var(--s-4); padding-block: var(--s-6) var(--s-7); }
+  .nc-crumbs, .nc-crumbs a { color: rgb(255 255 255 / .85); }
+  .nc-hero__title { font: 800 clamp(34px, 5vw, 76px)/1 var(--font-display); letter-spacing: var(--tracking-display); max-width: 16ch; text-wrap: balance; }
+  .nc-hero__lead { font-size: var(--fs-lead); line-height: 1.45; max-width: 58ch; }
+  .nc-facts { list-style: none; margin: var(--s-4) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 3px solid #FFFFFF; max-width: 900px; }
+  .nc-facts li { display: grid; gap: 6px; padding: var(--s-4) var(--s-4) 0 0; }
+  .nc-facts li + li { padding-left: var(--s-4); border-left: 1px solid rgb(255 255 255 / .35); }
+  .nc-facts b { font: 800 clamp(30px, 4vw, 56px)/1 var(--font-display); letter-spacing: -0.04em; white-space: nowrap; }
+  .nc-facts span { font-size: var(--fs-small); opacity: .9; }
+  .nc-credit { font-size: var(--fs-caption); opacity: .75; }
+  .nc-section { padding-top: var(--section-gap); }
+  .nc-last { padding-bottom: var(--section-gap); }
+  .nc-places { list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--s-4); }
+  .nc-places a { display: grid; gap: var(--s-2); height: 100%; padding: var(--s-5); border: var(--rule-thick) solid var(--rule); background: var(--surface); color: inherit; text-decoration: none; transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+  .nc-places a:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); }
+  .nc-places__t { font: 700 20px/1.15 var(--font-display); letter-spacing: -0.015em; hyphens: auto; overflow-wrap: break-word; }
+  .nc-places a { min-width: 0; }
+  .nc-places__a { font-weight: 600; color: var(--accent-text); }
+  .nc-two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7); align-items: start; }
+  .nc-tips { margin: var(--s-5) 0 0; padding-left: 1.2em; display: grid; gap: var(--s-3); line-height: 1.5; }
+  .nc-actions { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-5); }
+  .nc-quote { margin: 0; padding: var(--s-6); background: var(--c-blue); color: #FFFFFF; }
+  .nc-quote p { font: 700 clamp(22px, 2.4vw, 34px)/1.15 var(--font-display); letter-spacing: -0.02em; }
+  .nc-quote footer { margin-top: var(--s-4); font-size: var(--fs-small); opacity: .85; }
+  .nc-cta { position: relative; isolation: isolate; overflow: hidden; display: grid; gap: var(--s-3); padding: var(--s-7) var(--s-6); background: #1D1D1B; color: #FFFFFF; text-decoration: none; }
+  .nc-cta::after { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; right: -10%; width: 30%; background: var(--c-blue); transform: skewX(var(--slope)); }
+  .nc-cta__title { font: 800 var(--fs-h2)/1.05 var(--font-display); letter-spacing: -0.03em; max-width: 18ch; }
+  .nc-cta .btn--light { justify-self: start; --btn-bg: #FFFFFF; --btn-fg: #1D1D1B; --btn-bd: #FFFFFF; }
+  @media (max-width: 899px) {
+    .nc-two { grid-template-columns: minmax(0, 1fr); }
+    .nc-facts { grid-template-columns: minmax(0, 1fr); }
+    .nc-facts li + li { padding-left: 0; border-left: 0; border-top: 1px solid rgb(255 255 255 / .35); }
+  }
+</style>
