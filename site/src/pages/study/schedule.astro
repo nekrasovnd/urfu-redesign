@@ -155,7 +155,7 @@ const altBells = schedule.pairs_alt;
           <li><i class="sch-key sch-key--lab"></i>Лабораторная</li>
         </ul>
       </div>
-      <p class="t-small t-muted">Адрес аудитории ведёт на карту кампуса. Корпус I — новый кампус на ул. 100-летия Уральского университета, 5.</p>
+      <p class="t-small t-muted">Адрес аудитории ведёт на карту кампуса. <a class="link" href="/life/campus#rooms-guide">Как читать номер аудитории</a> — Р, ГУК, Ф, I и другие буквы.</p>
     </aside>
   </div>
 
@@ -215,6 +215,7 @@ const altBells = schedule.pairs_alt;
   const place = (e: Ev) => online(e)
     ? (e.location ? `<a class="sch-ev__place" href="${esc(e.location)}">Онлайн${e.room ? ': ' + esc(e.room) : ''}</a>` : '<span class="sch-ev__place">Онлайн</span>')
     : e.room ? `<a class="sch-ev__place" href="${base}/life/campus?room=${encodeURIComponent(e.room)}">${esc(e.room)}${e.location ? `<small>${esc(e.location)}</small>` : ''}</a>`
+    : /физическ/i.test(e.title) ? `<a class="sch-ev__place" href="${base}/life/campus#zone-sport">Где проходит физкультура</a>`
     : '<span class="sch-ev__place sch-ev__place--none">Аудитория уточняется</span>';
   // A pair can run on the second bell schedule: show its own time when it differs from the standard one.
   const ownTime = (e: Ev) => e.pair && e.begin && BELLS[e.pair] && e.begin !== BELLS[e.pair][0] ? `<span class="sch-ev__time">${e.begin}–${e.end}</span>` : '';

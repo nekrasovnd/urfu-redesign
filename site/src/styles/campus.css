@@ -38,7 +38,7 @@
 .cp-building__addr { font: 700 15px/1.2 var(--font-display); color: var(--accent-text); }
 .cp-building__rooms { display: flex; gap: 4px; }
 .cp-building__rooms .tag { height: 24px; font-family: var(--font-display); }
-.cp-building__title { font: 700 var(--fs-h3)/1.15 var(--font-display); letter-spacing: -0.015em; }
+.cp-building__title { font: 700 clamp(18px, 1.6vw, 24px)/1.15 var(--font-display); letter-spacing: -0.015em; hyphens: auto; overflow-wrap: break-word; min-width: 0; }
 .cp-building__units { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 15px; color: var(--fg-muted); }
 .cp-building .btn { justify-self: start; margin-top: var(--s-2); }
 
@@ -77,3 +77,13 @@
   .cp-new__facts div:nth-last-child(2) { border-bottom: 1px solid #1D1D1B; }
   .cp-new::after { display: none; }
 }
+
+/* How to read a room / group number */
+.cp-guide { padding-block: var(--section-gap) 0; }
+.cp-guide__grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-7); margin-top: var(--s-5); align-items: start; }
+.cp-guide__grid > div { display: grid; gap: var(--s-4); }
+.cp-guide__table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+.cp-guide__table th { text-align: left; font: 600 var(--fs-label)/1.2 var(--font-text); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg-muted); padding: 8px 12px 8px 0; border-bottom: var(--rule-thick) solid var(--rule); }
+.cp-guide__table td { padding: 8px 12px 8px 0; border-bottom: var(--rule-thin) solid var(--rule-soft); vertical-align: top; }
+.cp-guide__table td:first-child { white-space: nowrap; font-family: var(--font-display); }
+@media (max-width: 899px) { .cp-guide__grid { grid-template-columns: minmax(0, 1fr); } .cp-guide__table td:first-child { white-space: normal; } }
