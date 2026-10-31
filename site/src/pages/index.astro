@@ -12,9 +12,9 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
     actions: [
       { t: 'Подобрать программу по баллам', h: '/admission/match', s: `${directions.length} направлений бакалавриата и специалитета` },
       { t: 'Все программы', h: '/programs', s: 'Фильтры по институту и уровню' },
-      { t: 'Стоимость обучения', h: '/admission/cost', s: 'Указана для каждого направления' },
-      { t: 'Общежития', h: '/life/housing', s: `${figures.dormitories} общежитий, ${figures.dorm_places} мест` },
-      { t: 'Приёмная комиссия', h: '/admission/contacts', s: `${c.admissions.phone} · ${c.admissions.address}` },
+      { t: 'Стоимость обучения', h: '/programs', s: 'Указана для каждого направления в каталоге' },
+      { t: 'Общежития', h: 'https://urfu.ru/ru/students/social/campus/', s: `${figures.dormitories} общежитий, ${figures.dorm_places} мест`, ext: true },
+      { t: 'Приёмная комиссия', h: 'https://urfu.ru/ru/applicant/contacts/', s: `${c.admissions.phone} · ${c.admissions.address}`, ext: true },
     ],
   },
   {
@@ -291,7 +291,7 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
           <p>Пять лет учёные УрФУ и УрО РАН измеряют парниковые газы на полигоне в Коуровке. Модель машинного обучения, проверенная наземными наблюдениями, построила карту природных потоков углекислого газа по всей стране.</p>
           <div style="display:flex;flex-wrap:wrap;gap:var(--s-3)">
             <a class="btn btn--light" href={`/news/${featured.id}`}>Читать историю <span class="arrow" aria-hidden="true">→</span></a>
-            <a class="btn btn--ghost" style="--btn-fg:#fff;text-decoration-color:#fff" href="/research/labs">Все лаборатории</a>
+            <a class="btn btn--ghost" style="--btn-fg:#fff;text-decoration-color:#fff" href="/institutes/irit-rtf#science">Лаборатории ИРИТ-РтФ</a>
           </div>
         </div>
         <div class="science-stat">
@@ -311,7 +311,7 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
   <section class="container home-section" aria-labelledby="campus-title">
     <div class="section-head section-head--plain">
       <h2 class="section-head__title" id="campus-title">Жизнь в УрФУ</h2>
-      <a class="btn btn--ghost section-head__more" href="/life">Весь раздел</a>
+      <a class="btn btn--ghost section-head__more" href="/life/campus">Кампус и карта</a>
     </div>
     <div class="campus-grid">
       <a class="campus-tile campus-tile--lead campus-tile--photo" href="/life/campus">
@@ -320,10 +320,10 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
         <p>Кампус построен по нацпроекту «Молодёжь и дети», сюда переехал лицей УрФУ. На карте — он и все {figures.academic_buildings} учебных корпусов.</p>
         <span class="btn btn--primary" style="justify-self:start">Открыть карту <span class="arrow" aria-hidden="true">→</span></span>
       </a>
-      <a class="campus-tile" href="/life/housing"><b>{figures.dormitories}</b><span>общежитий на {figures.dorm_places} мест</span></a>
-      <a class="campus-tile" href="/life/sport"><b>{figures.sports_facilities}</b><span>спортивных объектов и {figures.sports_teams} команды</span></a>
-      <a class="campus-tile" href="/life/clubs"><b>{figures.creative_groups}</b><span>творческих коллективов</span></a>
-      <a class="campus-tile" href="/study/mobility"><b>400+</b><span>зарубежных вузов-партнёров из 72 стран</span></a>
+      <a class="campus-tile" href="https://urfu.ru/ru/students/social/campus/"><b>{figures.dormitories}</b><span>общежитий на {figures.dorm_places} мест</span></a>
+      <a class="campus-tile" href="https://sport.urfu.ru/"><b>{figures.sports_facilities}</b><span>спортивных объектов и {figures.sports_teams} команды</span></a>
+      <a class="campus-tile" href="https://urfu.ru/ru/students/leisure/oso/tvorchestvo/"><b>{figures.creative_groups}</b><span>творческих коллективов</span></a>
+      <a class="campus-tile" href="https://urfu.ru/ru/international/mobility/"><b>400+</b><span>зарубежных вузов-партнёров из 72 стран</span></a>
     </div>
   </section>
 
@@ -331,11 +331,11 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
   <section class="container home-section" aria-labelledby="inst-title">
     <div class="section-head section-head--plain">
       <h2 class="section-head__title" id="inst-title">13 институтов</h2>
-      <a class="btn btn--ghost section-head__more" href="/institutes">Все институты</a>
+      <a class="btn btn--ghost section-head__more" href="https://urfu.ru/ru/instituty/">Все институты <span aria-hidden="true">↗</span></a>
     </div>
     <div class="inst-grid">
       {institutes.map(i => (
-        <a class="inst" href={i.abbr === 'ИРИТ-РтФ' ? '/institutes/irit-rtf' : '/institutes'}><b>{i.abbr}</b><span>{i.name}</span></a>
+        <a class="inst" href={i.abbr === 'ИРИТ-РтФ' ? '/institutes/irit-rtf' : i.site}><b>{i.abbr}</b><span>{i.name}</span>{i.abbr !== 'ИРИТ-РтФ' && <span class="visually-hidden"> (сайт института)</span>}</a>
       ))}
     </div>
   </section>

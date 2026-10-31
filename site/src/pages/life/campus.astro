@@ -128,7 +128,7 @@ const roomsIndex = B.flatMap(b => (b.rooms ?? []).map(r => ({ p: r, id: b.id }))
   <section class="container cp-more" aria-label="Полезное">
     <a class="campus-tile" href="https://urfu.ru/ru/students/social/campus/"><b>{figures.dormitories}</b><span>общежитий — поселение студентов ↗</span></a>
     <a class="campus-tile" href="/study/schedule"><b>1–7</b><span>пар в расписании — адрес аудитории ведёт сюда</span></a>
-    <a class="campus-tile" href="/contacts"><b>8-800</b><span>контакт-центр: {university.contacts.contact_center}</span></a>
+    <a class="campus-tile" href="tel:88001005044"><b>8-800</b><span>контакт-центр: {university.contacts.contact_center}</span></a>
   </section>
 
   <script type="application/json" id="rooms" set:html={JSON.stringify(roomsIndex)} />

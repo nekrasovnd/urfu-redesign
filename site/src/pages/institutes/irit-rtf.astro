@@ -142,7 +142,7 @@ const others = institutes.filter(i => i.abbr !== rtf.abbr).slice(0, 12);
   <section class="container in-section in-last" aria-labelledby="oth-title">
     <div class="section-head section-head--plain"><h2 class="section-head__title" id="oth-title">Другие институты</h2></div>
     <div class="inst-grid">
-      {others.map(i => <a class="inst" href="/institutes"><b>{i.abbr}</b><span>{i.name}</span></a>)}
+      {others.map(i => <a class="inst" href={i.site}><b>{i.abbr}</b><span>{i.name}</span><span class="visually-hidden"> (сайт института)</span></a>)}
     </div>
   </section>
 </Base>

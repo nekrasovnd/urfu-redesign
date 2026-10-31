@@ -47,15 +47,13 @@
     scrub();
   }
 
-  // Figures count up each time they come into view; the final text is always the real value.
+  // Figures count up once, the first time they come into view; the final text is the real value.
   const figures = document.querySelectorAll<HTMLElement>('.intro__stats b, .campus-tile b, .stat__value, .cp-new__facts dd');
   const fmt = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ');
-  const counting = new WeakSet<Element>();
   const countIO = new IntersectionObserver(entries => entries.forEach(en => {
     const el = en.target as HTMLElement;
-    if (!en.isIntersecting) { counting.delete(el); return; } // left the screen: count again next time
-    if (counting.has(el) || !motion()) return;
-    counting.add(el);
+    if (!en.isIntersecting || !motion()) return;
+    countIO.unobserve(el);
     const final = el.dataset.final!; // the real value, also when re-counting mid-way
     const m = final.trim().match(/^([\d\s ]+)(\+?)$/);
     if (!m) return;

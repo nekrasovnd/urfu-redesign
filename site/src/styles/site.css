@@ -14,7 +14,6 @@ main { display: block; }
 .search-trigger__icon { flex: none; color: var(--fg); }
 .site-header { transition: transform var(--dur-3) var(--ease); }
 .site-header.is-hidden { transform: translateY(-100%); }
-.logo-mobile { display: none !important; }
 a.megamenu__promo { color: var(--fg-inverse); text-decoration: none; transition: transform var(--dur-2) var(--ease); }
 a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 0 var(--accent); }
 .megamenu { box-shadow: 0 24px 0 -12px transparent; }
@@ -27,8 +26,6 @@ a.megamenu__promo:hover { transform: translate(-3px, -3px); box-shadow: 6px 6px 
 .mobile-menu__foot { display: flex; flex-wrap: wrap; gap: var(--s-3); }
 
 @media (max-width: 1099px) {
-  .logo-desktop { display: none !important; }
-  .logo-mobile { display: block !important; }
   .header-lk, .header-lang { display: none; }
   .site-header__inner { gap: var(--s-3); }
   .search-trigger { min-height: 44px; padding: 0 12px; }
