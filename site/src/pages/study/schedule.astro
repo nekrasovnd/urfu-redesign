@@ -126,7 +126,7 @@ const altBells = schedule.pairs_alt;
                       <div class={`lesson sch-lesson`}>
                         <span class="lesson__time">{p ? `${p.start}–${p.end}` : 'Онлайн'}<small>{p ? `${e.pair} пара` : 'в своём темпе'}</small></span>
                         <span>
-                          <span class="lesson__title">{e.title}</span>
+                          <span class="lesson__title">{e.title}</span><br />
                           <span class="lesson__meta">{[TYPE[e.type]?.short ?? e.type, e.room && (isOnline(e) ? `онлайн: ${e.room}` : `ауд. ${e.room}`), e.location && !isOnline(e) && e.location, e.teacher].filter(Boolean).join(' · ')}</span>
                         </span>
                       </div>
@@ -241,7 +241,7 @@ const altBells = schedule.pairs_alt;
       return `<li class="sch-day${ds[i] === today ? ' is-today' : ''}"><h2 class="sch-day__title"><span>${DAY_FULL[i]}</span> ${dLabel(d)}</h2>${items.length ? items.map(e => {
         const t = TYPE[e.type] ?? [e.type || 'Занятие', 'pr'];
         const meta = [t[0], e.room && (online(e) ? 'онлайн: ' + e.room : 'ауд. ' + e.room), !online(e) && e.location, target.kind === 'teacher' ? e.group : e.teacher].filter(Boolean).map(esc).join(' · ');
-        return `<div class="lesson sch-lesson"><span class="lesson__time">${e.begin ? `${e.begin}–${e.end}` : 'Онлайн'}<small>${e.pair ? e.pair + ' пара' : 'в своём темпе'}</small></span><span><span class="lesson__title">${esc(e.title)}</span><span class="lesson__meta">${meta}</span></span></div>`;
+        return `<div class="lesson sch-lesson"><span class="lesson__time">${e.begin ? `${e.begin}–${e.end}` : 'Онлайн'}<small>${e.pair ? e.pair + ' пара' : 'в своём темпе'}</small></span><span><span class="lesson__title">${esc(e.title)}</span><br><span class="lesson__meta">${meta}</span></span></div>`;
       }).join('') : '<p class="sch-day__empty">Занятий нет</p>'}</li>`;
     }).join('')}</ol>`;
     const empty = list.length ? '' : `<p class="sch-empty">На этой неделе в открытом расписании занятий нет. ${target.kind === 'group' ? 'Курсы траектории видны в личном кабинете.' : ''}</p>`;

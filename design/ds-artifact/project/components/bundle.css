@@ -543,3 +543,42 @@ html.is-loading .loader { animation: loader-in 200ms ease-out 600ms forwards; }
 .sch-suggest li small { font: 500 var(--fs-caption)/1.3 var(--font-text); color: var(--fg-muted); white-space: nowrap; }
 .sch-suggest li:hover, .sch-suggest li[aria-selected="true"] { background: var(--fg); color: var(--bg); }
 .sch-suggest li:hover small, .sch-suggest li[aria-selected="true"] small { color: inherit; opacity: .75; }
+
+/* =========================================================
+   Институты: карточки с фото, справка в модальном окне
+   ========================================================= */
+.inst-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--s-4); }
+.inst-cards--compact { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 210px; gap: var(--s-3); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--s-3); }
+.inst-cards--compact > li { scroll-snap-align: start; }
+.inst-card { display: grid; gap: 6px; align-content: start; width: 100%; height: 100%; padding: 0 0 var(--s-4); border: var(--rule-thick) solid var(--rule); background: var(--surface); color: var(--fg); text-align: left; font: inherit; cursor: pointer; transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+.inst-card:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); }
+.inst-card__media { display: grid; place-items: center; aspect-ratio: 3 / 2; overflow: hidden; background: var(--surface-2); margin-bottom: var(--s-2); }
+.inst-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease); }
+.inst-card:hover .inst-card__media img { transform: scale(1.04); }
+.inst-card__media--plate { position: relative; isolation: isolate; background: var(--c-blue); color: #FFFFFF; overflow: hidden; }
+.inst-card__media--plate::after { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; right: -20%; width: 45%; background: rgb(255 255 255 / .12); transform: skewX(var(--slope)); }
+.inst-card__sign { width: auto; height: 46%; }
+.inst-card__abbr { padding: 0 var(--s-4); font: 800 22px/1 var(--font-display); letter-spacing: -0.03em; }
+.inst-card__name { padding: 0 var(--s-4); font-size: 14px; line-height: 1.35; color: var(--fg-muted); }
+.inst-cards--compact .inst-card__abbr { font-size: 18px; }
+.inst-cards--compact .inst-card__name { font-size: 13px; }
+.inst-dialog { width: min(760px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); padding: 0; border: var(--rule-thick) solid var(--rule); background: var(--bg); color: var(--fg); box-shadow: var(--shadow-pop); }
+.inst-dialog::backdrop { background: rgb(13 32 72 / .6); }
+.inst-dialog[open] { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.inst-dialog__media { min-height: 100%; display: grid; place-items: center; background: var(--surface-2); }
+.inst-dialog__media img { width: 100%; height: 100%; object-fit: cover; }
+.inst-dialog__body { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-6) var(--s-6) var(--s-5); }
+.inst-dialog__title { font: 700 var(--fs-h3)/1.15 var(--font-display); letter-spacing: -0.015em; padding-right: var(--s-6); }
+.inst-dialog__nums { list-style: none; margin: var(--s-2) 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: var(--rule-thin) solid var(--rule); }
+.inst-dialog__nums li { display: grid; gap: 4px; padding: var(--s-3) var(--s-3) var(--s-3) 0; }
+.inst-dialog__nums li + li { padding-left: var(--s-3); border-left: var(--rule-thin) solid var(--rule-soft); }
+.inst-dialog__nums b { font: 800 28px/1 var(--font-display); letter-spacing: -0.03em; color: var(--accent-text); }
+.inst-dialog__nums span { font-size: 13px; color: var(--fg-muted); line-height: 1.3; }
+.inst-dialog__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-2); }
+.inst-dialog__close { position: absolute; top: var(--s-3); right: var(--s-3); width: 44px; height: 44px; border: 2px solid var(--rule); background: var(--surface); color: var(--fg); font-size: 18px; cursor: pointer; }
+@media (max-width: 699px) {
+  .inst-dialog[open] { grid-template-columns: minmax(0, 1fr); }
+  .inst-dialog__media { aspect-ratio: 16 / 9; min-height: 0; }
+  .inst-dialog__body { padding: var(--s-5); }
+  .inst-cards--compact { grid-auto-columns: 170px; }
+}

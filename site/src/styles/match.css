@@ -88,3 +88,6 @@
   .exam, .exam-group .exam { grid-template-columns: 88px 1fr 60px; gap: var(--s-2); }
   .results-sort { min-width: 0; width: 100%; }
 }
+
+/* Until the script sorts the list, lay out only the first 12 cards: no long layout, no jump when the rest hides */
+.match-list[data-list="ok"]:not(.is-ready) > :nth-child(n+13) { display: none; }

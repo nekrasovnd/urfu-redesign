@@ -9,6 +9,11 @@
 
 /* Dashboard */
 .hub-dash { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--gutter); align-items: stretch; }
+.hub-dash { grid-template-columns: minmax(0, 4fr) minmax(0, 4fr) minmax(0, 5fr); }
+.hub-entry { position: relative; display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5) var(--s-7) var(--s-5) var(--s-5); background: var(--surface); border: var(--rule-thick) solid var(--rule); color: inherit; text-decoration: none; transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+.hub-entry:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); }
+.hub-entry__title { font: 700 var(--fs-h3)/1.15 var(--font-display); letter-spacing: -0.015em; }
+.hub-entry__go { position: absolute; right: var(--s-5); top: var(--s-5); font-weight: 700; color: var(--accent-text); }
 .hub-today { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-5); background: var(--surface); border: var(--rule-thick) solid var(--rule); }
 .hub-today__head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); }
 .hub-today .btn { justify-self: start; margin-top: var(--s-2); }

@@ -104,6 +104,7 @@ const progWord = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'програ�
       ))}
     </div>
 
+    <button class="btn more-btn" type="button" data-more hidden>Показать ещё</button>
     <div class="match-empty" data-empty hidden>
       <p class="t-h3">Ничего не нашлось</p>
       <p class="t-body t-muted">Проверьте написание или поищите по коду направления. Можно сбросить фильтры или <a class="link" href="/admission/match">подобрать программу по баллам ЕГЭ</a>.</p>
@@ -134,7 +135,12 @@ const progWord = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'програ�
   const plural = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'программа' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'программы' : 'программ');
   const esc = (s: string) => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 
-  function apply() {
+  // Long lists are shown 20 at a time: the catalogue has 200+ programmes per level.
+  const PAGE = 20;
+  let limit = PAGE;
+  const more = document.querySelector<HTMLButtonElement>('[data-more]')!;
+  function apply(keep = false) {
+    if (!keep) limit = PAGE;
     const words = norm(q.value).split(/\s+/).filter(Boolean);
     let n = 0;
     for (const g of groups) {
@@ -146,12 +152,15 @@ const progWord = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'програ�
           (!inst.value || it.dataset.inst === inst.value) &&
           (!field.value || it.dataset.field === field.value) &&
           words.every(w => it.dataset.q!.includes(w));
-        it.hidden = !ok;
+        it.hidden = !ok || n + visible >= limit;
         if (ok) visible++;
       });
-      g.hidden = visible === 0;
+      g.hidden = !g.querySelector('.prog-item:not([hidden])');
       n += visible;
     }
+    const left = n - limit;
+    more.hidden = left <= 0;
+    more.textContent = `Показать ещё ${Math.min(PAGE, left)} из ${left}`;
     document.querySelector('[data-count]')!.textContent = String(n);
     document.querySelector('[data-count-label]')!.textContent = plural(n);
     document.querySelector<HTMLElement>('[data-empty]')!.hidden = n > 0;
@@ -174,9 +183,10 @@ const progWord = (n: number) => (n % 10 === 1 && n % 100 !== 11 ? 'програ�
     if (k === 'field') field.value = '';
     apply();
   });
-  q.addEventListener('input', apply);
-  inst.addEventListener('change', apply);
-  field.addEventListener('change', apply);
+  more.addEventListener('click', () => { limit += PAGE; apply(true); });
+  q.addEventListener('input', () => apply());
+  inst.addEventListener('change', () => apply());
+  field.addEventListener('change', () => apply());
   levelBtns.forEach(b => b.addEventListener('click', () => { level = b.dataset.level!; apply(); }));
   document.querySelector('[data-reset]')!.addEventListener('click', () => {
     q.value = ''; inst.value = ''; field.value = ''; code = '';

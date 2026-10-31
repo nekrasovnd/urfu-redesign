@@ -84,6 +84,7 @@ export const protoPages: { href: string; label: string; type: string }[] = [
   { href: '/news', label: 'Новости', type: 'Лента' },
   { href: '/news/60431', label: 'Учёные создали карту потоков CO₂', type: 'Статья' },
   { href: '/events', label: 'Афиша', type: 'Календарь' },
+  { href: '/institutes', label: 'Институты', type: 'Список с фото' },
   { href: '/institutes/irit-rtf', label: 'Институт ИРИТ-РтФ', type: 'Институт' },
   { href: '/life/campus', label: 'Кампус и карта', type: 'Карта' },
   { href: '/sveden', label: 'Сведения об образовательной организации', type: 'Обязательный раздел' },

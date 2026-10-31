@@ -2,7 +2,6 @@
 import Base from '../../layouts/Base.astro';
 import '../../styles/hub.css';
 import services from '@content/student-services.json';
-import MyPairs from '../../components/MyPairs.astro';
 import { events, university, day, monthShort, dateRange } from '../../data/site';
 
 const total = services.groups.reduce((s, g) => s + g.items.length, 0);
@@ -29,10 +28,18 @@ const QUEST = 'https://quest.my1.urfu.ru/questionary/3306e4b0-6e43-11f1-bef0-1b0
 
   <!-- ============ Dashboard row ============ -->
   <section class="container hub-dash" aria-label="Главное на сегодня">
-    <div class="hub-today">
-      <h2 class="t-h3">Мои пары</h2>
-      <MyPairs count={3} />
-    </div>
+    <a class="hub-entry" href="/study/schedule">
+      <span class="t-label t-muted">Расписание</span>
+      <span class="hub-entry__title">Любая группа и любой преподаватель</span>
+      <span class="t-small t-muted">Неделя целиком, адреса аудиторий, экспорт в календарь</span>
+      <span class="hub-entry__go" aria-hidden="true">→</span>
+    </a>
+    <a class="hub-entry" href="#app-title">
+      <span class="t-label t-muted">Приложение УрФУ.Учеба</span>
+      <span class="hub-entry__title">Расписание, баллы БРС и практика в телефоне</span>
+      <span class="t-small t-muted">App Store, Google Play, RuStore</span>
+      <span class="hub-entry__go" aria-hidden="true">↓</span>
+    </a>
 
     <a class="hub-lk" href="https://istudent.urfu.ru/">
       <span class="t-label">Личный кабинет</span>

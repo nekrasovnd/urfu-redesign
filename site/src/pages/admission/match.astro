@@ -164,6 +164,7 @@ const c = university.contacts;
         ))}
       </div>
 
+      <button class="btn more-btn" type="button" data-more hidden>Показать ещё</button>
       <div class="match-empty" data-empty hidden>
         <p class="t-h3">По этим баллам и фильтрам ничего не нашлось</p>
         <p class="t-body t-muted">Проверьте, что указаны русский язык и математика или обществознание, и снимите фильтры по стоимости и институту. Ниже — направления, до которых не хватает совсем немного.</p>
@@ -268,7 +269,13 @@ const c = university.contacts;
     });
   }
 
-  function update() {
+  // 12 cards at a time: with typical scores 40–60 directions fit, which is a very long page.
+  const PAGE = 12;
+  let limit = PAGE;
+  const more = document.querySelector<HTMLButtonElement>('[data-more]')!;
+  more.addEventListener('click', () => { limit += PAGE; update(true); });
+  function update(keep = false) {
+    if (!keep || keep instanceof Event) limit = PAGE;
     const s = scores();
     try { localStorage.setItem(STORE, JSON.stringify(Object.fromEntries(inputs.map(i => [i.name, i.value])))); } catch {}
     const maxCost = Number((form.querySelector('#cost') as HTMLSelectElement).value) || Infinity;
@@ -296,7 +303,11 @@ const c = university.contacts;
       sort === 'cheap' ? (a.d.p ?? 1e9) - (b.d.p ?? 1e9) :
       sort === 'expensive' ? (b.d.p ?? -1) - (a.d.p ?? -1) :
       sort === 'name' ? a.d.n.localeCompare(b.d.n, 'ru') : b.m - a.m;
-    ok.sort(cmp).forEach(x => okList.append(cards.get(x.d.id)!));
+    ok.sort(cmp).forEach((x, i) => { const c = cards.get(x.d.id)!; okList.append(c); c.hidden = i >= limit; });
+    okList.classList.add('is-ready');
+    const left = ok.length - limit;
+    more.hidden = left <= 0;
+    more.textContent = `Показать ещё ${Math.min(PAGE, left)} из ${left}`;
     close.sort((a, b) => (a as any).def - (b as any).def).forEach(x => closeList.append(cards.get(x.d.id)!));
 
     document.querySelector('[data-count]')!.textContent = String(ok.length);

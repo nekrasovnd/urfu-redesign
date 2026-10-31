@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import InstituteCards from '../../components/InstituteCards.astro';
+import { institutes, programs } from '../../data/site';
+const bach = programs.filter(p => p.level === 'Бакалавриат' || p.level === 'Специалитет').length;
+---
+<Base title="Институты" section="study" description={`${institutes.length} институтов УрФУ: фото корпусов, программы по уровням, адреса и контакты. Нажмите на институт — откроется краткая справка.`}>
+  <div class="container inst-head">
+    <ol class="breadcrumbs"><li><a href="/">Главная</a></li><li><a href="/study">Обучение</a></li><li aria-current="page">Институты</li></ol>
+    <h1 class="t-h1">Институты</h1>
+    <p class="t-lead">{institutes.length} институтов и {bach} программ бакалавриата и специалитета. Нажмите на институт — откроется справка: сколько программ, примеры направлений, где корпус и как связаться.</p>
+  </div>
+  <section class="container inst-body" aria-labelledby="inst-list">
+    <h2 class="visually-hidden" id="inst-list">Все институты</h2>
+    <InstituteCards />
+    <p class="t-small t-muted inst-note">На urfu.ru раздел «Институты» сейчас пуст («находится в стадии заполнения»), а у каждого института свой сайт со своим дизайном. Здесь — один шаблон для всех; полная страница института показана на примере <a class="link" href="/institutes/irit-rtf">ИРИТ-РтФ</a>.</p>
+  </section>
+</Base>
+
+<style>
+  .inst-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-4); padding-block: var(--s-6); }
+  .inst-head .t-lead { max-width: 64ch; }
+  .inst-body { display: grid; gap: var(--s-6); padding-bottom: var(--section-gap); }
+  .inst-note { max-width: 70ch; }
+</style>

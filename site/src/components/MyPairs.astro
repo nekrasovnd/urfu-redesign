@@ -7,18 +7,18 @@ const { count = 3 } = Astro.props;
 ---
 <div class="my-pairs" data-my-pairs data-count={count}>
   <form class="my-pairs__form" data-mp-form>
-    <label class="field__label" for="mp-q">Моя группа</label>
+    <label class="field__label" for="mp-q">Группа или преподаватель</label>
     <div class="my-pairs__row">
       <div class="my-pairs__box">
-        <input class="input" id="mp-q" autocomplete="off" spellcheck="false" placeholder="Например, РИ-250902"
+        <input class="input" id="mp-q" autocomplete="off" spellcheck="false" placeholder="РИ-250902 или фамилия"
           role="combobox" aria-expanded="false" aria-controls="mp-list" aria-autocomplete="list" />
-        <ul class="sch-suggest" id="mp-list" role="listbox" aria-label="Группы" hidden></ul>
+        <ul class="sch-suggest" id="mp-list" role="listbox" aria-label="Группы и преподаватели" hidden></ul>
       </div>
       <button class="btn btn--sm btn--ink" type="submit">Показать</button>
     </div>
   </form>
   <div class="my-pairs__list" data-mp-list aria-live="polite">
-    <p class="my-pairs__note">Введите номер своей группы — покажем ближайшие пары из открытого расписания urfu.ru. Группа запомнится, и на странице расписания тоже.</p>
+    <p class="my-pairs__note">Введите номер группы или фамилию преподавателя — покажем ближайшие пары из открытого расписания urfu.ru. Выбор запомнится и на странице расписания.</p>
   </div>
   <a class="btn btn--sm" href="/study/schedule" data-mp-all>Всё расписание <span class="arrow" aria-hidden="true">→</span></a>
 </div>
@@ -79,9 +79,13 @@ const { count = 3 } = Astro.props;
     const search = async (v: string) => {
       const my = ++seq;
       try {
-        const data: any[] = await (await fetch(`${API}/groups?search=${encodeURIComponent(v)}`)).json();
+        // Groups and teachers at once: a number finds groups, a surname finds teachers.
+        const [g, t]: any[][] = await Promise.all(['groups', 'teachers'].map(k => fetch(`${API}/${k}?search=${encodeURIComponent(v)}`).then(r => r.json()).catch(() => [])));
         if (my !== seq) return;
-        found = data.slice(0, 6).map(d => ({ kind: 'group', id: String(d.id), title: d.title, sub: d.course ? `${d.course} курс` : undefined }));
+        found = [
+          ...g.slice(0, 5).map(d => ({ kind: 'group' as const, id: String(d.id), title: d.title, sub: d.course ? `группа · ${d.course} курс` : 'группа' })),
+          ...t.slice(0, 5).map(d => ({ kind: 'teacher' as const, id: String(d.id), title: d.name, sub: 'преподаватель' })),
+        ];
         paint();
       } catch {}
     };
@@ -95,7 +99,8 @@ const { count = 3 } = Astro.props;
       if (!found.length) await search(v);
       const exact = found.find(t => t.title.toUpperCase() === v) || (found.length === 1 ? found[0] : null);
       if (exact) pick(exact);
-      else if (!found.length) out.innerHTML = '<p class="my-pairs__note">Такой группы не нашли. Проверьте номер: например, РИ-250902.</p>';
+      else if (!found.length) out.innerHTML = '<p class="my-pairs__note">Ничего не нашли. Проверьте номер группы (например, РИ-250902) или введите только фамилию.</p>';
+      else { sug.hidden = false; q.setAttribute('aria-expanded', 'true'); }
     });
 
     try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved?.id) show(saved); } catch {}

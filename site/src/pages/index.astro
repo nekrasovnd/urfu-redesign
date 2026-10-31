@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import MyPairs from '../components/MyPairs.astro';
+import InstituteCards from '../components/InstituteCards.astro';
 import { news, events, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
 
 // ---------- Roles: what each audience needs first ----------
@@ -308,13 +309,9 @@ const roleEvents = (aud?: string) => upcoming.filter(e => !aud || e.audience.inc
   <section class="container home-section" aria-labelledby="inst-title">
     <div class="section-head section-head--plain">
       <h2 class="section-head__title" id="inst-title">13 институтов</h2>
-      <a class="btn btn--ghost section-head__more" href="https://urfu.ru/ru/instituty/">Все институты <span aria-hidden="true">↗</span></a>
+      <a class="btn btn--ghost section-head__more" href="/institutes">Все институты</a>
     </div>
-    <div class="inst-grid">
-      {institutes.map(i => (
-        <a class="inst" href={i.abbr === 'ИРИТ-РтФ' ? '/institutes/irit-rtf' : i.site}><b>{i.abbr}</b><span>{i.name}</span>{i.abbr !== 'ИРИТ-РтФ' && <span class="visually-hidden"> (сайт института)</span>}</a>
-      ))}
-    </div>
+    <InstituteCards compact />
   </section>
 
   <!-- ============ ADMISSION CONTACT ============ -->

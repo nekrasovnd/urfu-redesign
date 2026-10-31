@@ -1,0 +1,72 @@
+---
+// Institutes as photo cards; a click opens a short profile built from real data only: programmes by level
+// (UrFU catalogue), example programmes, address, phone, site. Photos — Wikimedia Commons, credited;
+// where no free photo exists the card is a brand plate with the abbreviation, not someone else's building.
+import { institutes, programs } from '../data/site';
+import credits from '@content/institute-photos.json';
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+
+const PHOTO: Record<string, keyof typeof credits> = {
+  'ФТИ': 'fti', 'ХТИ': 'mira-28', 'ИНМТ': 'mira-28', 'ИСА': 'isa', 'ИРИТ-РтФ': 'rtf', 'УГИ': 'ugi', 'ИнЭУ': 'inue', 'ИТОО': 'guk',
+};
+const SIGN = '<svg class="inst-card__sign" viewBox="0 0 92 118" fill="#FFFFFF" aria-hidden="true"><path d="M0 0H22L64 84C68 92 62 118 38 118V110C50 110 52 102 46 92Z"/><path d="M74 0H92L72 40H54Z"/></svg>';
+const list = institutes.map(i => {
+  const mine = programs.filter(p => p.institute === i.abbr);
+  const n = (...levels: string[]) => mine.filter(p => levels.includes(p.level)).length;
+  const examples = mine.filter(p => p.level === 'Бакалавриат' || p.level === 'Специалитет').slice(0, 4).map(p => p.name);
+  const key = PHOTO[i.abbr];
+  return {
+    ...i, id: 'inst-' + i.abbr.replace(/[^A-Za-zА-Яа-яЁё]/g, ''),
+    bach: n('Бакалавриат', 'Специалитет'), master: n('Магистратура'), phd: n('Аспирантура'), examples,
+    photo: key ? `/photos/inst/${key}.webp` : null, credit: key ? credits[key] : null,
+    page: i.abbr === 'ИРИТ-РтФ' ? '/institutes/irit-rtf' : null,
+  };
+});
+---
+<ul class:list={['inst-cards', { 'inst-cards--compact': compact }]}>
+  {list.map(i => (
+    <li>
+      <button class="inst-card" type="button" data-inst-open={i.id} aria-haspopup="dialog">
+        <span class:list={['inst-card__media', { 'inst-card__media--plate': !i.photo }]}>
+          {i.photo ? <img src={i.photo} alt="" width="720" height="480" loading="lazy" decoding="async" /> : <Fragment set:html={SIGN} />}
+        </span>
+        <span class="inst-card__abbr">{i.abbr}</span>
+        <span class="inst-card__name">{i.name}</span>
+      </button>
+      <dialog class="inst-dialog" id={i.id} aria-labelledby={i.id + '-t'}>
+        <div class:list={['inst-dialog__media', { 'inst-card__media--plate': !i.photo }]}>
+          {i.photo ? <img src={i.photo} alt={`Корпус: ${i.address}`} width="720" height="480" loading="lazy" decoding="async" /> : <Fragment set:html={SIGN} />}
+        </div>
+        <div class="inst-dialog__body">
+          <p class="t-label t-muted">{i.abbr}</p>
+          <h2 class="inst-dialog__title" id={i.id + '-t'}>{i.name}</h2>
+          <ul class="inst-dialog__nums">
+            <li><b>{i.bach}</b><span>бакалавриат и специалитет</span></li>
+            <li><b>{i.master}</b><span>магистратура</span></li>
+            <li><b>{i.phd}</b><span>аспирантура</span></li>
+          </ul>
+          {i.examples.length > 0 && <p class="t-small"><span class="t-muted">Например: </span>{i.examples.join(' · ')}</p>}
+          <p class="t-small">{i.address}, Екатеринбург{i.phone && <> · <a class="link" href={`tel:${i.phone.replace(/[^\d+]/g, '')}`}>{i.phone}</a></>}</p>
+          <div class="inst-dialog__actions">
+            {i.page
+              ? <a class="btn btn--primary btn--sm" href={i.page}>Страница института <span class="arrow" aria-hidden="true">→</span></a>
+              : <a class="btn btn--primary btn--sm" href={`/programs?inst=${encodeURIComponent(i.abbr)}`}>Программы института <span class="arrow" aria-hidden="true">→</span></a>}
+            <a class="btn btn--sm" href={i.site}>Сайт института <span aria-hidden="true">↗</span></a>
+          </div>
+          {i.credit && <p class="t-caption t-muted">Фото: {i.credit.artist}, {i.credit.license} · <a class="link" href={i.credit.page}>Wikimedia Commons</a></p>}
+        </div>
+        <form method="dialog"><button class="inst-dialog__close" aria-label="Закрыть">✕</button></form>
+      </dialog>
+    </li>
+  ))}
+</ul>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-inst-open]').forEach(b => b.addEventListener('click', () => {
+    const d = document.getElementById(b.dataset.instOpen!) as HTMLDialogElement | null;
+    d?.showModal();
+  }));
+  // Click on the backdrop closes the profile.
+  document.querySelectorAll<HTMLDialogElement>('.inst-dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+</script>

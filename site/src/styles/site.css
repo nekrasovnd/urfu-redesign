@@ -257,3 +257,10 @@ html[data-proto="ready"] .proto__label-full, html[data-proto="full"] .proto__lab
 .my-pairs__list[aria-busy="true"] { opacity: .45; }
 .my-pairs__note { padding: var(--s-3) var(--s-4); background: var(--surface-2); font-size: var(--fs-small); }
 .my-pairs > .btn { justify-self: start; }
+
+/* Phones: the homepage shows a short selection; the full lists are one tap away */
+@media (max-width: 699px) {
+  .news-grid > .card-news:nth-child(n+4) { display: none; }
+  .campus-grid .campus-tile:not(.campus-tile--lead):nth-child(n+4) { display: none; }
+}
+.more-btn { justify-self: center; margin-top: var(--s-5); }
