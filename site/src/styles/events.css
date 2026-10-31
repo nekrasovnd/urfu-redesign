@@ -17,7 +17,10 @@
 .ev-month__title { font: 800 var(--fs-h2)/1 var(--font-display); letter-spacing: -0.03em; padding-bottom: var(--s-4); border-bottom: var(--rule-thick) solid var(--rule); }
 .ev-item { display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: var(--s-5); align-items: start; padding-block: var(--s-5); border-bottom: var(--rule-thin) solid var(--rule); scroll-margin-top: 120px; transition: background var(--dur-3) var(--ease); }
 .ev-item.is-flash { background: color-mix(in srgb, var(--accent) 12%, transparent); }
-.ev-item.is-past { opacity: .55; }
+/* Past events recede without losing readable contrast: muted colours instead of transparency */
+.ev-item.is-past { --fg: var(--fg-muted); color: var(--fg-muted); }
+.ev-item.is-past :is(.ev-item__title, .ev-item__day) { color: var(--fg-muted); }
+.ev-item.is-past :is(.ev-item__meta, .ev-item__aud, .tag) { color: var(--fg-muted); }
 .ev-item__date { display: grid; }
 .ev-item__day { font: 800 56px/0.9 var(--font-display); letter-spacing: -0.05em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ev-item__day small { font-size: .42em; letter-spacing: -0.03em; }

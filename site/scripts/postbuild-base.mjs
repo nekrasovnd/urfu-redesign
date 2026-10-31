@@ -17,11 +17,19 @@ const files = [];
 })(dist);
 
 // href/src/srcset/action="/x" but not "//host" and not already under the base.
-const attr = /\b(href|src|srcset|action)="\/(?!\/)([^"]*)"/g;
+const attr = /\b(href|src|srcset|action|data-src)="\/(?!\/)([^"]*)"/g;
 let changed = 0;
 for (const f of files) {
   const html = fs.readFileSync(f, 'utf8');
-  const out = html.replace(attr, (m, name, rest) => {
+  // srcset holds several URLs: prefix each «/x 640w» entry, not only the first.
+  const html2 = html.replace(/srcset="([^"]*)"/g, (m, v) => 'srcset="' + v.split(',').map(part => {
+    const t = part.trim();
+    if (!t.startsWith('/') || t.startsWith('//') || t.startsWith(base + '/')) return t;
+    changed++;
+    return base + t;
+  }).join(', ') + '"');
+  const out = html2.replace(attr, (m, name, rest) => {
+    if (name === 'srcset') return m; // handled above (data-srcset too)
     if (('/' + rest).startsWith(base + '/') || '/' + rest === base) return m;
     changed++;
     return `${name}="${base}/${rest}"`;

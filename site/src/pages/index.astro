@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { news, events, schedule, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
+import MyPairs from '../components/MyPairs.astro';
+import { news, events, directions, institutes, figures, university, fmtNum, day, monthShort, dateLong, dateRange } from '../data/site';
 
 // ---------- Roles: what each audience needs first ----------
 type Action = { t: string; h: string; s?: string; ext?: boolean };
@@ -96,9 +97,6 @@ const upcoming = events.filter(e => e.date >= '2026-10-28').slice(0, 7);
 const audiences = ['Все', 'Абитуриенты', 'Студенты', 'Школьники', 'Учёные'];
 const roleEvents = (aud?: string) => upcoming.filter(e => !aud || e.audience.includes(aud) || e.audience.includes('Все')).slice(0, 3);
 
-const lessonsSorted = [...schedule.events].sort((a, b) => (a.date + a.pair).localeCompare(b.date + b.pair));
-const pairTime = (n: number) => schedule.pairs.find(p => p.n === n);
-const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 ---
 <Base title="УрФУ" description="Уральский федеральный университет: поступление, программы, расписание, наука и жизнь в кампусе. 50 000 студентов, 13 институтов, Екатеринбург.">
 
@@ -172,30 +170,8 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
             )}
 
             {r.id === 'student' && (
-              <div class="my-schedule" style="margin-top: var(--s-6)" data-my-schedule>
-                <div class="my-schedule__head">
-                  <div class="field">
-                    <label class="field__label" for="ms-group">Моя группа</label>
-                    <div class="my-schedule__group">
-                      <input class="input" id="ms-group" value={schedule.group.title} autocomplete="off" />
-                      <a class="btn btn--sm" href="/study/schedule">Полное расписание</a>
-                    </div>
-                  </div>
-                  <span class="t-caption">{schedule.group.institute} · {schedule.group.course} курс</span>
-                </div>
-                <div>
-                  {lessonsSorted.slice(0, 4).map(l => {
-                    const p = pairTime(l.pair);
-                    const d = new Date(l.date);
-                    return (
-                      <div class="lesson" data-lesson-date={l.date}>
-                        <span class="lesson__time">{l.pair && p ? `${p.start}–${p.end}` : 'Онлайн'}<small>{WEEKDAYS[d.getDay()]}, {dateLong(l.date)}</small></span>
-                        <span><span class="lesson__title">{l.title}</span><br /><span class="lesson__meta">{[l.type, l.room && `ауд. ${l.room}`, l.teacher].filter(Boolean).join(' · ')}</span></span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <p class="quick-match__note">Данные открытого расписания urfu.ru для группы {schedule.group.title}. Группа запоминается в браузере.</p>
+              <div class="my-schedule" style="margin-top: var(--s-6)">
+                <MyPairs count={4} />
               </div>
             )}
 
@@ -242,7 +218,8 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
       {[featured, ...restNews].map((n, i) => (
         <a class={`card-news${i === 0 ? ' card-news--feature' : ''}`} href={`/news/${n.id}`}>
           <span class="card-news__media">
-            <img src={n.image} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" />
+            <img data-src={n.thumb} data-srcset={i === 0 ? `${n.thumb} 640w, ${n.image} 1200w` : undefined} sizes={i === 0 ? '(max-width: 700px) 360px, 800px' : undefined} width="640" height="363" alt="" decoding="async" />
+            <noscript><img src={n.thumb} width="640" height="363" alt="" /></noscript>
             {i === 0 && <span class="media-credit">Фото: пресс-служба УрФУ</span>}
           </span>
           <span class="card-news__meta"><span>{dateLong(n.date)}</span><span>{n.tags[0]}</span></span>
@@ -400,12 +377,17 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     update();
   }
 
-  // ---------- Student: remember group ----------
-  const group = document.querySelector<HTMLInputElement>('#ms-group');
-  if (group) {
-    try { const g = localStorage.getItem('urfu-group'); if (g) group.value = g; } catch {}
-    group.addEventListener('change', () => { try { localStorage.setItem('urfu-group', group.value.trim()); } catch {} });
-  }
+  // ---------- News photos: fetched only when the news block nears the screen ----------
+  // (plain loading="lazy" still fetched them during the first screen and delayed the main-building photo).
+  const deferred = document.querySelectorAll<HTMLImageElement>('img[data-src]');
+  const near = new IntersectionObserver(entries => entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    const img = en.target as HTMLImageElement;
+    if (img.dataset.srcset) img.srcset = img.dataset.srcset;
+    img.src = img.dataset.src!;
+    near.unobserve(img);
+  }), { rootMargin: '600px 0px' });
+  deferred.forEach(img => near.observe(img));
 
   // ---------- Events filter ----------
   const evButtons = [...document.querySelectorAll<HTMLButtonElement>('[data-ev-filter]')];

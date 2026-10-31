@@ -15,7 +15,9 @@ export type Section = { id: string; label: string; href: string; lead: string; c
 
 export const sections = sitemap.main as Section[];
 export const institutes = institutesJson.institutes;
-export const news = newsJson.items;
+// Press photos are served from the site in two sizes (WebP 640 and 1200 px, made from the originals on urfu.ru):
+// the thumbnails urfu.ru serves are 290 px wide and look pixelated in large cards.
+export const news = newsJson.items.map(n => ({ ...n, source_image: n.image, image: `/photos/news/${n.id}.webp`, thumb: `/photos/news/${n.id}-640.webp` }));
 export const events = eventsJson.items;
 export const schedule = scheduleJson;
 export const directions = egeJson.directions;
@@ -34,7 +36,7 @@ const INSTITUTE_ABBR: [RegExp, string][] = [
   [/строительства/i, 'ИСА'], [/открытого образования/i, 'ИТОО'], [/физической культуры/i, 'ИФКСиМП'],
   [/фундаментального/i, 'ИнФО'], [/экономики и управления/i, 'ИнЭУ'], [/гуманитарный/i, 'УГИ'],
   [/энергетический/i, 'УралЭНИН'], [/Физико-технологический/i, 'ФТИ'], [/Химико-технологический/i, 'ХТИ'],
-  [/инженерная школа/i, 'УралПИШ'], [/Нижнетагильский/i, 'НТИ'], [/Каменске/i, 'Каменск-Уральский'],
+  [/инженерная школа/i, 'УПИШ'], [/Нижнетагильский/i, 'НТИ'], [/Каменске/i, 'Каменск-Уральский'],
   [/Верхняя Салда/i, 'Верхняя Салда'], [/Краснотурьинск/i, 'Краснотурьинск'],
 ];
 export const instituteAbbr = (name: string) => INSTITUTE_ABBR.find(([re]) => re.test(name))?.[1] ?? name;

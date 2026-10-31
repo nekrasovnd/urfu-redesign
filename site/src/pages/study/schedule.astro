@@ -202,7 +202,8 @@ const altBells = schedule.pairs_alt;
     if (!r.ok) throw new Error(String(r.status));
     const data = await r.json();
     const list: Ev[] = (data.events || []).map((e: any) => ({
-      date: e.date, pair: e.pairNumber || 0, begin: e.timeBegin?.slice(0, 5), end: e.timeEnd?.slice(0, 5),
+      date: e.date, pair: e.pairNumber || 0,
+      ...(e.pairNumber && e.timeBegin !== e.timeEnd ? { begin: e.timeBegin?.slice(0, 5), end: e.timeEnd?.slice(0, 5) } : {}), // online: 00:00–00:00
       title: e.title, type: e.loadType || '', room: e.auditoryTitle || undefined, location: e.auditoryLocation || undefined,
       teacher: e.teacherName || undefined, group: e.groupTitle || undefined,
     }));

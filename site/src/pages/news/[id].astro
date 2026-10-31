@@ -38,7 +38,7 @@ const facts = n.id === 60431 ? [
 
     <figure class="container article-figure">
       <div class="article-figure__img">
-        <img src={n.image} alt={'quote_person' in n ? `${(n as any).quote_person} на конференции` : ''} referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" />
+        <img src={n.image} width="1200" height="680" alt={'quote_person' in n ? `${(n as any).quote_person} на конференции` : ''} fetchpriority="high" />
       </div>
       <figcaption>{'quote_person' in n ? `${(n as any).quote_person}. ` : ''}Фото: пресс-служба УрФУ</figcaption>
     </figure>
@@ -80,7 +80,7 @@ const facts = n.id === 60431 ? [
     <div class="news-grid-list">
       {more.map(r => (
         <a class="card-news" href={`/news/${r.id}`}>
-          <span class="card-news__media"><img src={r.image} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" /></span>
+          <span class="card-news__media"><img src={r.thumb} width="640" height="363" alt="" loading="lazy" decoding="async" /></span>
           <span class="card-news__meta"><span>{dateLong(r.date)}</span><span>{r.tags[0]}</span></span>
           <span class="card-news__title">{r.title}</span>
         </a>

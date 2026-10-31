@@ -503,9 +503,9 @@ html.motion .slope-scrub::after { transform: skewX(var(--slope)) translateX(calc
 html.motion .intro::after {
   content: ""; position: absolute; z-index: 2; top: 0; bottom: 0; left: -40%; width: 180%;
   background: var(--c-blue); pointer-events: none; transform-origin: top;
-  animation: intro-wipe 1100ms cubic-bezier(.75, 0, .2, 1) 80ms both;
+  animation: intro-wipe 650ms cubic-bezier(.65, 0, .25, 1) both;
 }
-html.motion .intro__arm { animation: arm-draw 520ms var(--ease) 900ms both; }
+html.motion .intro__arm { animation: arm-draw 480ms var(--ease) 520ms both; }
 
 /* 4. Переходы между страницами: новая открывается косым срезом, шапка стоит на месте */
 @media (prefers-reduced-motion: no-preference) {
@@ -535,3 +535,11 @@ html.is-loading .loader { animation: loader-in 200ms ease-out 600ms forwards; }
 @keyframes arm-loop { 0% { transform: translate(10px, -20px); opacity: 0; } 55%, 100% { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .loader, html.is-loading .loadbar { animation: none; } }
 :root[data-motion="off"] .loader { display: none; }
+
+/* Подсказки поиска (расписание, «Мои пары»): выпадающий список под полем */
+.sch-suggest { position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; right: 0; margin: 0; padding: 0; list-style: none; max-height: 320px; overflow-y: auto; background: var(--surface); border: var(--rule-thick) solid var(--rule); box-shadow: var(--shadow-pop); }
+.sch-suggest li { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); padding: 10px 14px; border-bottom: var(--rule-thin) solid var(--rule-soft); cursor: pointer; font-weight: 600; }
+.sch-suggest li:last-child { border-bottom: 0; }
+.sch-suggest li small { font: 500 var(--fs-caption)/1.3 var(--font-text); color: var(--fg-muted); white-space: nowrap; }
+.sch-suggest li:hover, .sch-suggest li[aria-selected="true"] { background: var(--fg); color: var(--bg); }
+.sch-suggest li:hover small, .sch-suggest li[aria-selected="true"] small { color: inherit; opacity: .75; }

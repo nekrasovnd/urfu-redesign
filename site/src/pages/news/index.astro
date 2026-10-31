@@ -27,7 +27,7 @@ const media = newsJson.media_mentions;
     <div class="news-main">
       <a class="news-feature" href={`/news/${feature.id}`} data-tags={feature.tags.join('|')}>
         <span class="news-feature__media">
-          <img src={feature.image} alt="Виктор Валдайских рассказывает об исследованиях карбонового полигона" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" />
+          <img src={feature.image} width="1200" height="680" alt="Виктор Валдайских рассказывает об исследованиях карбонового полигона" fetchpriority="high" />
           <span class="media-credit">Фото: пресс-служба УрФУ</span>
         </span>
         <span class="news-feature__body">
@@ -43,7 +43,7 @@ const media = newsJson.media_mentions;
         <div class="news-grid-list">
           {ordered.slice(1).map(n => (
             <a class="card-news" href={`/news/${n.id}`} data-tags={n.tags.join('|')}>
-              <span class="card-news__media"><img src={n.image} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentElement.classList.add('is-missing');this.remove()" /></span>
+              <span class="card-news__media"><img src={n.thumb} width="640" height="363" alt="" loading="lazy" decoding="async" /></span>
               <span class="card-news__meta"><span>{dateLong(n.date)}</span><span>{n.tags.join(' · ')}</span></span>
               <span class="card-news__title">{n.title}</span>
               <span class="card-news__lead">{n.lead}</span>

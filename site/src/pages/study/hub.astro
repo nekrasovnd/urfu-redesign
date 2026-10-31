@@ -2,13 +2,11 @@
 import Base from '../../layouts/Base.astro';
 import '../../styles/hub.css';
 import services from '@content/student-services.json';
-import { schedule, events, university, day, monthShort, dateRange } from '../../data/site';
+import MyPairs from '../../components/MyPairs.astro';
+import { events, university, day, monthShort, dateRange } from '../../data/site';
 
 const total = services.groups.reduce((s, g) => s + g.items.length, 0);
 const studentEvents = events.filter(e => e.audience.includes('Студенты') && e.date >= '2026-10-28').slice(0, 4);
-const pairOf = (n: number) => schedule.pairs.find(p => p.n === n);
-const lessons = [...schedule.events].sort((a, b) => (a.date + a.pair).localeCompare(b.date + b.pair))
-  .map(l => ({ ...l, time: pairOf(l.pair) ? `${pairOf(l.pair)!.start}–${pairOf(l.pair)!.end}` : 'Онлайн' }));
 const apps = university.apps;
 const QUEST = 'https://quest.my1.urfu.ru/questionary/3306e4b0-6e43-11f1-bef0-1b09cff11077/form';
 ---
@@ -31,20 +29,9 @@ const QUEST = 'https://quest.my1.urfu.ru/questionary/3306e4b0-6e43-11f1-bef0-1b0
 
   <!-- ============ Dashboard row ============ -->
   <section class="container hub-dash" aria-label="Главное на сегодня">
-    <div class="hub-today" data-today>
-      <div class="hub-today__head">
-        <h2 class="t-h3">Ближайшие пары</h2>
-        <span class="t-caption">Группа {schedule.group.title}</span>
-      </div>
-      <div class="hub-today__list">
-        {lessons.map((l, i) => (
-          <div class="lesson" data-date={l.date} hidden={i > 2}>
-            <span class="lesson__time">{l.time}<small>{new Date(l.date + 'T00:00:00Z').getUTCDate()} {monthShort(l.date)}</small></span>
-            <span><span class="lesson__title">{l.title}</span><br /><span class="lesson__meta">{[l.type, l.room && `ауд. ${l.room}`].filter(Boolean).join(' · ')}</span></span>
-          </div>
-        ))}
-      </div>
-      <a class="btn btn--sm" href="/study/schedule">Всё расписание <span class="arrow" aria-hidden="true">→</span></a>
+    <div class="hub-today">
+      <h2 class="t-h3">Мои пары</h2>
+      <MyPairs count={3} />
     </div>
 
     <a class="hub-lk" href="https://istudent.urfu.ru/">
@@ -54,16 +41,34 @@ const QUEST = 'https://quest.my1.urfu.ru/questionary/3306e4b0-6e43-11f1-bef0-1b0
       <span class="btn btn--primary" style="justify-self:start">Войти <span aria-hidden="true">↗</span></span>
     </a>
 
-    <div class="hub-app">
-      <span class="t-label t-muted">Мобильное приложение</span>
-      <p class="hub-app__title">{apps.name}</p>
-      <p class="t-small t-muted">Официальное приложение УрФУ для студентов.</p>
-      <ul class="hub-app__stores">
-        <li><a class="btn btn--sm" href={apps.ios}>App Store</a></li>
-        <li><a class="btn btn--sm" href={apps.android}>Google Play</a></li>
-        <li><a class="btn btn--sm" href={apps.rustore}>RuStore</a></li>
+  </section>
+
+  <!-- ============ App showcase ============ -->
+  <section class="hub-appshow" aria-labelledby="app-title">
+    <div class="container hub-appshow__inner">
+      <div class="hub-appshow__text">
+        <p class="t-label">Мобильное приложение</p>
+        <h2 class="hub-appshow__title" id="app-title">{apps.name}</h2>
+        <ul class="hub-appshow__list">
+          <li><b>Расписание</b> занятий и поиск преподавателя: время, место, дисциплина, группы</li>
+          <li><b>Баллы БРС</b> по дисциплинам и технологические карты в начале семестра</li>
+          <li><b>Практика:</b> заявки предприятий, отклик и статус, шаблоны документов</li>
+          <li><b>Рейтинги</b> — общий, учебный, научный, внеучебный и ТОП-100</li>
+        </ul>
+        <p class="hub-appshow__rating"><b>4,1</b> в App Store · 97 оценок · разработано Дирекцией информационных технологий УрФУ</p>
+        <ul class="hub-app__stores">
+          <li><a class="btn btn--light" href={apps.ios}>App Store <span aria-hidden="true">↗</span></a></li>
+          <li><a class="btn btn--light" href={apps.android}>Google Play <span aria-hidden="true">↗</span></a></li>
+          <li><a class="btn btn--light" href={apps.rustore}>RuStore <span aria-hidden="true">↗</span></a></li>
+        </ul>
+      </div>
+      <ul class="hub-appshow__shots" aria-label="Экраны приложения">
+        {[[1, 'Главный экран: расписание, практика, проектное обучение'], [2, 'Расписание на неделю'], [4, 'Баллы БРС по дисциплинам'], [3, 'Запись на практику'], [6, 'Навигатор первокурсника']].map(([n, alt]) => (
+          <li><img src={`/photos/app/app-${n}.webp`} alt={alt as string} width="520" height="1125" loading="lazy" decoding="async" /></li>
+        ))}
       </ul>
     </div>
+    <p class="container t-caption hub-appshow__credit">Экраны — из карточки приложения в App Store.</p>
   </section>
 
   <div class="container">
@@ -122,13 +127,6 @@ const QUEST = 'https://quest.my1.urfu.ru/questionary/3306e4b0-6e43-11f1-bef0-1b0
 </Base>
 
 <script>
-  // Upcoming lessons: hide the ones already in the past (keep at least two).
-  const today = new Date().toISOString().slice(0, 10);
-  const rows = [...document.querySelectorAll<HTMLElement>('[data-today] .lesson')];
-  const future = rows.filter(r => r.dataset.date! >= today);
-  (future.length >= 2 ? future : rows).slice(0, 3).forEach(r => r.classList.add('is-shown'));
-  rows.forEach(r => (r.hidden = !r.classList.contains('is-shown')));
-
   // Filter services.
   const q = document.querySelector<HTMLInputElement>('#hub-q')!;
   q.addEventListener('input', () => {

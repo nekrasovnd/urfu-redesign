@@ -1,0 +1,103 @@
+---
+// «Мои пары»: the next classes of the student's own group, live from the open urfu.ru schedule API.
+// The group is shared with /study/schedule (localStorage «urfu-schedule»); until it is set, the widget asks for it
+// instead of showing someone else's group. One per page.
+interface Props { count?: number }
+const { count = 3 } = Astro.props;
+---
+<div class="my-pairs" data-my-pairs data-count={count}>
+  <form class="my-pairs__form" data-mp-form>
+    <label class="field__label" for="mp-q">Моя группа</label>
+    <div class="my-pairs__row">
+      <div class="my-pairs__box">
+        <input class="input" id="mp-q" autocomplete="off" spellcheck="false" placeholder="Например, РИ-250902"
+          role="combobox" aria-expanded="false" aria-controls="mp-list" aria-autocomplete="list" />
+        <ul class="sch-suggest" id="mp-list" role="listbox" aria-label="Группы" hidden></ul>
+      </div>
+      <button class="btn btn--sm btn--ink" type="submit">Показать</button>
+    </div>
+  </form>
+  <div class="my-pairs__list" data-mp-list aria-live="polite">
+    <p class="my-pairs__note">Введите номер своей группы — покажем ближайшие пары из открытого расписания urfu.ru. Группа запомнится, и на странице расписания тоже.</p>
+  </div>
+  <a class="btn btn--sm" href="/study/schedule" data-mp-all>Всё расписание <span class="arrow" aria-hidden="true">→</span></a>
+</div>
+
+<script>
+  const API = 'https://urfu.ru/api/v2/schedule';
+  const KEY = 'urfu-schedule';
+  type Target = { kind: 'group' | 'teacher'; id: string; title: string; sub?: string };
+  const root = document.querySelector<HTMLElement>('[data-my-pairs]');
+  if (root) {
+    const N = Number(root.dataset.count) || 3;
+    const form = root.querySelector<HTMLFormElement>('[data-mp-form]')!;
+    const q = root.querySelector<HTMLInputElement>('#mp-q')!;
+    const sug = root.querySelector<HTMLUListElement>('#mp-list')!;
+    const out = root.querySelector<HTMLElement>('[data-mp-list]')!;
+    const all = root.querySelector<HTMLAnchorElement>('[data-mp-all]')!;
+    const esc = (v: unknown) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+    const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const WD = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+    const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    const when = (s: string) => { const d = new Date(s + 'T00:00:00'); return s === iso(new Date()) ? 'сегодня' : `${WD[d.getDay()]}, ${d.getDate()} ${MON[d.getMonth()]}`; };
+    const linkFor = (t: Target) => `${all.getAttribute('href')!.split('?')[0]}?${t.kind}=${encodeURIComponent(t.id)}`;
+
+    async function show(t: Target) {
+      q.value = t.title;
+      all.href = linkFor(t);
+      out.setAttribute('aria-busy', 'true');
+      try {
+        const from = new Date(), to = new Date(from.getFullYear(), from.getMonth(), from.getDate() + 14);
+        const r = await fetch(`${API}/${t.kind === 'group' ? 'groups' : 'teachers'}/${t.id}/schedule?date_gte=${iso(from)}&date_lte=${iso(to)}`);
+        if (!r.ok) throw new Error();
+        const now = `${iso(from)} ${String(from.getHours()).padStart(2, '0')}:${String(from.getMinutes()).padStart(2, '0')}`;
+        const evs = ((await r.json()).events || [])
+          .map((e: any) => (!e.pairNumber || e.timeBegin === e.timeEnd ? { ...e, timeBegin: null, timeEnd: null } : e)) // online courses come as 00:00–00:00
+          .filter((e: any) => `${e.date} ${(e.timeEnd || '23:59').slice(0, 5)}` > now)
+          .sort((a: any, b: any) => `${a.date} ${a.timeBegin || '99'}`.localeCompare(`${b.date} ${b.timeBegin || '99'}`))
+          .slice(0, N);
+        out.innerHTML = evs.length ? evs.map((e: any) => {
+          const time = e.timeBegin ? `${e.timeBegin.slice(0, 5)}–${e.timeEnd.slice(0, 5)}` : 'Онлайн';
+          const meta = [e.loadType, e.auditoryTitle && `ауд. ${e.auditoryTitle}`, t.kind === 'teacher' ? e.groupTitle : e.teacherName].filter(Boolean).map(esc).join(' · ');
+          return `<div class="lesson"><span class="lesson__time">${time}<small>${when(e.date)}</small></span><span><span class="lesson__title">${esc(e.title)}</span><br><span class="lesson__meta">${meta}</span></span></div>`;
+        }).join('') : `<p class="my-pairs__note">В ближайшие две недели у ${t.kind === 'group' ? 'группы' : 'преподавателя'} ${esc(t.title)} занятий в открытом расписании нет. Курсы траектории — в личном кабинете.</p>`;
+      } catch {
+        out.innerHTML = '<p class="my-pairs__note">Не удалось связаться с расписанием urfu.ru. Попробуйте позже.</p>';
+      } finally { out.removeAttribute('aria-busy'); }
+    }
+    function pick(t: Target) {
+      try { localStorage.setItem(KEY, JSON.stringify(t)); } catch {}
+      sug.hidden = true; q.setAttribute('aria-expanded', 'false');
+      show(t);
+    }
+
+    let found: Target[] = [], timer = 0, seq = 0;
+    const paint = () => {
+      sug.innerHTML = found.map((t, i) => `<li role="option" aria-selected="false" data-i="${i}"><span>${esc(t.title)}</span>${t.sub ? `<small>${esc(t.sub)}</small>` : ''}</li>`).join('');
+      sug.hidden = !found.length; q.setAttribute('aria-expanded', String(!!found.length));
+    };
+    const search = async (v: string) => {
+      const my = ++seq;
+      try {
+        const data: any[] = await (await fetch(`${API}/groups?search=${encodeURIComponent(v)}`)).json();
+        if (my !== seq) return;
+        found = data.slice(0, 6).map(d => ({ kind: 'group', id: String(d.id), title: d.title, sub: d.course ? `${d.course} курс` : undefined }));
+        paint();
+      } catch {}
+    };
+    q.addEventListener('input', () => { clearTimeout(timer); const v = q.value.trim(); if (v.length < 2) { found = []; paint(); return; } timer = window.setTimeout(() => search(v), 250); });
+    sug.addEventListener('mousedown', e => { const li = (e.target as HTMLElement).closest<HTMLElement>('[data-i]'); if (li) { e.preventDefault(); pick(found[+li.dataset.i!]); } });
+    q.addEventListener('blur', () => setTimeout(() => { sug.hidden = true; }, 150));
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const v = q.value.trim().toUpperCase();
+      if (!v) return;
+      if (!found.length) await search(v);
+      const exact = found.find(t => t.title.toUpperCase() === v) || (found.length === 1 ? found[0] : null);
+      if (exact) pick(exact);
+      else if (!found.length) out.innerHTML = '<p class="my-pairs__note">Такой группы не нашли. Проверьте номер: например, РИ-250902.</p>';
+    });
+
+    try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved?.id) show(saved); } catch {}
+  }
+</script>
