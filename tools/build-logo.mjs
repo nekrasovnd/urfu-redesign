@@ -15,6 +15,7 @@ const COLORS = {
   color: { sign: '#E50046', text: '#1D1D1B' },
   ink: { sign: '#1D1D1B', text: '#1D1D1B' },
   white: { sign: '#FFFFFF', text: '#FFFFFF' },
+  dark: { sign: '#E50046', text: '#FFFFFF' },   // brand book «полноцветное на тёмном»: red sign stays red
 };
 
 // ---------- Sign «Точная У» ----------

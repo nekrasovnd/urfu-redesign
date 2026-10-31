@@ -446,7 +446,7 @@ a.card:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); 
 .intro__photo { object-fit: cover; object-position: 50% 38%; }
 .intro::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(13 32 72 / 0) 30%, rgb(13 32 72 / .55) 58%, rgb(13 32 72 / .92) 100%), linear-gradient(90deg, rgb(13 32 72 / .7) 0%, rgb(13 32 72 / .25) 45%, rgb(13 32 72 / 0) 70%); }
 .intro__inner { display: grid; gap: clamp(8px, 1.6vh, 16px); padding-block: var(--s-6) clamp(16px, 3vh, 32px); }
-.intro__sign { width: auto; height: clamp(44px, min(6vw, 9vh), 88px); }
+.intro__u { display: inline-block; height: calc(.75em * 118 / 84); width: auto; vertical-align: calc(-.75em * 34 / 84); margin-right: .02em; fill: var(--c-red); overflow: visible; }
 .intro__title { font: 800 clamp(32px, min(5.2vw, 8.4vh), 84px)/0.98 var(--font-display); letter-spacing: var(--tracking-display); max-width: 21ch; margin: 0; text-wrap: balance; }
 .intro__sub { font: 500 var(--fs-lead)/1.4 var(--font-text); max-width: 62ch; opacity: .92; }
 .intro__stats { list-style: none; margin: clamp(8px, 1.6vh, 24px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: var(--rule-thick) solid #FFFFFF; }
@@ -482,9 +482,8 @@ a.card:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-pop); 
 /* 1. Плашки в шапках страниц въезжают по наклону при загрузке */
 html.motion :is(.pg-hero, .in-hero, .hub-lk, .ev-promo, .diagonal)::after { animation: slope-enter 900ms var(--ease) both; }
 
-/* 2. Плашки ниже первого экрана въезжают, когда секция появляется (класс ставит скрипт) */
-html.motion .slope-wait::after { transform: skewX(var(--slope)) translateX(105%); transition: transform 1100ms var(--ease); }
-html.motion .slope-wait.slope-in::after { transform: skewX(var(--slope)); }
+/* 2. Плашки привязаны к прокрутке в обе стороны: скрипт ставит --p от 0 (за краем) до 1 (на месте) */
+html.motion .slope-scrub::after { transform: skewX(var(--slope)) translateX(calc((1 - var(--p, 1)) * 105%)); transition: transform 180ms linear; }
 
 /* 3. Обложка вуза: синий срез проходит по фото и открывает его, «галочка» знака дорисовывается */
 html.motion .intro::after {

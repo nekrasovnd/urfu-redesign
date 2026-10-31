@@ -27,29 +27,40 @@
 
   const motion = () => root.classList.contains('motion') && root.dataset.motion !== 'off';
 
-  // Slope plates below the first screen slide in along the 1:2 slope when their section appears.
-  const plates = document.querySelectorAll<HTMLElement>('.hero, .campus-tile--lead, .cp-new, .band--science, .in-science');
-  const plateIO = new IntersectionObserver(entries => entries.forEach(en => {
-    if (en.isIntersecting) { en.target.classList.add('slope-in'); plateIO.unobserve(en.target); }
-  }), { rootMargin: '0px 0px -15% 0px' });
-  plates.forEach(el => {
-    if (!motion() || el.getBoundingClientRect().top < innerHeight) return; // already on screen: leave as is
-    el.classList.add('slope-wait');
-    plateIO.observe(el);
-  });
+  // Slope plates follow the scroll both ways: they slide in along the 1:2 slope as their section
+  // rises into view and slide back out when it goes down again. --p is 0 (off) … 1 (in place).
+  const plates = [...document.querySelectorAll<HTMLElement>('.hero, .campus-tile--lead, .cp-new, .band--science, .in-science')];
+  let plateTick = false;
+  const scrub = () => {
+    plateTick = false;
+    const vh = innerHeight;
+    for (const el of plates) {
+      const top = el.getBoundingClientRect().top;
+      const p = Math.max(0, Math.min(1, (vh - top) / (vh * .55)));
+      el.style.setProperty('--p', p.toFixed(3));
+    }
+  };
+  if (plates.length) {
+    plates.forEach(el => el.classList.add('slope-scrub'));
+    addEventListener('scroll', () => { if (!plateTick) { plateTick = true; requestAnimationFrame(scrub); } }, { passive: true });
+    addEventListener('resize', scrub);
+    scrub();
+  }
 
-  // Figures count up once when they come into view; the final text is the real value.
+  // Figures count up each time they come into view; the final text is always the real value.
   const figures = document.querySelectorAll<HTMLElement>('.intro__stats b, .campus-tile b, .stat__value, .cp-new__facts dd');
   const fmt = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ');
+  const counting = new WeakSet<Element>();
   const countIO = new IntersectionObserver(entries => entries.forEach(en => {
-    if (!en.isIntersecting) return;
-    countIO.unobserve(en.target);
     const el = en.target as HTMLElement;
-    const m = el.textContent!.trim().match(/^([\d\s ]+)(\+?)$/);
+    if (!en.isIntersecting) { counting.delete(el); return; } // left the screen: count again next time
+    if (counting.has(el) || !motion()) return;
+    counting.add(el);
+    const final = el.dataset.final!; // the real value, also when re-counting mid-way
+    const m = final.trim().match(/^([\d\s ]+)(\+?)$/);
     if (!m) return;
     const end = Number(m[1].replace(/[\s ]/g, ''));
     if (!end || end < 10) return;
-    const final = el.textContent!;
     const t0 = performance.now(), dur = 1200;
     const tick = (t: number) => {
       const k = Math.min(1, (t - t0) / dur);
@@ -58,7 +69,7 @@
     };
     requestAnimationFrame(tick);
   }), { threshold: .6 });
-  if (motion()) figures.forEach(el => { el.setAttribute('aria-label', el.textContent!.trim()); countIO.observe(el); });
+  if (motion()) figures.forEach(el => { el.dataset.final = el.textContent!; countIO.observe(el); });
 
   // The main-building photo drifts slower than the page while the first screen is in view.
   const intro = document.querySelector<HTMLElement>('.intro');
