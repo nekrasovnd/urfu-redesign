@@ -28,6 +28,7 @@ const dirs = directions.map((d, idx) => ({
 }));
 // Guides per direction for the client (sorting by budget chance).
 const guides = dirs.map(d => d.pass.map(x => x.guide));
+const withGuide = guides.filter(g => g.length).length;
 const institutes = [...new Set(dirs.flatMap(d => d.pr.map(p => p.i)))].sort((a, b) => a.localeCompare(b, 'ru'));
 const DETAIL: Record<string, string> = { '09.03.04': '/programs/software-engineering' };
 const rub = (n: number) => n.toLocaleString('ru-RU').replace(/ /g, ' ') + ' ₽';
@@ -43,7 +44,6 @@ const c = university.contacts;
     </ol>
     <h1 class="t-h1">Подбор программы по баллам ЕГЭ</h1>
     <p class="t-lead">Укажите баллы по предметам, которые сдали или собираетесь сдавать. Покажем направления, на которые можно подать документы, минимальные баллы, стоимость обучения и программы внутри каждого направления.</p>
-    <p class="match-head__chance"><b>Новое: шанс на бюджет-2027.</b> Сравниваем сумму ваших трёх ЕГЭ с ориентиром — средним проходным на бюджет за прошлые годы. Сейчас это только программы ИРИТ-РтФ, зато по точным данным: их сайт приёма публикует проходной прошлого приёма и число бюджетных мест. Если УрФУ откроет проходные баллы за прошлые годы по всем направлениям, расчёт так же легко включится для каждой карточки. Индивидуальные достижения не учитываются.</p>
   </div>
 
   <div class="container match-layout">
@@ -56,7 +56,7 @@ const c = university.contacts;
           <div class="score-list">
             {SUBJECTS.map((s, i) => (
               <label class="score-row" for={`sc-${i}`}>
-                <span class="score-row__name">{s}{i < 2 && <span class="score-row__req">обязательный</span>}</span>
+                <span class="score-row__name">{s}{i === 0 && <span class="score-row__req">обязательный</span>}</span>
                 <input class="input input--score score-row__input" id={`sc-${i}`} name={s} type="number" inputmode="numeric" min="0" max="100" placeholder="—"
                   value={s === 'Русский язык' ? '82' : s === 'Математика' ? '76' : s === 'Информатика' ? '80' : ''} />
               </label>
@@ -98,6 +98,17 @@ const c = university.contacts;
 
     <!-- ============ Results ============ -->
     <section class="match-results" aria-labelledby="results-title">
+      <div class="match-mode" role="group" aria-label="Что считать">
+        <button type="button" data-mode="min" aria-pressed="true">
+          <b>Можно ли подать документы</b>
+          <span>Запас над минимальными баллами · все {dirs.length} направлений</span>
+        </button>
+        <button type="button" data-mode="chance" aria-pressed="false">
+          <b>Шанс на бюджет-2027 <em>новое</em></b>
+          <span>Сумма трёх ЕГЭ против проходного прошлых лет · пока {withGuide} направлений ИРИТ-РтФ</span>
+        </button>
+      </div>
+
       <div class="results-bar">
         <h2 class="results-count" id="results-title" aria-live="polite">
           <span class="results-count__n" data-count>—</span>
@@ -115,11 +126,19 @@ const c = university.contacts;
         </div>
       </div>
 
-      <div class="notice notice--info">
+      <div class="notice notice--info" data-notice="chance" hidden>
+        <span class="notice__mark" aria-hidden="true"></span>
+        <div>
+          <p class="notice__title">Сумма трёх ЕГЭ против ориентира — проходного на бюджет за прошлые годы</p>
+          <p class="notice__text">Сейчас это только программы ИРИТ-РтФ, зато по точным данным: их сайт приёма публикует проходной прошлого приёма и число бюджетных мест. Если УрФУ откроет проходные баллы за прошлые годы по всем направлениям, расчёт так же легко включится для каждой карточки. Индивидуальные достижения не учитываются.</p>
+        </div>
+      </div>
+
+      <div class="notice notice--info" data-notice="min">
         <span class="notice__mark" aria-hidden="true"></span>
         <div>
           <p class="notice__title">Это минимальные баллы для подачи документов, а не проходные</p>
-          <p class="notice__text">Проходной балл зависит от конкурса и обычно выше. Пороги и стоимость — по данным калькулятора ЕГЭ УрФУ для приёма-2026; правила приёма-2027 опубликуют до 1 ноября 2026 года.</p>
+          <p class="notice__text">Проходной балл зависит от конкурса и обычно выше — его показывает режим «Шанс на бюджет-2027». Пороги и стоимость — по данным калькулятора ЕГЭ УрФУ для приёма-2026; правила приёма-2027 опубликуют до 1 ноября 2026 года.</p>
         </div>
       </div>
 
@@ -225,6 +244,10 @@ const c = university.contacts;
   const STORE = 'urfu-scores';
   let level = '';
   const insts = new Set<string>();
+  // Mode: «min» — can I apply (all directions); «chance» — budget chance, only directions with published passing scores.
+  let mode = new URLSearchParams(location.search).get('mode') === 'chance' ? 'chance' : 'min';
+  const sortSel = document.querySelector<HTMLSelectElement>('#sort')!;
+  const withGuide = dirs.filter(d => d.g.length).length;
 
   // ---------- Prefill: URL from the homepage widget, then saved scores ----------
   const byName = (n: string) => inputs.find(i => i.name === n);
@@ -310,7 +333,8 @@ const c = university.contacts;
       const passesFilters =
         (!level || card.dataset.level === level) &&
         (d.p === null ? !needCost : d.p <= maxCost) &&
-        (!insts.size || card.dataset.inst!.split('|').some(i => insts.has(i)));
+        (!insts.size || card.dataset.inst!.split('|').some(i => insts.has(i))) &&
+        (mode !== 'chance' || d.g.length > 0);
       const e = evaluate(d, s);
       paintExams(card, s);
       // Budget chance against the 2027 guide (average of published passing scores), where it is published.
@@ -346,7 +370,7 @@ const c = university.contacts;
 
     document.querySelector('[data-count]')!.textContent = String(ok.length);
     document.querySelector('[data-count-label]')!.textContent =
-      `${plural(ok.length, 'направление подходит', 'направления подходят', 'направлений подходят')} из ${dirs.length}`;
+      `${plural(ok.length, 'направление подходит', 'направления подходят', 'направлений подходят')} из ${mode === 'chance' ? `${withGuide} с проходными` : dirs.length}`;
     document.querySelector<HTMLElement>('[data-empty]')!.hidden = ok.length > 0;
     closeWrap.hidden = close.length === 0;
     closeWrap.querySelector('[data-close-count]')!.textContent = String(close.length);
@@ -375,5 +399,16 @@ const c = university.contacts;
     (form.querySelector('#has-cost') as HTMLInputElement).checked = false;
     update();
   });
-  update();
+
+  const modeBtns = [...document.querySelectorAll<HTMLButtonElement>('[data-mode]')];
+  function setMode(m: string) {
+    mode = m;
+    modeBtns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+    document.querySelectorAll<HTMLElement>('[data-notice]').forEach(n => (n.hidden = n.dataset.notice !== m));
+    okList.classList.toggle('is-chance', m === 'chance');
+    sortSel.value = m === 'chance' ? 'chance' : 'margin';
+    update();
+  }
+  modeBtns.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode!)));
+  setMode(mode);
 </script>
