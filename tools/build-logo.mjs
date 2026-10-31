@@ -18,21 +18,26 @@ const COLORS = {
   dark: { sign: '#E50046', text: '#FFFFFF' },   // brand book «полноцветное на тёмном»: red sign stays red
 };
 
-// ---------- Sign «Точная У» ----------
-// Units: sign box 92 × 118. Both strokes run at a 1:2 slope (26.57° from vertical) —
-// the same angle the interface uses for its diagonals.
-// Main stroke: 22 wide horizontally, flat top at y=0, turns into a calligraphic tail
-// that ends with a vertical cut. The right arm («галочка») is 18 wide and stops at y=40,
-// leaving the break the brandbook describes: the eye completes the «У» itself.
+// ---------- Sign «У-долина» ----------
+// Units: sign box 82 × 118. A Latin U (Ural, University) whose right stem runs on down and turns
+// into a hook — a handwritten Cyrillic «у». Stems are 20 wide; the U bowl is centred at (41, 40),
+// radii 21/41, so its bottom sits at 81 ≈ cap height 84. The hook is centred at (50, 84), radii 12/32,
+// and ends with a vertical cut at x = 24.
+// The stem tops are cut towards the centre at the 1:2 slope of the interface diagonals: two slopes
+// and a valley between them — the Urals. Extended, the cuts meet at (49; 24.5) above the bowl.
+// `d` is the whole sign as one contour; `parts` split it for animation (the hook slides in along the slope).
 export const SIGN = {
-  w: 92, h: 118,
-  main: 'M0 0H22L64 84C68 92 62 118 38 118V110C50 110 52 102 46 92Z',
-  arm: 'M74 0H92L72 40H54Z',
+  w: 82, h: 118,
+  d: 'M0 0L20 10V40A21 21 0 0 0 62 40V18L82 8V84A32 32 0 0 1 50 116H24V96H50A12 12 0 0 0 62 84V75.21A41 41 0 0 1 0 40Z',
+  parts: {
+    body: 'M0 0L20 10V40A21 21 0 0 0 62 40H70V68.98A41 41 0 0 1 0 40Z',
+    hook: 'M62 18L82 8V84A32 32 0 0 1 50 116H24V96H50A12 12 0 0 0 62 84Z',
+  },
 };
 
 const signPaths = (fill, dx = 0, dy = 0, k = 1) => {
   const t = (dx || dy || k !== 1) ? ` transform="translate(${r(dx)} ${r(dy)})${k !== 1 ? ` scale(${r(k, 4)})` : ''}"` : '';
-  return `<g fill="${fill}"${t}><path d="${SIGN.main}"/><path d="${SIGN.arm}"/></g>`;
+  return `<path fill="${fill}"${t} d="${SIGN.d}"/>`;
 };
 
 const r = (n, d = 2) => +n.toFixed(d);
@@ -118,11 +123,10 @@ variants('urfu-abbr', c => {
 // 5. Sign only
 variants('urfu-sign', c => ({ w: SIGN.w, h: SIGN.h, body: signPaths(c.sign), title: 'Знак УрФУ' }));
 
-// 6. Favicon / app icon: square field, sign at 62 % of the height, optically centred
-//    (the arm is lighter than the tail, so the sign is nudged 3 % right).
+// 6. Favicon / app icon: square field, sign at 62 % of the height, centred.
 function icon(size, bg, fg) {
   const k = (size * 0.62) / SIGN.h;
-  const dx = (size - SIGN.w * k) / 2 + size * 0.03;
+  const dx = (size - SIGN.w * k) / 2;
   const dy = (size - SIGN.h * k) / 2;
   return svg(size, size, `<rect width="${size}" height="${size}" fill="${bg}"/>` + signPaths(fg, dx, dy, k), 'УрФУ');
 }
@@ -138,20 +142,22 @@ fs.writeFileSync(path.join(OUT, 'app-icon-ink.svg'), icon(512, '#1D1D1B', '#E500
   for (let x = 0; x <= SIGN.w + 8; x += 4) grid.push(`<line x1="${x}" y1="-8" x2="${x}" y2="${SIGN.h + 8}"/>`);
   for (let y = -8; y <= SIGN.h + 8; y += 4) grid.push(`<line x1="-8" y1="${y}" x2="${SIGN.w + 8}" y2="${y}"/>`);
   const guides = [
-    // 1:2 slope guides through both strokes
-    '<line x1="-6" y1="-12" x2="68" y2="136"/>', '<line x1="16" y1="-12" x2="90" y2="136"/>',
-    '<line x1="80" y1="-12" x2="44" y2="60"/>', '<line x1="98" y1="-12" x2="62" y2="60"/>',
-    // where the arm would meet the main stroke — the break
-    '<circle cx="48" cy="52" r="3"/>',
+    // the stem cuts at 1:2, extended: they meet at the bottom of the «valley»
+    '<line x1="-8" y1="-4" x2="49" y2="24.5"/>', '<line x1="98" y1="0" x2="49" y2="24.5"/>',
+    '<circle cx="49" cy="24.5" r="2"/>',
+    // bowl and hook centres and radii
+    '<circle cx="41" cy="40" r="21"/>', '<circle cx="41" cy="40" r="41"/>',
+    '<circle cx="50" cy="84" r="12"/>', '<circle cx="50" cy="84" r="32"/>',
+    `<line x1="-8" y1="84" x2="${SIGN.w + 8}" y2="84"/>`,
   ];
   const body = `<g transform="translate(${pad} ${pad})">
 <g stroke="#D6D4CE" stroke-width=".4">${grid.join('')}</g>
 ${signPaths('#E50046')}
 <g stroke="#1D1D1B" stroke-width=".6" fill="none" stroke-dasharray="2 2">${guides.join('')}</g>
 <g font-family="Golos Text, sans-serif" font-size="5" fill="#1D1D1B">
-<text x="0" y="-14">22</text><text x="74" y="-14">18</text>
-<text x="${SIGN.w + 6}" y="42">y = 40</text><text x="${SIGN.w + 6}" y="86">y = 84</text>
-<text x="52" y="58">разрыв</text><text x="-34" y="60">1 : 2</text>
+<text x="2" y="-10">20</text><text x="64" y="-10">20</text>
+<text x="${SIGN.w + 6}" y="86">y = 84</text>
+<text x="53" y="31">долина</text><text x="-34" y="4">1 : 2</text>
 </g></g>`;
   fs.writeFileSync(path.join(OUT, 'construction.svg'), svg(W, H, `<rect width="${W}" height="${H}" fill="#F4F3EF"/>` + body, 'Построение знака УрФУ'));
 }
