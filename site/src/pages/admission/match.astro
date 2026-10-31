@@ -212,11 +212,11 @@ const c = university.contacts;
     if (saved) inputs.forEach(i => (i.value = saved[i.name] ?? ''));
   } catch {}
   const q = new URLSearchParams(location.search);
-  if (q.has('ru') || q.has('ma')) {
+  if (q.has('ru') || q.has('ma') || q.has('s1')) {
     inputs.forEach(i => (i.value = ''));
     if (q.get('ru')) byName('Русский язык')!.value = q.get('ru')!;
-    if (q.get('ma')) byName('Математика')!.value = q.get('ma')!;
-    if (q.get('s') && q.get('sv') && byName(q.get('s')!)) byName(q.get('s')!)!.value = q.get('sv')!;
+    if (q.get('ma')) byName('Математика')!.value = q.get('ma')!; // old links
+    for (const [s, v] of [['s1', 'sv1'], ['s', 'sv']]) if (q.get(s) && q.get(v) && byName(q.get(s)!)) byName(q.get(s)!)!.value = q.get(v)!;
   }
 
   const plural = (n: number, a: string, b: string, c: string) => (n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c);

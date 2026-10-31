@@ -85,7 +85,9 @@ const roles: { id: string; label: string; title: string; lead: string; actions: 
 ];
 
 // Third subject options for the quick match: every subject that appears in the EGE data except the two fixed ones.
-const thirdSubjects = ['Информатика', 'Физика', 'Обществознание', 'Химия', 'Биология', 'История', 'Иностранный язык', 'Литература', 'География'];
+// Russian is required on all 113 directions; maths only on some (48 required, 37 as an option, 28 none), so both other subjects are chosen.
+const otherSubjects = ['Математика', 'Информатика', 'Физика', 'Обществознание', 'Химия', 'Биология', 'История', 'Иностранный язык', 'Литература', 'География'];
+const mathOptional = directions.filter(d => !d.required.some(e => e.subject === 'Математика')).length;
 const egeCompact = directions.map(d => ({ c: d.code, n: d.name, p: d.max_cost_rub, r: d.required.map(x => [x.subject, x.min]), o: d.choose_one.map(x => [x.subject, x.min]) }));
 
 const featured = news[9]; // карбоновый полигон
@@ -144,13 +146,16 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
                     <input class="input input--score" id="qm-ru" name="ru" type="number" inputmode="numeric" min="0" max="100" value="82" />
                   </div>
                   <div class="field">
-                    <label class="field__label" for="qm-ma">Математика (профиль)</label>
-                    <input class="input input--score" id="qm-ma" name="ma" type="number" inputmode="numeric" min="0" max="100" value="76" />
+                    <label class="field__label" for="qm-s1">Второй предмет</label>
+                    <div class="score-pair">
+                      <select class="select" id="qm-s1" name="s1">{otherSubjects.map(s => <option selected={s === 'Математика'}>{s}</option>)}</select>
+                      <input class="input input--score" id="qm-sv1" name="sv1" type="number" inputmode="numeric" min="0" max="100" value="76" aria-label="Балл по второму предмету" />
+                    </div>
                   </div>
                   <div class="field">
                     <label class="field__label" for="qm-s">Третий предмет</label>
                     <div class="score-pair">
-                      <select class="select" id="qm-s" name="s">{thirdSubjects.map(s => <option>{s}</option>)}</select>
+                      <select class="select" id="qm-s" name="s">{otherSubjects.map(s => <option selected={s === 'Информатика'}>{s}</option>)}</select>
                       <input class="input input--score" id="qm-sv" name="sv" type="number" inputmode="numeric" min="0" max="100" value="80" aria-label="Балл по третьему предмету" />
                     </div>
                   </div>
@@ -160,7 +165,7 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
                   <span class="quick-match__count-label" data-qm-label>направлений подходит по минимальным баллам</span>
                   <ul class="quick-match__list" data-qm-list></ul>
                   <div class="quick-match__foot">
-                    <span class="quick-match__note">Пример баллов — введите свои. Пороги и цены: калькулятор ЕГЭ УрФУ, приём-2026.</span>
+                    <span class="quick-match__note">Пример баллов — введите свои. Русский нужен везде, профильная математика — нет: на {mathOptional} из {directions.length} направлений её можно заменить или она не нужна. Пороги и цены: калькулятор ЕГЭ УрФУ, приём-2026.</span>
                     <button class="btn btn--primary" type="submit">Показать все <span class="arrow" aria-hidden="true">→</span></button>
                   </div>
                 </div>
@@ -379,8 +384,10 @@ const WEEKDAYS = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
     const plural = (n: number, a: string, b: string, c: string) => (n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? b : c);
     const rub = (n: number) => n.toLocaleString('ru-RU') + ' ₽';
     function update() {
-      const third = $('qm-s').value;
-      const scores: Record<string, number> = { 'Русский язык': +$('qm-ru').value || 0, 'Математика': +$('qm-ma').value || 0, [third]: +$('qm-sv').value || 0 };
+      const second = $('qm-s1').value, third = $('qm-s').value;
+      const scores: Record<string, number> = { 'Русский язык': +$('qm-ru').value || 0 };
+      // The same subject picked twice counts once, with the higher score.
+      for (const [s, v] of [[second, +$('qm-sv1').value || 0], [third, +$('qm-sv').value || 0]] as [string, number][]) scores[s] = Math.max(scores[s] ?? 0, v);
       const ok = (s: string, min: number) => (scores[s] ?? -1) >= min;
       const matched = dirs.filter(d => d.r.every(([s, m]) => ok(s, m)) && (!d.o.length || d.o.some(([s, m]) => ok(s, m))));
       matched.sort((a, b) => Number(b.o.some(([s]) => s === third)) - Number(a.o.some(([s]) => s === third)) || (b.p ?? 0) - (a.p ?? 0));
