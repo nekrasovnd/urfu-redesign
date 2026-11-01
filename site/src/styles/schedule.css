@@ -13,6 +13,14 @@
 .sch-bar__group b { font: 700 17px/1 var(--font-display); letter-spacing: -0.01em; }
 .sch-bar__group span { font-size: 14px; color: var(--fg-muted); }
 .sch-week-nav { display: flex; align-items: center; gap: var(--s-2); margin-left: auto; }
+/* Desktop: one row that never wraps — the caption arrives with the live data and must not push the week nav down */
+@media (min-width: 900px) {
+  .sch-bar__inner { flex-wrap: nowrap; }
+  .sch-bar__group { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; white-space: nowrap; overflow: hidden; }
+  .sch-bar__group b { flex: none; }
+  .sch-bar__group span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .sch-week-nav, .sch-ics { flex: none; }
+}
 .sch-week-nav .btn[disabled] { opacity: .35; }
 .sch-week-label { font: 700 17px/1 var(--font-display); letter-spacing: -0.01em; min-width: 200px; text-align: center; font-variant-numeric: tabular-nums; }
 

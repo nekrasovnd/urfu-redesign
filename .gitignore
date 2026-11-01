@@ -17,3 +17,6 @@ design/concept/preview/
 design/concept/author.local.json
 design/concept/*.pdf
 research/benchmark/shots/*-full.jpg
+# Local-only: the email draft with personal contacts and the logo archive for the jury
+design/concept/*.local.*
+design/concept/*.zip

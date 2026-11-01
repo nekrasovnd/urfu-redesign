@@ -5,6 +5,9 @@ import '@fontsource/golos-text/600.css';
 import '@fontsource/golos-text/700.css';
 import '@fontsource/unbounded/700.css';
 import '@fontsource/unbounded/800.css';
+// The headline and body Cyrillic faces are preloaded: a late swap would shift the text under the first screen.
+import fontDisplay from '@fontsource/unbounded/files/unbounded-cyrillic-800-normal.woff2?url';
+import fontText from '@fontsource/golos-text/files/golos-text-cyrillic-400-normal.woff2?url';
 import '@ds/tokens.css';
 import '@ds/components.css';
 import '../styles/site.css';
@@ -31,6 +34,8 @@ const fullTitle =title === 'УрФУ' ? 'Уральский федеральны
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="ru_RU" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={fontDisplay} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={fontText} as="font" type="font/woff2" crossorigin />
     <!-- Display settings (eye button in the header) apply before first paint, so the page does not flash. -->
     <script is:inline>try{var a=JSON.parse(localStorage.getItem('urfu-a11y')||'{}'),r=document.documentElement;if(a.theme){r.setAttribute('data-theme',a.theme==='contrast'?'light':a.theme);if(a.theme==='contrast')r.setAttribute('data-contrast','high')}['text','spacing','motion'].forEach(function(k){if(a[k])r.setAttribute('data-'+k,a[k])})}catch(e){}</script>
     <script is:inline>try{document.documentElement.setAttribute('data-proto',localStorage.getItem('urfu-proto')==='full'?'full':'ready')}catch(e){document.documentElement.setAttribute('data-proto','ready')}</script>
